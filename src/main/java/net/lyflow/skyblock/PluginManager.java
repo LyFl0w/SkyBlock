@@ -1,8 +1,9 @@
 package net.lyflow.skyblock;
 
-
 import net.lyflow.skyblock.command.IslandCommand;
+import net.lyflow.skyblock.listener.inventory.InventoryClickListener;
 import net.lyflow.skyblock.listener.player.PlayerJoinLister;
+
 import org.bukkit.command.PluginCommand;
 
 public class PluginManager {
@@ -17,7 +18,12 @@ public class PluginManager {
     }
 
     private void registerEvents(org.bukkit.plugin.PluginManager pluginManager) {
+
+        // PLAYER EVENT
         pluginManager.registerEvents(new PlayerJoinLister(skyblock), skyblock);
+
+        // INVENTORY EVENT
+        pluginManager.registerEvents(new InventoryClickListener(skyblock), skyblock);
     }
 
     private void registerCommands() {
