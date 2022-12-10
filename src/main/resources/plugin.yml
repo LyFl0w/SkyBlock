@@ -1,0 +1,6 @@
+name: SkyBlock
+description: Plugin for SkyBlock Server
+author: LyFlow
+main: net.lyflow.skyblock.SkyBlock
+api-version: 1.19
+version: 1.0.0-beta
