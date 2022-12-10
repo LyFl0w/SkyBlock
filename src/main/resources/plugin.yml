@@ -4,3 +4,18 @@ author: LyFlow
 main: net.lyflow.skyblock.SkyBlock
 api-version: 1.19
 version: 1.0.0-beta
+
+commands:
+  island:
+    usage: §c/island <create/delete/config> or /island <invite/kick/setowner> <player>
+    description: command to manipulate your island
+    aliases: is
+
+  visit:
+    usage: §c/visit <player>
+    description: command to visit other island
+
+  lobby:
+    usage: §c/lobby
+    description: command to return to the lobby
+    aliases: [spawn, hub]
