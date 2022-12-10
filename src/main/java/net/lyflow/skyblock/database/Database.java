@@ -29,7 +29,6 @@ public class Database {
     }
 
     private void initDatabase(File database) {
-
         // Generate database if not exist
         if(!database.exists()) {
             logger.info("Generate Database in plugin folder ("+database.getName()+")");
@@ -45,7 +44,6 @@ public class Database {
 
     public Connection getConnection() throws SQLException {
         if(connection == null || connection.isClosed()){
-            logger.info("Init connexion to Database");
             connection = DriverManager.getConnection(databaseLink);
         }
         return connection;
