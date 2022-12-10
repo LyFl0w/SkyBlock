@@ -1,6 +1,7 @@
 package net.lyflow.skyblock.command;
 
 import net.lyflow.skyblock.SkyBlock;
+import net.lyflow.skyblock.island.IslandDifficulty;
 import net.lyflow.skyblock.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -28,7 +29,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
             if (args.length == 1) {
                 // CREATE
                 if (sub.equalsIgnoreCase(argsCompletion[0])) {
-
+                    player.openInventory(IslandDifficulty.openInventoryDifficulty());
                     return true;
                 }
 
