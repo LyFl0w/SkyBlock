@@ -38,14 +38,14 @@ public class Database {
                 throw new RuntimeException(e);
             }
         }
-
     }
 
-
     public Connection getConnection() throws SQLException {
-        if(connection == null || connection.isClosed()){
-            connection = DriverManager.getConnection(databaseLink);
-        }
+        if(connection == null || connection.isClosed()) connection = DriverManager.getConnection(databaseLink);
         return connection;
+    }
+
+    public void closeConnection() throws SQLException {
+        if(connection != null && !connection.isClosed()) connection.close();
     }
 }
