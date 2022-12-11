@@ -1,5 +1,7 @@
 package net.lyflow.skyblock.island;
 
+import java.util.Arrays;
+
 public enum MateStatus {
 
     OWNER(1), MATE(2);
@@ -12,5 +14,9 @@ public enum MateStatus {
 
     public int getID() {
         return id;
+    }
+
+    public static MateStatus getMateStatusByID(int id) {
+        return Arrays.stream(values()).filter(mateStatus -> mateStatus.getID() == id).findFirst().get();
     }
 }
