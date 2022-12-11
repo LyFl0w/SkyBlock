@@ -4,6 +4,8 @@ import net.lyflow.skyblock.database.Database;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.sql.SQLException;
+
 public class SkyBlock extends JavaPlugin {
 
     private static SkyBlock INSTANCE;
@@ -20,7 +22,11 @@ public class SkyBlock extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        try {
+            database.closeConnection();
+        } catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Database getDatabase() {
