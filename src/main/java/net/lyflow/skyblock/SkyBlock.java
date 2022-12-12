@@ -13,7 +13,7 @@ public class SkyBlock extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.INSTANCE = this;
+        INSTANCE = this;
 
         this.database = new Database(this, "skyblock.db");
 
