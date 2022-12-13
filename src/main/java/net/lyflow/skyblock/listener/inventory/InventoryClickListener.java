@@ -30,10 +30,12 @@ public class InventoryClickListener implements Listener {
 
         if(title.equalsIgnoreCase("§6Difficulté de l'île")) {
             event.setCancelled(true);
+            player.closeInventory();
             if(item.getType() == Material.STRUCTURE_VOID) {
-                player.closeInventory();
+                //player.closeInventory();
                 return;
             }
+            //player.closeInventory();
             skyBlock.getServer().getPluginManager()
                     .callEvent(new CreateIslandEvent(skyBlock, player, IslandDifficulty.getIslandDifficultyByMaterial(item.getType())));
         }
