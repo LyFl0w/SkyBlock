@@ -21,6 +21,19 @@ public class PlayerIslandRequest {
         this.autoClose = autoClose;
     }
 
+    public int getPlayerID(Player player) throws SQLException {
+        final Connection connection = database.getConnection();
+        final PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM Player WHERE UUID = ?");
+
+        preparedStatement.setString(1, player.getUniqueId().toString());
+        final ResultSet resultSet = preparedStatement.executeQuery();
+        final int playerID = (resultSet.next()) ? resultSet.getInt(1) : -1;
+
+        autoClose();
+
+        return playerID;
+    }
+
     public boolean playerHasIsland(Player player) throws SQLException {
         final Connection connection = database.getConnection();
 
