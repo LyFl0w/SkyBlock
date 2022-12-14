@@ -7,7 +7,7 @@ version: 1.0.0-beta
 
 commands:
   island:
-    usage: §c/island <create/delete/config/list> or /island <invite/kick/setowner> <player>
+    usage: §c/island <create/delete/config/tp/list> or /island <invite/kick/setowner/accept> <player>
     description: command to manipulate your island
     aliases: is
 
