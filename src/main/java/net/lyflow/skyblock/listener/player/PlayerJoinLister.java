@@ -1,6 +1,7 @@
 package net.lyflow.skyblock.listener.player;
 
 import net.lyflow.skyblock.SkyBlock;
+import net.lyflow.skyblock.request.account.AccountRequest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,25 +19,15 @@ public class PlayerJoinLister implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) throws SQLException {
         final Player player = event.getPlayer();
-        final Connection connection = skyBlock.getDatabase().getConnection();
-        final PreparedStatement preparableStatement = connection.prepareStatement("SELECT COUNT(*) FROM Player WHERE UUID = ?");
 
-        preparableStatement.setString(1, player.getUniqueId().toString());
-
-        // Check if player has an account
-        final boolean hasAccount = (0 != preparableStatement.executeQuery().getInt(1));
-
-        if(!hasAccount) {
-            final PreparedStatement preparedStatement2 = connection.prepareStatement("INSERT INTO Player (UUID) VALUES (?)");
-            preparedStatement2.setString(1, player.getUniqueId().toString());
-            preparedStatement2.execute();
-
-            skyBlock.getLogger().info("Account create for : "+player.getName());
-
+        final AccountRequest accountRequest = new AccountRequest(skyBlock.getDatabase(), false);
+        if(!accountRequest.hasAccount(player.getUniqueId())) {
+            accountRequest.createPlayerAccount(player);
+            skyBlock.getDatabase().closeConnection();
             event.setJoinMessage("§6Bienvenue à §b"+player.getName()+" §6!");
+        } else {
+            accountRequest.updatePlayerName(player);
         }
-
-        connection.close();
     }
 
 }
