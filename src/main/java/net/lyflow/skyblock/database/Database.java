@@ -1,10 +1,8 @@
 package net.lyflow.skyblock.database;
 
-import org.apache.commons.io.FileUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -12,7 +10,7 @@ import java.util.logging.Logger;
 
 public class Database {
 
-    private JavaPlugin javaPlugin;
+    private final JavaPlugin javaPlugin;
     private final Logger logger;
 
     private final String databaseLink;
@@ -32,20 +30,16 @@ public class Database {
         // Generate database if not exist
         if(!database.exists()) {
             logger.info("Generate Database in plugin folder ("+database.getName()+")");
-            try {
-                FileUtils.copyInputStreamToFile(javaPlugin.getResource(database.getName()), database);
-            } catch(IOException e) {
-                throw new RuntimeException(e);
-            }
+            javaPlugin.saveResource(database.getName(), false);
         }
-
     }
 
-
     public Connection getConnection() throws SQLException {
-        if(connection == null || connection.isClosed()){
-            connection = DriverManager.getConnection(databaseLink);
-        }
+        if(connection == null || connection.isClosed()) connection = DriverManager.getConnection(databaseLink);
         return connection;
+    }
+
+    public void closeConnection() throws SQLException {
+        if(connection != null && !connection.isClosed()) connection.close();
     }
 }

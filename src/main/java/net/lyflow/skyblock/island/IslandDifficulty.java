@@ -11,14 +11,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public enum IslandDifficulty {
 
-    EASY(1, Material.LIME_STAINED_GLASS_PANE), NORMAL(2, Material.YELLOW_STAINED_GLASS_PANE), HARD(3, Material.RED_STAINED_GLASS_PANE);
+    EASY(1, "Facile", Material.LIME_STAINED_GLASS_PANE), NORMAL(2, "Normal", Material.YELLOW_STAINED_GLASS_PANE), HARD(3, "Difficile", Material.RED_STAINED_GLASS_PANE);
 
     private final int difficulty;
     private final Material material;
+    private final String itemName;
 
-    IslandDifficulty(int difficulty, Material material) {
+    IslandDifficulty(int difficulty, String itemName, Material material) {
         this.difficulty = difficulty;
         this.material = material;
+        this.itemName = itemName;
     }
 
     public int getDifficulty() {
@@ -29,15 +31,22 @@ public enum IslandDifficulty {
         return material;
     }
 
+    public String getItemName() {
+        return itemName;
+    }
+
     public static IslandDifficulty getIslandDifficultyByMaterial(Material material) {
         return Arrays.stream(values()).filter(islandDifficulty -> islandDifficulty.getMaterial() == material).findFirst().get();
     }
 
     public static Inventory openInventoryDifficulty() {
-        final InventoryBuilder inventoryBuilder = new InventoryBuilder(9, "§6Island Difficulty");
-        final AtomicInteger slot = new AtomicInteger(0);
+        final InventoryBuilder inventoryBuilder = new InventoryBuilder(9, "§6Difficulté de l'île");
+
+        final AtomicInteger slot = new AtomicInteger(1);
         Arrays.stream(values()).forEach(islandDifficulty ->
-                inventoryBuilder.setItem(slot.addAndGet(2), new ItemBuilder(islandDifficulty.getMaterial()).setName("§r"+islandDifficulty.name()).toItemStack()));
+                inventoryBuilder.setItem(slot.getAndAdd(2), new ItemBuilder(islandDifficulty.getMaterial()).setName("§r"+islandDifficulty.getItemName()).toItemStack()));
+        inventoryBuilder.setItem(slot.get(), new ItemBuilder(Material.STRUCTURE_VOID).setName("§rAttendre une invitation").toItemStack());
+
         return inventoryBuilder.toInventory();
     }
 }

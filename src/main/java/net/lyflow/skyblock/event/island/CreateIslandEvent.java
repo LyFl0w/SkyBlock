@@ -2,14 +2,19 @@ package net.lyflow.skyblock.event.island;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.island.IslandDifficulty;
-import net.lyflow.skyblock.island.MateStatus;
+import net.lyflow.skyblock.request.account.AccountRequest;
+import net.lyflow.skyblock.request.island.IslandRequest;
+import net.lyflow.skyblock.utils.ResourceUtils;
+
+import org.bukkit.Location;
+import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.io.File;
 import java.sql.SQLException;
 
 public class CreateIslandEvent extends Event implements Cancellable {
@@ -20,50 +25,48 @@ public class CreateIslandEvent extends Event implements Cancellable {
 
     public CreateIslandEvent(SkyBlock skyBlock, Player player, IslandDifficulty islandDifficulty) {
         try {
-            final Connection connection = skyBlock.getDatabase().getConnection();
+            final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
 
-            // Check if player has an island
-            final PreparedStatement preparedStatement = connection.prepareStatement("""
-                    SELECT COUNT(*) FROM Island_Mate
-                    JOIN Player ON Player.id = Island_Mate.player_id
-                    WHERE Player.UUID = ?
-                    """);
-
-            preparedStatement.setString(1, player.getUniqueId().toString());
-
-            final boolean playerHasIsland = (0 != preparedStatement.executeQuery().getInt(1));
-
-            if(playerHasIsland) {
-                player.sendMessage("Tu ne peux pas avoir plusieurs îles en même temps !");
-                connection.close();
-
+            if(islandRequest.hasIsland(player.getUniqueId())) {
+                player.sendMessage("§cTu ne peux pas avoir plusieurs îles en même temps !");
                 setCancelled(true);
                 return;
             }
+            player.sendMessage("§bCréation de votre île en cours §6§o(difficulté : "+islandDifficulty.name()+")");
 
-            final PreparedStatement preparedStatement2 = connection.prepareStatement("INSERT INTO Island (id_difficulty) VALUES (?)");
-            preparedStatement2.setInt(1, islandDifficulty.getDifficulty());
-            preparedStatement2.executeUpdate();
+            try {
+                // Make a copy of  Island World
+                final String defaultPath = "skyblock-map/"+new AccountRequest(skyBlock.getDatabase(), true).getPlayerID(player);
+                final File islandWorld = new File(skyBlock.getDataFolder(), "../../"+defaultPath);
+                ResourceUtils.saveResourceFolder("maps/skyblock-"+islandDifficulty.name().toLowerCase(), islandWorld, skyBlock, false);
 
-            final int primaryKey = preparedStatement2.getGeneratedKeys().getInt(1);
+                // Load World
+                skyBlock.getServer().createWorld(new WorldCreator(defaultPath));
+                final Location spawn = new Location(skyBlock.getServer().getWorld(defaultPath), -0.5, 100, 0.5, 90, 0);
 
-            final PreparedStatement preparedStatementPlayerID = connection.prepareStatement("SELECT id FROM Player WHERE UUID = ?");
-            preparedStatementPlayerID.setString(1, player.getUniqueId().toString());
+                player.sendMessage("§bTéléportation en cours");
 
-            final PreparedStatement preparedStatement3 = connection.prepareStatement("INSERT INTO Island_Mate VALUES (?, ?, ?)");
-            preparedStatement3.setInt(1, primaryKey);
-            preparedStatement3.setInt(2, preparedStatementPlayerID.executeQuery().getInt(1));
-            preparedStatement3.setInt(3, MateStatus.OWNER.getID());
+                try {
+                    // create island in DB
+                    islandRequest.createIsland(player.getUniqueId(), spawn, islandDifficulty);
+                    skyBlock.getDatabase().closeConnection();
 
-            preparedStatement3.execute();
-
-            connection.close();
+                    // Teleport to the world
+                    player.teleport(spawn);
+                } catch(SQLException e) {
+                    // DELETE USELESS WORLD FOLDER IF WE CAN'T GENERATE UTILS INFORMATION IN DATABASE
+                    islandWorld.delete();
+                    throw new RuntimeException("Database error (therefore the world folder ("+defaultPath+") has been deleted)", e);
+                }
+            } catch(SQLException e) {
+                    throw new RuntimeException("Player ID not found", e);
+            }
         } catch(SQLException e) {
             throw new RuntimeException("Erreur lors de la récupération de la base lors de la création d'une île", e);
         }
     }
 
-    @Override
+    @Override @NotNull
     public HandlerList getHandlers() {
         return HANDLERS;
     }
@@ -81,4 +84,5 @@ public class CreateIslandEvent extends Event implements Cancellable {
     public void setCancelled(boolean setCancelled) {
         this.isCancelled = setCancelled;
     }
+
 }
