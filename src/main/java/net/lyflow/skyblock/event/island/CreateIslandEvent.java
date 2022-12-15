@@ -27,7 +27,7 @@ public class CreateIslandEvent extends Event implements Cancellable {
         try {
             final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
 
-            if(islandRequest.hasIsland(player)) {
+            if(islandRequest.hasIsland(player.getUniqueId())) {
                 player.sendMessage("§cTu ne peux pas avoir plusieurs îles en même temps !");
                 setCancelled(true);
                 return;
@@ -48,7 +48,7 @@ public class CreateIslandEvent extends Event implements Cancellable {
 
                 try {
                     // create island in DB
-                    islandRequest.createIsland(player, spawn, islandDifficulty);
+                    islandRequest.createIsland(player.getUniqueId(), spawn, islandDifficulty);
                     skyBlock.getDatabase().closeConnection();
 
                     // Teleport to the world

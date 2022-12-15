@@ -19,7 +19,7 @@ import java.util.*;
 public class IslandCommand implements CommandExecutor, TabCompleter {
 
     private final static String[] argsCompletion = new String[]{"create", "tp", "delete", "config", "list", "invite", "accept", "kick", "setowner"};
-    private final static ArrayList<IslandInvitation> islandInvitationList = new ArrayList();
+    private final static ArrayList<IslandInvitation> islandInvitationList = new ArrayList<>();
 
     private final SkyBlock skyBlock;
 
@@ -44,13 +44,13 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                     final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
 
                     try {
-                        if(!islandRequest.hasIsland(player)) {
+                        if(!islandRequest.hasIsland(player.getUniqueId())) {
                             player.sendMessage("§cVous n'avez pas d'île, créer vous en une avec la commande §6/island create");
                             return true;
                         }
 
                         player.sendMessage("§bTéléportation en cours sur votre île");
-                        player.teleport(islandRequest.getSpawnLocation(islandRequest.getIslandID(player)));
+                        player.teleport(islandRequest.getSpawnLocation(islandRequest.getIslandID(player.getUniqueId())));
 
                     } catch(SQLException e) {
                         throw new RuntimeException(e);
@@ -75,11 +75,11 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                     final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
 
                     try {
-                        if(!islandRequest.hasIsland(player)) {
+                        if(!islandRequest.hasIsland(player.getUniqueId())) {
                             player.sendMessage("§cVous n'avez pas d'île, créez-vous en une avec la commande §6/island create");
                             return true;
                         }
-                        final List<IslandMate> islandMates = islandRequest.getMates(player);
+                        final List<IslandMate> islandMates = islandRequest.getMates(player.getUniqueId());
 
                         skyBlock.getDatabase().closeConnection();
 
@@ -120,7 +120,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                     try {
                         final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
 
-                        if(!islandRequest.hasIsland(player)) {
+                        if(!islandRequest.hasIsland(player.getUniqueId())) {
                             player.sendMessage("§cVous n'avez pas d'île, créez-vous en une avec la commande §6/island create");
                             return true;
                         }
@@ -130,9 +130,9 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                             return true;
                         }
 
-                        final int playerIslandID = islandRequest.getIslandID(player);
-                        if(islandRequest.hasIsland(target)) {
-                            if(playerIslandID != islandRequest.getIslandID(target)) {
+                        final int playerIslandID = islandRequest.getIslandID(player.getUniqueId());
+                        if(islandRequest.hasIsland(target.getUniqueId())) {
+                            if(playerIslandID != islandRequest.getIslandID(target.getUniqueId())) {
                                 player.sendMessage("§cLe joueur "+args[1]+" possède déjà une île");
                             } else {
                                 player.sendMessage("§cLe joueur "+args[1]+" fait déjà partie de ton île");
@@ -169,7 +169,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                     try {
                         final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
 
-                        if(islandRequest.hasIsland(player)) {
+                        if(islandRequest.hasIsland(player.getUniqueId())) {
                             player.sendMessage("§cVous devez quitter votre île avant de pouvoir rejoindre une autre");
                             skyBlock.getDatabase().closeConnection();
                             return true;
@@ -188,7 +188,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                             return true;
                         }
 
-                        if(!islandRequest.hasIsland(targetOfflinePlayer)) {
+                        if(!islandRequest.hasIsland(targetOfflinePlayer.getUniqueId())) {
                             player.sendMessage("§cLe joueur "+args[1]+" ne possède plus d'île");
                             skyBlock.getDatabase().closeConnection();
                             return true;
@@ -196,14 +196,14 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
 
                         final IslandInvitation islandInvitation = getInvitation(player.getUniqueId(), args[1]);
 
-                        if(islandRequest.getIslandID(targetOfflinePlayer) != islandInvitation.islandID()) {
+                        if(islandRequest.getIslandID(targetOfflinePlayer.getUniqueId()) != islandInvitation.islandID()) {
                             player.sendMessage("§cLe joueur "+args[1]+"ne possède plus la même île");
                             skyBlock.getDatabase().closeConnection();
                             return true;
                         }
 
-                        final List<IslandMate> islandMates = islandRequest.getMates(targetOfflinePlayer);
-                        islandRequest.addMate(player, islandInvitation.islandID());
+                        final List<IslandMate> islandMates = islandRequest.getMates(targetOfflinePlayer.getUniqueId());
+                        islandRequest.addMate(player.getUniqueId(), islandInvitation.islandID());
 
                         islandMates.stream().parallel().filter(islandMate ->
                                 islandMate.player().isOnline()).forEach(islandMate -> skyBlock.getServer().getScheduler().runTask(skyBlock, () ->
