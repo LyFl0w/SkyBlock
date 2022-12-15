@@ -49,7 +49,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                             return true;
                         }
 
-                        player.sendMessage("§bTéléportation en cours sur votre île");
+                        player.sendMessage("§bTéléportation vers votre île");
                         player.teleport(islandRequest.getSpawnLocation(islandRequest.getIslandID(player.getUniqueId())));
 
                     } catch(SQLException e) {
