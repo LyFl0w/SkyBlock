@@ -1,17 +1,14 @@
 package net.lyflow.skyblock.request.island;
 
 import net.lyflow.skyblock.database.Database;
-
 import net.lyflow.skyblock.island.IslandDifficulty;
 import net.lyflow.skyblock.island.IslandMate;
 import net.lyflow.skyblock.island.MateStatus;
 import net.lyflow.skyblock.request.DefaultRequest;
-
 import net.lyflow.skyblock.utils.LocationUtils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,7 +24,7 @@ public class IslandRequest extends DefaultRequest {
         super(database, autoClose);
     }
 
-    public boolean hasIsland(OfflinePlayer offlinePlayer) throws SQLException {
+    public boolean hasIsland(UUID uuid) throws SQLException {
         final Connection connection = database.getConnection();
 
         // Check if player has an island
@@ -37,7 +34,7 @@ public class IslandRequest extends DefaultRequest {
                     WHERE Player.UUID = ?
                     """);
 
-        preparedStatement.setString(1, offlinePlayer.getUniqueId().toString());
+        preparedStatement.setString(1, uuid.toString());
 
         final boolean result = (0 != preparedStatement.executeQuery().getInt(1));
 
@@ -46,7 +43,7 @@ public class IslandRequest extends DefaultRequest {
         return result;
     }
 
-    public int getIslandID(OfflinePlayer offlinePlayer) throws SQLException {
+    public int getIslandID(UUID uuid) throws SQLException {
         final Connection connection = database.getConnection();
 
         // Check if player has an island
@@ -56,7 +53,7 @@ public class IslandRequest extends DefaultRequest {
                     WHERE Player.UUID = ?
                     """);
 
-        preparedStatement.setString(1, offlinePlayer.getUniqueId().toString());
+        preparedStatement.setString(1, uuid.toString());
 
         final int islandID = preparedStatement.executeQuery().getInt(1);
 
@@ -65,7 +62,7 @@ public class IslandRequest extends DefaultRequest {
         return islandID;
     }
 
-    public void createIsland(Player player, Location spawn, IslandDifficulty islandDifficulty) throws SQLException {
+    public void createIsland(UUID uuid, Location spawn, IslandDifficulty islandDifficulty) throws SQLException {
         final Connection connection = database.getConnection();
 
         final PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Island (id_difficulty, spawn_location) VALUES (?, ?)");
@@ -79,7 +76,7 @@ public class IslandRequest extends DefaultRequest {
             INSERT INTO Island_Mate VALUES (?, (SELECT Player.id FROM Player WHERE Player.UUID = ?), ?)
             """);
         preparedStatement2.setInt(1, primaryKey);
-        preparedStatement2.setString(2, player.getUniqueId().toString());
+        preparedStatement2.setString(2, uuid.toString());
         preparedStatement2.setInt(3, MateStatus.OWNER.getID());
 
         preparedStatement2.execute();
@@ -87,14 +84,14 @@ public class IslandRequest extends DefaultRequest {
         autoClose();
     }
 
-    public void addMate(Player player, int islandID) throws SQLException {
+    public void addMate(UUID uuid, int islandID) throws SQLException {
         final Connection connection = database.getConnection();
 
         final PreparedStatement preparedStatement = connection.prepareStatement("""
             INSERT INTO Island_Mate VALUES (?, (SELECT Player.id FROM Player WHERE Player.UUID = ?), ?)
             """);
         preparedStatement.setInt(1, islandID);
-        preparedStatement.setString(2, player.getUniqueId().toString());
+        preparedStatement.setString(2, uuid.toString());
         preparedStatement.setInt(3, MateStatus.MATE.getID());
 
         preparedStatement.execute();
@@ -102,7 +99,7 @@ public class IslandRequest extends DefaultRequest {
         autoClose();
     }
 
-    public List<IslandMate> getMates(OfflinePlayer offlinePlayer) throws SQLException {
+    public List<IslandMate> getMates(UUID uuid) throws SQLException {
         final List<IslandMate> islandMates = new ArrayList<>();
         final Connection connection = database.getConnection();
 
@@ -116,7 +113,7 @@ public class IslandRequest extends DefaultRequest {
                 )
                 """);
 
-        preparedStatement.setString(1, offlinePlayer.getUniqueId().toString());
+        preparedStatement.setString(1, uuid.toString());
 
         final ResultSet resultSet = preparedStatement.executeQuery();
         while(resultSet.next()) {
@@ -129,16 +126,32 @@ public class IslandRequest extends DefaultRequest {
         return islandMates;
     }
 
-    public Location getSpawnLocation(int islandID) throws SQLException {
+    public String getSpawnLocationFormattedString(int islandID) throws SQLException {
         final Connection connection = database.getConnection();
         final PreparedStatement preparedStatement = connection.prepareStatement("SELECT spawn_location FROM Island WHERE id = ?");
         preparedStatement.setInt(1, islandID);
 
-        final Location location = LocationUtils.getLocationFromString(preparedStatement.executeQuery().getString(1));
+        final String locationString = preparedStatement.executeQuery().getString(1);
+
+        autoClose();
+
+        return locationString;
+    }
+
+    public Location getSpawnLocation(int islandID) throws SQLException {
+        final Location location = LocationUtils.getLocationFromString(getSpawnLocationFormattedString(islandID));
 
         autoClose();
 
         return location;
+    }
+
+    public String getIslandWorldName(int islandID) throws SQLException {
+        final String worldName = getSpawnLocationFormattedString(islandID).split(":", 2)[0];
+
+        autoClose();
+
+        return worldName;
     }
 
 }
