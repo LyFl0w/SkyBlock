@@ -3,12 +3,13 @@ package net.lyflow.skyblock.request.island;
 import net.lyflow.skyblock.database.Database;
 import net.lyflow.skyblock.island.IslandDifficulty;
 import net.lyflow.skyblock.island.IslandMate;
-import net.lyflow.skyblock.island.MateStatus;
+import net.lyflow.skyblock.island.PlayerIslandStatus;
 import net.lyflow.skyblock.request.DefaultRequest;
 import net.lyflow.skyblock.utils.LocationUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -55,7 +56,8 @@ public class IslandRequest extends DefaultRequest {
 
         preparedStatement.setString(1, uuid.toString());
 
-        final int islandID = preparedStatement.executeQuery().getInt(1);
+        final ResultSet resultSet = preparedStatement.executeQuery();
+        final int islandID = (resultSet.next()) ? resultSet.getInt(1) : -1;
 
         autoClose();
 
@@ -77,7 +79,7 @@ public class IslandRequest extends DefaultRequest {
             """);
         preparedStatement2.setInt(1, primaryKey);
         preparedStatement2.setString(2, uuid.toString());
-        preparedStatement2.setInt(3, MateStatus.OWNER.getID());
+        preparedStatement2.setInt(3, PlayerIslandStatus.OWNER.getID());
 
         preparedStatement2.execute();
 
@@ -92,7 +94,7 @@ public class IslandRequest extends DefaultRequest {
             """);
         preparedStatement.setInt(1, islandID);
         preparedStatement.setString(2, uuid.toString());
-        preparedStatement.setInt(3, MateStatus.MATE.getID());
+        preparedStatement.setInt(3, PlayerIslandStatus.MATE.getID());
 
         preparedStatement.execute();
 
@@ -118,7 +120,7 @@ public class IslandRequest extends DefaultRequest {
         final ResultSet resultSet = preparedStatement.executeQuery();
         while(resultSet.next()) {
             islandMates.add(new IslandMate(Bukkit.getOfflinePlayer(UUID.fromString(resultSet.getString(1))),
-                    MateStatus.getMateStatusByID(resultSet.getInt(2))));
+                    PlayerIslandStatus.getMateStatusByID(resultSet.getInt(2))));
         }
 
         autoClose();
@@ -126,32 +128,88 @@ public class IslandRequest extends DefaultRequest {
         return islandMates;
     }
 
+    @Nullable
     public String getSpawnLocationFormattedString(int islandID) throws SQLException {
         final Connection connection = database.getConnection();
         final PreparedStatement preparedStatement = connection.prepareStatement("SELECT spawn_location FROM Island WHERE id = ?");
         preparedStatement.setInt(1, islandID);
 
-        final String locationString = preparedStatement.executeQuery().getString(1);
+        final ResultSet resultSet = preparedStatement.executeQuery();
+        final String locationString = (resultSet.next()) ? resultSet.getString(1) : null;
 
         autoClose();
 
         return locationString;
     }
 
+    @Nullable
     public Location getSpawnLocation(int islandID) throws SQLException {
-        final Location location = LocationUtils.getLocationFromString(getSpawnLocationFormattedString(islandID));
+        final String locationFormatted = getSpawnLocationFormattedString(islandID);
 
-        autoClose();
-
-        return location;
+        return (locationFormatted != null) ? LocationUtils.getLocationFromString(locationFormatted) : null;
     }
 
+    @Nullable
     public String getIslandWorldName(int islandID) throws SQLException {
-        final String worldName = getSpawnLocationFormattedString(islandID).split(":", 2)[0];
+        final String worldName = getSpawnLocationFormattedString(islandID);
+
+        return (worldName != null) ? worldName.split(":", 2)[0] : null;
+    }
+
+    @Nullable
+    public PlayerIslandStatus getPlayerIslandStatus(UUID uuid) throws SQLException {
+        final Connection connection = database.getConnection();
+        final PreparedStatement preparedStatement = connection.prepareStatement("""
+                SELECT status FROM Island_Mate
+                JOIN Player ON Player.id = Island_Mate.player_id
+                WHERE Player.UUID = ?
+                """);
+        preparedStatement.setString(1, uuid.toString());
+
+        final ResultSet resultSet = preparedStatement.executeQuery();
+        final PlayerIslandStatus playerIslandStatus = (resultSet.next()) ? PlayerIslandStatus.getMateStatusByID(resultSet.getInt(1)) : null;
 
         autoClose();
 
-        return worldName;
+        return playerIslandStatus;
+    }
+
+    public void setPlayerIslandStatus(UUID uuid, PlayerIslandStatus playerIslandStatus) throws SQLException {
+        final Connection connection = database.getConnection();
+        final PreparedStatement preparedStatement = connection.prepareStatement("""
+                UPDATE Island_Mate SET status = ?
+                WHERE player_id = (SELECT id FROM Player WHERE Player.UUID = ?)
+                """);
+        preparedStatement.setInt(1, playerIslandStatus.getID());
+        preparedStatement.setString(2, uuid.toString());
+
+        preparedStatement.execute();
+
+        autoClose();
+    }
+
+    public void setIslandSpawn(int islandID, Location location) throws SQLException {
+        final Connection connection = database.getConnection();
+        final PreparedStatement preparedStatement = connection.prepareStatement("UPDATE Island SET spawn_location = ? WHERE id = ?");
+        preparedStatement.setString(1, LocationUtils.getStringFromLocation(location));
+        preparedStatement.setInt(2, islandID);
+
+        preparedStatement.execute();
+
+        autoClose();
+    }
+
+    public void leaveIsland(UUID uuid) throws SQLException {
+        final Connection connection = database.getConnection();
+        final PreparedStatement preparedStatement = connection.prepareStatement("""
+                DELETE FROM Island_Mate
+                WHERE player_id = (SELECT id FROM Player WHERE UUID = ?)
+                """);
+        preparedStatement.setString(1, uuid.toString());
+
+        preparedStatement.execute();
+
+        autoClose();
     }
 
 }

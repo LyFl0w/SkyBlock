@@ -1,7 +1,9 @@
 package net.lyflow.skyblock.listener.player;
 
 import net.lyflow.skyblock.SkyBlock;
+import net.lyflow.skyblock.command.LobbyCommand;
 import net.lyflow.skyblock.request.account.AccountRequest;
+import net.lyflow.skyblock.request.island.IslandRequest;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,12 +25,17 @@ public class PlayerJoinListener implements Listener {
 
         final AccountRequest accountRequest = new AccountRequest(skyBlock.getDatabase(), false);
         if(!accountRequest.hasAccount(player.getUniqueId())) {
+            player.teleport(LobbyCommand.spawn);
             accountRequest.createPlayerAccount(player);
-            skyBlock.getDatabase().closeConnection();
+
             event.setJoinMessage("§6Bienvenue à §b"+player.getName()+" §6!");
         } else {
             accountRequest.updatePlayerName(player);
+            if(!new IslandRequest(skyBlock.getDatabase(), false).hasIsland(player.getUniqueId()))
+                player.teleport(LobbyCommand.spawn);
         }
+
+        skyBlock.getDatabase().closeConnection();
     }
 
 }
