@@ -2,6 +2,7 @@ package net.lyflow.skyblock.listener.player;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.request.account.AccountRequest;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,10 +10,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.sql.*;
 
-public class PlayerJoinLister implements Listener {
+public class PlayerJoinListener implements Listener {
 
     private final SkyBlock skyBlock;
-    public PlayerJoinLister(SkyBlock skyBlock) {
+    public PlayerJoinListener(SkyBlock skyBlock) {
         this.skyBlock = skyBlock;
     }
 
