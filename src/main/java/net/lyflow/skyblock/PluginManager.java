@@ -2,6 +2,7 @@ package net.lyflow.skyblock;
 
 import net.lyflow.skyblock.command.IslandCommand;
 import net.lyflow.skyblock.command.LobbyCommand;
+import net.lyflow.skyblock.listener.block.BlockSpreadListener;
 import net.lyflow.skyblock.listener.inventory.InventoryClickListener;
 import net.lyflow.skyblock.listener.player.AsyncPlayerPreLoginListener;
 import net.lyflow.skyblock.listener.player.PlayerJoinListener;
@@ -27,6 +28,10 @@ public class PluginManager {
         pluginManager.registerEvents(new PlayerJoinListener(skyblock), skyblock);
         pluginManager.registerEvents(new AsyncPlayerPreLoginListener(skyblock), skyblock);
         pluginManager.registerEvents(new PlayerToggleSneakListener(), skyblock);
+
+        // BLOCK EVENT
+        pluginManager.registerEvents(new BlockSpreadListener(), skyblock);
+
 
         // INVENTORY EVENT
         pluginManager.registerEvents(new InventoryClickListener(skyblock), skyblock);
