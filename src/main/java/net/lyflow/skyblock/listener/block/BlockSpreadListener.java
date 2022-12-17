@@ -1,6 +1,5 @@
 package net.lyflow.skyblock.listener.block;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,9 +13,7 @@ public class BlockSpreadListener implements Listener {
     public void onBlockSpread(BlockFormEvent event) {
         final Material dmaterial = event.getNewState().getType();
 
-        Bukkit.getLogger().warning("Form "+dmaterial);
         if(dmaterial == Material.COBBLESTONE && new SecureRandom().nextInt(10)+1 == 5) {
-            Bukkit.getLogger().warning("Rdm");
             final int rdm = new SecureRandom().nextInt(33)+1;
             Material material;
             if(rdm <= 15) material = Material.COPPER_ORE;
