@@ -34,6 +34,10 @@ public class MoneyCommand implements CommandExecutor{
             if(args.length == 3) {
                 if(args[0].equalsIgnoreCase("send")){
                     final AccountRequest accountRequest = new AccountRequest(skyBlock.getDatabase(), false);
+                    if(args[2].equals(player.getName())) {
+                        player.sendMessage("§cVous ne pouvez pas vous envoyer de l'argent");
+                        return true;
+                    }
                     try {
                         final float amount = Float.parseFloat(new DecimalFormat("0.00").format(Float.parseFloat(args[2])));
                         final OfflinePlayer offlinePlayer = accountRequest.getOfflinePlayerByName(args[1]);
