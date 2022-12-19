@@ -2,6 +2,7 @@ package net.lyflow.skyblock;
 
 import net.lyflow.skyblock.command.IslandCommand;
 import net.lyflow.skyblock.command.LobbyCommand;
+import net.lyflow.skyblock.command.MoneyCommand;
 import net.lyflow.skyblock.command.ShopCommand;
 import net.lyflow.skyblock.listener.block.BlockSpreadListener;
 import net.lyflow.skyblock.listener.inventory.InventoryClickListener;
@@ -43,6 +44,11 @@ public class PluginManager {
         final PluginCommand islandPluginCommand = skyblock.getCommand("island");
         islandPluginCommand.setExecutor(islandCommand);
         islandPluginCommand.setTabCompleter(islandCommand);
+
+        final MoneyCommand moneyCommand = new MoneyCommand(skyblock);
+        final PluginCommand moneyPluginCommand = skyblock.getCommand("money");
+        moneyPluginCommand.setExecutor(moneyCommand);
+        moneyPluginCommand.setTabCompleter(moneyCommand);
 
         skyblock.getCommand("lobby").setExecutor(new LobbyCommand(skyblock));
         skyblock.getCommand("shop").setExecutor(new ShopCommand());
