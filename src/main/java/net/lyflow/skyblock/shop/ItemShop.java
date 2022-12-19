@@ -32,11 +32,11 @@ public enum ItemShop {
 
 
     
-    private final double buyPrice, sellPrice;
+    private final float buyPrice, sellPrice;
     private final Material material;
     private final ShopCategory shopCategory;
 
-    ItemShop(Material material, double buyPrice, double sellPrice, ShopCategory shopCategory) {
+    ItemShop(Material material, float buyPrice, float sellPrice, ShopCategory shopCategory) {
         this.buyPrice = buyPrice;
         this.sellPrice = sellPrice;
         this.material = material;
@@ -63,11 +63,11 @@ public enum ItemShop {
         return material;
     }
 
-    public double getBuyPrice() {
+    public float getBuyPrice() {
         return buyPrice;
     }
 
-    public double getSellPrice() {
+    public float getSellPrice() {
         return sellPrice;
     }
 
