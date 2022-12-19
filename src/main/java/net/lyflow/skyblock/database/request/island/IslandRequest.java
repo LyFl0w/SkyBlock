@@ -1,10 +1,10 @@
-package net.lyflow.skyblock.request.island;
+package net.lyflow.skyblock.database.request.island;
 
 import net.lyflow.skyblock.database.Database;
 import net.lyflow.skyblock.island.IslandDifficulty;
 import net.lyflow.skyblock.island.IslandMate;
 import net.lyflow.skyblock.island.PlayerIslandStatus;
-import net.lyflow.skyblock.request.DefaultRequest;
+import net.lyflow.skyblock.database.request.DefaultRequest;
 import net.lyflow.skyblock.utils.LocationUtils;
 
 import org.bukkit.Bukkit;

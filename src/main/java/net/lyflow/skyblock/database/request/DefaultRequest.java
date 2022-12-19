@@ -1,4 +1,4 @@
-package net.lyflow.skyblock.request;
+package net.lyflow.skyblock.database.request;
 
 import net.lyflow.skyblock.database.Database;
 

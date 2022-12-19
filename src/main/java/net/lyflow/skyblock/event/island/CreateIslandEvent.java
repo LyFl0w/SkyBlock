@@ -2,8 +2,8 @@ package net.lyflow.skyblock.event.island;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.island.IslandDifficulty;
-import net.lyflow.skyblock.request.account.AccountRequest;
-import net.lyflow.skyblock.request.island.IslandRequest;
+import net.lyflow.skyblock.database.request.account.AccountRequest;
+import net.lyflow.skyblock.database.request.island.IslandRequest;
 import net.lyflow.skyblock.utils.ResourceUtils;
 
 import org.bukkit.Location;
@@ -24,9 +24,8 @@ public class CreateIslandEvent extends Event implements Cancellable {
     private boolean isCancelled = false;
 
     public CreateIslandEvent(SkyBlock skyBlock, Player player, IslandDifficulty islandDifficulty) {
+        final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
         try {
-            final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
-
             if(islandRequest.hasIsland(player.getUniqueId())) {
                 player.sendMessage("§cTu ne peux pas avoir plusieurs îles en même temps !");
                 setCancelled(true);

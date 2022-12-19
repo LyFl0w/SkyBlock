@@ -1,13 +1,8 @@
 package net.lyflow.skyblock.island;
 
-import net.lyflow.skyblock.utils.builder.InventoryBuilder;
-import net.lyflow.skyblock.utils.builder.ItemBuilder;
-
 import org.bukkit.Material;
-import org.bukkit.inventory.Inventory;
 
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public enum IslandDifficulty {
 
@@ -37,16 +32,5 @@ public enum IslandDifficulty {
 
     public static IslandDifficulty getIslandDifficultyByMaterial(Material material) {
         return Arrays.stream(values()).filter(islandDifficulty -> islandDifficulty.getMaterial() == material).findFirst().get();
-    }
-
-    public static Inventory openInventoryDifficulty() {
-        final InventoryBuilder inventoryBuilder = new InventoryBuilder(9, "§6Difficulté de l'île");
-
-        final AtomicInteger slot = new AtomicInteger(1);
-        Arrays.stream(values()).forEach(islandDifficulty ->
-                inventoryBuilder.setItem(slot.getAndAdd(2), new ItemBuilder(islandDifficulty.getMaterial()).setName("§r"+islandDifficulty.getItemName()).toItemStack()));
-        inventoryBuilder.setItem(slot.get(), new ItemBuilder(Material.STRUCTURE_VOID).setName("§rAttendre une invitation").toItemStack());
-
-        return inventoryBuilder.toInventory();
     }
 }

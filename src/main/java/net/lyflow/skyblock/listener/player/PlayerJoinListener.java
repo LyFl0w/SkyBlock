@@ -2,8 +2,8 @@ package net.lyflow.skyblock.listener.player;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.command.LobbyCommand;
-import net.lyflow.skyblock.request.account.AccountRequest;
-import net.lyflow.skyblock.request.island.IslandRequest;
+import net.lyflow.skyblock.database.request.account.AccountRequest;
+import net.lyflow.skyblock.database.request.island.IslandRequest;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
