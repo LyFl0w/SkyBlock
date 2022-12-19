@@ -1,6 +1,7 @@
 package net.lyflow.skyblock.utils.builder;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -47,6 +48,11 @@ public class InventoryBuilder implements Cloneable{
     public InventoryBuilder setTitle(String title){
         inventory = new InventoryBuilder(inventory, title).toInventory();
         return this;
+    }
+
+    public boolean isEmptySlot(int slot) {
+        final ItemStack itemStack = inventory.getItem(slot);
+        return itemStack == null || itemStack.getType() == Material.AIR;
     }
 
     public InventoryBuilder setContents(ItemStack[] items){

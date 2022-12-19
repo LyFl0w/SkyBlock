@@ -19,3 +19,11 @@ commands:
     usage: §c/lobby
     description: command to return to the lobby
     aliases: [spawn, hub]
+
+  shop:
+    usage: §c/shop
+    description: command to access to the shop
+
+  money:
+    usage: §c/money or /money <send> <player>
+    description: command to see your money or send money to any player

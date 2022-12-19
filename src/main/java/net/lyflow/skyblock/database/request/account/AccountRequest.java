@@ -1,7 +1,7 @@
-package net.lyflow.skyblock.request.account;
+package net.lyflow.skyblock.database.request.account;
 
 import net.lyflow.skyblock.database.Database;
-import net.lyflow.skyblock.request.DefaultRequest;
+import net.lyflow.skyblock.database.request.DefaultRequest;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -69,9 +69,10 @@ public class AccountRequest extends DefaultRequest {
 
     public void createPlayerAccount(Player player) throws SQLException {
         final Connection connection = database.getConnection();
-        final PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Player (UUID, name) VALUES (?, ?)");
+        final PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Player (UUID, name, money) VALUES (?, ?, ?)");
         preparedStatement.setString(1, player.getUniqueId().toString());
         preparedStatement.setString(2, player.getName());
+        preparedStatement.setFloat(3, 50.0f);
         preparedStatement.execute();
 
         autoClose();
@@ -86,6 +87,24 @@ public class AccountRequest extends DefaultRequest {
         preparedStatement.execute();
 
         autoClose();
+    }
+
+    public float getMoney(UUID uuid) throws SQLException {
+        final Connection connection = database.getConnection();
+        final PreparedStatement preparedStatement = connection.prepareStatement("SELECT money FROM Player WHERE uuid = ?");
+        preparedStatement.setString(1, uuid.toString());
+
+        final ResultSet resultSet = preparedStatement.executeQuery();
+        return (resultSet.next()) ? resultSet.getFloat(1) : -1.0f;
+    }
+
+    public void setMoney(UUID uuid, float money) throws SQLException {
+        final Connection connection = database.getConnection();
+        final PreparedStatement preparedStatement = connection.prepareStatement("UPDATE Player SET money = ? WHERE uuid = ?");
+        preparedStatement.setFloat(1, money);
+        preparedStatement.setString(2, uuid.toString());
+
+        preparedStatement.execute();
     }
 
 }
