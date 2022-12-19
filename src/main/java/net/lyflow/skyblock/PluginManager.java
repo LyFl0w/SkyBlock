@@ -2,13 +2,14 @@ package net.lyflow.skyblock;
 
 import net.lyflow.skyblock.command.IslandCommand;
 import net.lyflow.skyblock.command.LobbyCommand;
+import net.lyflow.skyblock.command.ShopCommand;
 import net.lyflow.skyblock.listener.block.BlockSpreadListener;
 import net.lyflow.skyblock.listener.inventory.InventoryClickListener;
 import net.lyflow.skyblock.listener.player.AsyncPlayerPreLoginListener;
 import net.lyflow.skyblock.listener.player.PlayerJoinListener;
-
 import net.lyflow.skyblock.listener.player.PlayerQuitListener;
 import net.lyflow.skyblock.listener.player.PlayerToggleSneakListener;
+
 import org.bukkit.command.PluginCommand;
 
 public class PluginManager {
@@ -44,5 +45,6 @@ public class PluginManager {
         islandPluginCommand.setTabCompleter(islandCommand);
 
         skyblock.getCommand("lobby").setExecutor(new LobbyCommand(skyblock));
+        skyblock.getCommand("shop").setExecutor(new ShopCommand());
     }
 }

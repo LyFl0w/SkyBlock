@@ -19,3 +19,7 @@ commands:
     usage: §c/lobby
     description: command to return to the lobby
     aliases: [spawn, hub]
+
+  shop:
+    usage: §c/shop
+    description: command to access to the shop

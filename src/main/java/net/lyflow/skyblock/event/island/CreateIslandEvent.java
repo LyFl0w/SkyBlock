@@ -2,8 +2,8 @@ package net.lyflow.skyblock.event.island;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.island.IslandDifficulty;
-import net.lyflow.skyblock.request.account.AccountRequest;
-import net.lyflow.skyblock.request.island.IslandRequest;
+import net.lyflow.skyblock.database.request.account.AccountRequest;
+import net.lyflow.skyblock.database.request.island.IslandRequest;
 import net.lyflow.skyblock.utils.ResourceUtils;
 
 import org.bukkit.Location;
