@@ -22,7 +22,7 @@ public class ShopInventory{
     }
 
     public static Inventory getServeurShopInventory() {
-        return new InventoryBuilder(9, "§aShop/Serveur")
+        return new InventoryBuilder(9, "§aShop")
                 .setItem(0, new ItemBuilder(Material.PAPER).setName("§9Back").toItemStack())
                 .setItem(3, new ItemBuilder(Material.ECHO_SHARD).setName("§9Buy").toItemStack())
                 .setItem(5, new ItemBuilder(Material.AMETHYST_SHARD).setName("§dSell").toItemStack())
@@ -30,7 +30,7 @@ public class ShopInventory{
     }
 
     public static Inventory getPlayerShopInventory() {
-        final InventoryBuilder inventoryBuilder = new InventoryBuilder(9, "Shop/Player");
+        final InventoryBuilder inventoryBuilder = new InventoryBuilder(9, "§bShop");
 
         return inventoryBuilder.toInventory();
     }
@@ -40,7 +40,7 @@ public class ShopInventory{
                 .filter((isBuyInventory) ? ItemShop::isPurchasable : ItemShop::isSaleable).toList();
         final int inventorySize = 54;
         final boolean nextPage = (page+1)*inventorySize - 9*(page+1) < itemShopList.size();
-        final InventoryBuilder inventoryBuilder = new InventoryBuilder(inventorySize, "§aShop/Serveur/"+(isBuyInventory ? "Buy" : "Sell")+"/"+shopCategory.getName()+"/"+page);
+        final InventoryBuilder inventoryBuilder = new InventoryBuilder(inventorySize, "§aShop/"+(isBuyInventory ? "Buy" : "Sell")+"/"+shopCategory.getName()+"/"+page);
         inventoryBuilder.setItem(0, new ItemBuilder(Material.PAPER).setName("Previous").toItemStack());
         if(nextPage) inventoryBuilder.setItem(8, new ItemBuilder(Material.PAPER).setName("Next").toItemStack());
 

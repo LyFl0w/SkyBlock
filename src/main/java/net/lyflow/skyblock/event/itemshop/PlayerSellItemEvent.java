@@ -3,11 +3,13 @@ package net.lyflow.skyblock.event.itemshop;
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.database.request.account.AccountRequest;
 import net.lyflow.skyblock.shop.ItemShop;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
@@ -23,7 +25,7 @@ public class PlayerSellItemEvent extends Event implements Cancellable {
         try {
             final ItemStack itemStack = new ItemStack(itemShop.getMaterial(), amount);
 
-            if(!player.getInventory().contains(itemStack)) {
+            if(!player.getInventory().contains(itemShop.getMaterial(), amount)) {
                 player.sendMessage("Vous n'avez pas "+amount+" "+itemStack.getItemMeta().getDisplayName()+ " à vendre");
                 setCancelled(true);
                 return;
@@ -31,7 +33,7 @@ public class PlayerSellItemEvent extends Event implements Cancellable {
             accountRequest.setMoney(player.getUniqueId(), accountRequest.getMoney(player.getUniqueId())+itemShop.getSellPrice() * amount);
             skyBlock.getDatabase().closeConnection();
 
-            player.getInventory().remove(itemStack);
+            removeItems(player, itemShop.getMaterial(), amount);
             player.sendMessage("Vous avez vendu "+amount+" "+itemStack.getItemMeta().getDisplayName());
         } catch(SQLException e) {
             throw new RuntimeException(e);
@@ -57,4 +59,22 @@ public class PlayerSellItemEvent extends Event implements Cancellable {
     public void setCancelled(boolean setCancelled) {
         this.isCancelled = setCancelled;
     }
+
+    public void removeItems(Player player, Material material, int amount) {
+        final PlayerInventory playerInventory = player.getInventory();
+
+        for(int slot=0; slot<playerInventory.getSize(); slot++) {
+            final ItemStack itemStack = playerInventory.getItem(slot);
+            if(itemStack == null || itemStack.getType() != material) continue;
+
+            amount -= itemStack.getAmount();
+            if(amount < 0)  {
+                itemStack.setAmount(-amount);
+                return;
+            }
+            playerInventory.remove(itemStack);
+            if(amount == 0) return;
+        }
+    }
+
 }
