@@ -2,20 +2,18 @@ package net.lyflow.skyblock.command;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.database.request.account.AccountRequest;
+
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.text.DecimalFormat;
-import java.util.List;
 
-public class MoneyCommand implements CommandExecutor, TabCompleter {
+public class MoneyCommand implements CommandExecutor{
 
     private final SkyBlock skyBlock;
     public MoneyCommand(SkyBlock skyblock) {
@@ -59,12 +57,4 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
         return false;
     }
 
-    @Nullable
-    @Override
-    public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(commandSender instanceof final Player player) {
-
-        }
-        return null;
-    }
 }

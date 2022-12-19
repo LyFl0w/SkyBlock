@@ -45,10 +45,7 @@ public class PluginManager {
         islandPluginCommand.setExecutor(islandCommand);
         islandPluginCommand.setTabCompleter(islandCommand);
 
-        final MoneyCommand moneyCommand = new MoneyCommand(skyblock);
-        final PluginCommand moneyPluginCommand = skyblock.getCommand("money");
-        moneyPluginCommand.setExecutor(moneyCommand);
-        moneyPluginCommand.setTabCompleter(moneyCommand);
+        skyblock.getCommand("money").setExecutor(new MoneyCommand(skyblock));
 
         skyblock.getCommand("lobby").setExecutor(new LobbyCommand(skyblock));
         skyblock.getCommand("shop").setExecutor(new ShopCommand());
