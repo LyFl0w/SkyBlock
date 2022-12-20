@@ -3,6 +3,7 @@ package net.lyflow.skyblock.event.itemshop;
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.database.request.account.AccountRequest;
 import net.lyflow.skyblock.shop.ItemShop;
+import net.lyflow.skyblock.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -24,9 +25,10 @@ public class PlayerSellItemEvent extends Event implements Cancellable {
         final AccountRequest accountRequest = new AccountRequest(skyBlock.getDatabase(), false);
         try {
             final ItemStack itemStack = new ItemStack(itemShop.getMaterial(), amount);
+            final String formatedItemStackName = StringUtils.capitalizeSentence(itemStack.getType().name(), "_", " ");
 
             if(!player.getInventory().contains(itemShop.getMaterial(), amount)) {
-                player.sendMessage("Vous n'avez pas "+amount+" "+itemStack.getItemMeta().getDisplayName()+ " à vendre");
+                player.sendMessage("§cVous n'avez pas "+amount+" "+formatedItemStackName+ " à vendre");
                 setCancelled(true);
                 return;
             }
@@ -34,7 +36,7 @@ public class PlayerSellItemEvent extends Event implements Cancellable {
             skyBlock.getDatabase().closeConnection();
 
             removeItems(player, itemShop.getMaterial(), amount);
-            player.sendMessage("Vous avez vendu "+amount+" "+itemStack.getItemMeta().getDisplayName());
+            player.sendMessage("§aVous avez vendu "+amount+" "+formatedItemStackName);
         } catch(SQLException e) {
             throw new RuntimeException(e);
         }

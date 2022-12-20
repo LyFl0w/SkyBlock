@@ -99,7 +99,7 @@ public class InventoryClickListener implements Listener {
                                 ChatColor.stripColor(item.getItemMeta().getDisplayName())), 1), page, isBuyInventory));
 
                 case LIGHT_BLUE_STAINED_GLASS_PANE -> player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(
-                        itemShop, countItemInventory(player.getInventory(), selectedItem.getType()), page, isBuyInventory));
+                        itemShop, Math.max(countItemInventory(player.getInventory(), selectedItem.getType()), 1), page, isBuyInventory));
 
                 default -> skyBlock.getServer().getPluginManager().callEvent((isBuyInventory)
                         ? new PlayerBuyItemEvent(skyBlock, player, itemShop, Integer.parseInt(selectedItem.getItemMeta().getLore().get(0)))
@@ -131,7 +131,6 @@ public class InventoryClickListener implements Listener {
         }
 
     }
-
 
     private int countItemInventory(Inventory inventory, Material material) {
         int result = 0;
