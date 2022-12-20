@@ -10,7 +10,7 @@ public class StringUtils {
         final StringBuilder stringBuilder = new StringBuilder(capitalizeWord(words.get(0)));
 
         words.remove(0);
-        words.stream().forEach(word -> stringBuilder.append(replace).append(capitalizeWord(word)));
+        words.forEach(word -> stringBuilder.append(replace).append(capitalizeWord(word)));
 
         return stringBuilder.toString();
     }
