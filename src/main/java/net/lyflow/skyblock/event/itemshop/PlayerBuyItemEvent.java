@@ -4,6 +4,8 @@ import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.database.request.account.AccountRequest;
 import net.lyflow.skyblock.shop.ItemShop;
 
+import net.lyflow.skyblock.utils.StringUtils;
+import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -25,10 +27,11 @@ public class PlayerBuyItemEvent extends Event implements Cancellable {
             final float playerMoney = accountRequest.getMoney(player.getUniqueId());
             final float price = itemShop.getBuyPrice() * amount;
             final ItemStack itemStack = new ItemStack(itemShop.getMaterial(), amount);
+            final String formatedItemStackName = StringUtils.capitalizeSentence(itemStack.getType().name(), "_", " ");
 
             if(playerMoney < price) {
                 skyBlock.getDatabase().closeConnection();
-                player.sendMessage("Vous n'avez pas assez de money pour acheter "+amount+" "+itemStack.getItemMeta().getDisplayName());
+                player.sendMessage("§cVous n'avez pas assez de money pour acheter "+amount+" "+formatedItemStackName);
                 setCancelled(true);
                 return;
             }
@@ -36,7 +39,7 @@ public class PlayerBuyItemEvent extends Event implements Cancellable {
             skyBlock.getDatabase().closeConnection();
 
             player.getInventory().addItem(itemStack);
-            player.sendMessage("Vous avez acheté "+amount+" "+itemStack.getItemMeta().getDisplayName());
+            player.sendMessage("§aVous avez acheté "+amount+" "+formatedItemStackName);
         } catch(SQLException e) {
             throw new RuntimeException(e);
         }
@@ -61,4 +64,5 @@ public class PlayerBuyItemEvent extends Event implements Cancellable {
     public void setCancelled(boolean setCancelled) {
         this.isCancelled = setCancelled;
     }
+
 }
