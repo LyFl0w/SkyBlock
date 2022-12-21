@@ -1,5 +1,6 @@
-package net.lyflow.skyblock;
+package net.lyflow.skyblock.manager;
 
+import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.command.IslandCommand;
 import net.lyflow.skyblock.command.LobbyCommand;
 import net.lyflow.skyblock.command.MoneyCommand;
@@ -34,9 +35,9 @@ public class PluginManager {
         // BLOCK EVENT
         pluginManager.registerEvents(new BlockSpreadListener(), skyblock);
 
-
         // INVENTORY EVENT
         pluginManager.registerEvents(new InventoryClickListener(skyblock), skyblock);
+        //pluginManager.registerEvents(new CraftItemListener(skyblock), skyblock);
     }
 
     private void registerCommands() {

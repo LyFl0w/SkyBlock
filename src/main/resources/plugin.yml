@@ -30,3 +30,8 @@ commands:
     usage: §c/money or /money <send> <player>
     description: command to see your money or send money to any player
     aliases: m
+
+  challenge:
+    usage: §c/challenge
+    description: command to access to the challenges
+    aliases: c

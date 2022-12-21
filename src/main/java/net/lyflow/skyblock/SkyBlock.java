@@ -2,6 +2,7 @@ package net.lyflow.skyblock;
 
 import net.lyflow.skyblock.database.Database;
 
+import net.lyflow.skyblock.manager.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.SQLException;
