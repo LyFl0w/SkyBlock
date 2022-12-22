@@ -9,9 +9,10 @@ import java.util.Arrays;
 
 public enum ShopCategory {
 
-    BLOCK("Block", new ItemBuilder(Material.COBBLESTONE).setName("Block"), 2),
-    ITEM("Item", new ItemBuilder(Material.LIGHT_BLUE_CANDLE).setName("Item"), 4),
-    ORE("Ore", new ItemBuilder(Material.EMERALD).setName("Ore"), 6);
+    BLOCK("Block", new ItemBuilder(Material.COBBLESTONE), 2),
+    ITEM("Item", new ItemBuilder(Material.LIGHT_BLUE_CANDLE), 4),
+    SPAWN_EGG("Spawn Eggs", new ItemBuilder(Material.VILLAGER_SPAWN_EGG), 6),
+    ORE("Ore", new ItemBuilder(Material.EMERALD), 8);
 
     private final String name;
     private final ItemBuilder itemBuilder;
@@ -24,7 +25,7 @@ public enum ShopCategory {
     }
 
     public ItemStack getItemStack() {
-        return itemBuilder.toItemStack();
+        return itemBuilder.setName(name).toItemStack();
     }
 
     public int getPos() {

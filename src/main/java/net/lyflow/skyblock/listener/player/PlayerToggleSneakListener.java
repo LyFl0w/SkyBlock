@@ -1,6 +1,7 @@
 package net.lyflow.skyblock.listener.player;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Sapling;
@@ -27,7 +28,7 @@ public class PlayerToggleSneakListener implements Listener {
             for(double y=-radius; y<=radius; y++) {
                 for(double z=-radius; z<=radius; z++) {
                     final Block block = location.clone().add(x, y, z).getBlock();
-                    if(block.getBlockData() instanceof Sapling && new SecureRandom().nextInt(17) == 8)
+                    if((block.getBlockData() instanceof Sapling || block.getType() == Material.MANGROVE_PROPAGULE) && new SecureRandom().nextInt(17) == 8)
                         block.applyBoneMeal(BlockFace.UP);
                 }
             }
