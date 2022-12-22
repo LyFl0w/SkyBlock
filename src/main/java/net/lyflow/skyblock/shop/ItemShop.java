@@ -46,7 +46,7 @@ public enum ItemShop {
     MANGROVE_PROPAGULE(Material.MANGROVE_PROPAGULE, 15, 0.25f, ShopCategory.ITEM),
 
     BAMBOO(Material.BAMBOO, 30, 0.5f, ShopCategory.ITEM),
-    SUGAR(Material.SUGAR, 30, 3.5f, ShopCategory.ITEM),
+    SUGAR_CANE(Material.SUGAR_CANE, 30, 3.5f, ShopCategory.ITEM),
     CACTUS(Material.CACTUS, 50, 3.5f, ShopCategory.ITEM),
     CHORUS_FLOWER(Material.CHORUS_FLOWER, 100, -1, ShopCategory.ITEM),
     CHORUS_FRUIT(Material.CHORUS_FRUIT, -1, 1, ShopCategory.ITEM),
