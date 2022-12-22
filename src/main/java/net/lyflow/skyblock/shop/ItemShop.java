@@ -162,7 +162,7 @@ public enum ItemShop {
     AMETHYST_SHARD(Material.AMETHYST_SHARD, 15, 10, ShopCategory.ORE),
 
     FLINT(Material.FLINT, -1, 3, ShopCategory.ORE),
-    COAL(Material.COAL, 6, 5, ShopCategory.ORE),
+    COAL(Material.COAL, 3, 2, ShopCategory.ORE),
     QUARTZ(Material.QUARTZ, 1.2f, -1, ShopCategory.ORE),
     LAPIS_LAZULI(Material.LAPIS_LAZULI, 15, 5, ShopCategory.ORE),
     REDSTONE(Material.REDSTONE, 1.25f, 1, ShopCategory.ORE),
