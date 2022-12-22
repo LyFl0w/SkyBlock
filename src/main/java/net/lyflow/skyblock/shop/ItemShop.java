@@ -10,6 +10,8 @@ import java.util.Arrays;
 public enum ItemShop {
 
     // BLOCK
+    DIRT(Material.DIRT, 10, 3, ShopCategory.BLOCK),
+
     BLOCK_OAK_LOG(Material.OAK_LOG, 5, 2, ShopCategory.BLOCK),
     BLOCK_SPRUCE_LOG(Material.SPRUCE_LOG, 5, 2, ShopCategory.BLOCK),
     BLOCK_BIRCH_LOG(Material.BIRCH_LOG, 5, 2, ShopCategory.BLOCK),
