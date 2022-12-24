@@ -34,7 +34,8 @@ public enum ItemShop {
     BUDDING_AMETHYST(Material.BUDDING_AMETHYST, 30, -1, ShopCategory.BLOCK),
     COBWEB(Material.COBWEB, 20, -1, ShopCategory.BLOCK),
     SCULK_SENSOR(Material.SCULK_SENSOR, 50, -1, ShopCategory.BLOCK),
-    DEAD_HORN_CORAL_FAN(Material.DEAD_HORN_CORAL_FAN, 500, 10, ShopCategory.BLOCK),
+    DEAD_HORN_CORAL_FAN(Material.DEAD_HORN_CORAL_FAN, 50_000, 1_000, ShopCategory.BLOCK),
+    POINTED_DRIPSTONE(Material.POINTED_DRIPSTONE, 300, 50, ShopCategory.BLOCK),
 
 
     // ITEM
@@ -55,7 +56,7 @@ public enum ItemShop {
 
     WATER_BUCKET(Material.WATER_BUCKET, 80, -1, ShopCategory.ITEM),
     POWDER_SNOW_BUCKET(Material.POWDER_SNOW_BUCKET, 85, -1, ShopCategory.ITEM),
-    LAVA_BUCKET(Material.LAVA_BUCKET, 100, -1, ShopCategory.ITEM),
+    LAVA_BUCKET(Material.LAVA_BUCKET, 100, 50, ShopCategory.ITEM),
 
     BONE(Material.BONE, 10, 2, ShopCategory.ITEM),
     STRING(Material.STRING, 5, 2, ShopCategory.ITEM),
