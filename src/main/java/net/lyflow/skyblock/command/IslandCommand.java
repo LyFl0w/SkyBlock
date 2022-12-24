@@ -116,7 +116,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                             return true;
                         }
 
-                        if(islandRequest.getPlayerIslandStatus(player.getUniqueId()) == PlayerIslandStatus.OWNER) {
+                        if(islandRequest.getMates(player.getUniqueId()).size() != 1 && islandRequest.getPlayerIslandStatus(player.getUniqueId()) == PlayerIslandStatus.OWNER) {
                             player.sendMessage("§cVous ne pouvez pas quitter l'île étant Owner, veuillez choisir un autre owner avec la commande §6/island set owner <player>");
                             skyBlock.getDatabase().closeConnection();
                             return true;
@@ -330,7 +330,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                             }
 
                             final int islandID = islandRequest.getIslandID(player.getUniqueId());
-                            if(!player.getWorld().getName().equals("skyblock-map/"+islandID)){
+                            if(!player.getWorld().getName().equals("skyblock-map/"+islandID)) {
                                 player.sendMessage("§cIl faut être sur votre île pour pouvoir exécuter cette commande");
                                 skyBlock.getDatabase().closeConnection();
                                 return true;

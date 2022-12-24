@@ -37,7 +37,7 @@ public class PlayerSellItemEvent extends Event implements Cancellable {
 
             removeItems(player, itemShop.getMaterial(), amount);
             player.sendMessage("§aVous avez vendu "+amount+" "+formatedItemStackName);
-        } catch(SQLException e) {
+        } catch(Exception e) {
             throw new RuntimeException(e);
         }
 
@@ -62,7 +62,7 @@ public class PlayerSellItemEvent extends Event implements Cancellable {
         this.isCancelled = setCancelled;
     }
 
-    public void removeItems(Player player, Material material, int amount) {
+    public void removeItems(Player player, Material material, int amount) throws Exception {
         final PlayerInventory playerInventory = player.getInventory();
 
         for(int slot=0; slot<playerInventory.getSize(); slot++) {
@@ -70,12 +70,14 @@ public class PlayerSellItemEvent extends Event implements Cancellable {
             if(itemStack == null || itemStack.getType() != material) continue;
 
             amount -= itemStack.getAmount();
+
             if(amount < 0)  {
                 itemStack.setAmount(-amount);
-                return;
+                break;
             }
-            playerInventory.remove(itemStack);
-            if(amount == 0) return;
+            playerInventory.clear(slot);
+
+            if(amount == 0) break;
         }
     }
 
