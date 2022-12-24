@@ -13,8 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.SQLException;
-
 public class PlayerSellItemEvent extends Event implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
@@ -62,7 +60,7 @@ public class PlayerSellItemEvent extends Event implements Cancellable {
         this.isCancelled = setCancelled;
     }
 
-    public void removeItems(Player player, Material material, int amount) throws Exception {
+    public void removeItems(Player player, Material material, int amount) {
         final PlayerInventory playerInventory = player.getInventory();
 
         for(int slot=0; slot<playerInventory.getSize(); slot++) {
