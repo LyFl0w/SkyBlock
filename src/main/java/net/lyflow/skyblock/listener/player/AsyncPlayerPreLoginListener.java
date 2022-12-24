@@ -16,8 +16,8 @@ public class AsyncPlayerPreLoginListener implements Listener {
 
     private final SkyBlock skyBlock;
 
-    public AsyncPlayerPreLoginListener(SkyBlock skyblock) {
-        this.skyBlock = skyblock;
+    public AsyncPlayerPreLoginListener(SkyBlock skyBlock) {
+        this.skyBlock = skyBlock;
     }
 
     @EventHandler

@@ -10,8 +10,8 @@ import org.bukkit.inventory.ItemStack;
 public class CraftItemListener implements Listener {
 
     private final SkyBlock skyBlock;
-    public CraftItemListener(SkyBlock skyblock) {
-        this.skyBlock = skyblock;
+    public CraftItemListener(SkyBlock skyBlock) {
+        this.skyBlock = skyBlock;
     }
 
     @EventHandler

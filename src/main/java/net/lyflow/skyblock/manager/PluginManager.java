@@ -16,39 +16,35 @@ import org.bukkit.command.PluginCommand;
 
 public class PluginManager {
 
-    private final SkyBlock skyblock;
-
     public PluginManager(SkyBlock skyBlock) {
-        this.skyblock = skyBlock;
-
-        registerEvents(skyBlock.getServer().getPluginManager());
-        registerCommands();
+        registerEvents(skyBlock, skyBlock.getServer().getPluginManager());
+        registerCommands(skyBlock);
     }
 
-    private void registerEvents(org.bukkit.plugin.PluginManager pluginManager) {
+    private void registerEvents(SkyBlock skyBlock, org.bukkit.plugin.PluginManager pluginManager) {
         // PLAYER EVENT
-        pluginManager.registerEvents(new PlayerQuitListener(skyblock), skyblock);
-        pluginManager.registerEvents(new PlayerJoinListener(skyblock), skyblock);
-        pluginManager.registerEvents(new AsyncPlayerPreLoginListener(skyblock), skyblock);
-        pluginManager.registerEvents(new PlayerToggleSneakListener(), skyblock);
+        pluginManager.registerEvents(new PlayerQuitListener(skyBlock), skyBlock);
+        pluginManager.registerEvents(new PlayerJoinListener(skyBlock), skyBlock);
+        pluginManager.registerEvents(new AsyncPlayerPreLoginListener(skyBlock), skyBlock);
+        pluginManager.registerEvents(new PlayerToggleSneakListener(), skyBlock);
 
         // BLOCK EVENT
-        pluginManager.registerEvents(new BlockSpreadListener(), skyblock);
+        pluginManager.registerEvents(new BlockSpreadListener(), skyBlock);
 
         // INVENTORY EVENT
-        pluginManager.registerEvents(new InventoryClickListener(skyblock), skyblock);
-        //pluginManager.registerEvents(new CraftItemListener(skyblock), skyblock);
+        pluginManager.registerEvents(new InventoryClickListener(skyBlock), skyBlock);
+        //pluginManager.registerEvents(new CraftItemListener(skyBlock), skyBlock);
     }
 
-    private void registerCommands() {
-        final IslandCommand islandCommand = new IslandCommand(skyblock);
-        final PluginCommand islandPluginCommand = skyblock.getCommand("island");
+    private void registerCommands(SkyBlock skyBlock) {
+        final IslandCommand islandCommand = new IslandCommand(skyBlock);
+        final PluginCommand islandPluginCommand = skyBlock.getCommand("island");
         islandPluginCommand.setExecutor(islandCommand);
         islandPluginCommand.setTabCompleter(islandCommand);
 
-        skyblock.getCommand("money").setExecutor(new MoneyCommand(skyblock));
+        skyBlock.getCommand("money").setExecutor(new MoneyCommand(skyBlock));
 
-        skyblock.getCommand("lobby").setExecutor(new LobbyCommand(skyblock));
-        skyblock.getCommand("shop").setExecutor(new ShopCommand());
+        skyBlock.getCommand("lobby").setExecutor(new LobbyCommand(skyBlock));
+        skyBlock.getCommand("shop").setExecutor(new ShopCommand());
     }
 }

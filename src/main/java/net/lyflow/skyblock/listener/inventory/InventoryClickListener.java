@@ -23,8 +23,8 @@ import org.bukkit.inventory.ItemStack;
 public class InventoryClickListener implements Listener {
 
     private final SkyBlock skyBlock;
-    public InventoryClickListener(SkyBlock skyblock) {
-        this.skyBlock = skyblock;
+    public InventoryClickListener(SkyBlock skyBlock) {
+        this.skyBlock = skyBlock;
     }
 
     @EventHandler

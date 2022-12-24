@@ -123,7 +123,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                         }
 
                         // TELEPORT THE PLAYER TO THE LOBBY IF HE IS ON THE ISLAND WORLD
-                        if(player.getWorld().getName().equals("skyblock-map/"+islandRequest.getIslandID(player.getUniqueId())))
+                        if(player.getWorld().getName().equals("skyBlock-map/"+islandRequest.getIslandID(player.getUniqueId())))
                             player.teleport(LobbyCommand.spawn);
 
                         islandRequest.leaveIsland(player.getUniqueId());
@@ -298,7 +298,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                         if(targetPlayerOffline.isOnline()) {
                             final Player targetPlayer = targetPlayerOffline.getPlayer();
                             // TELEPORT THE PLAYER TO THE LOBBY IF HE IS ON THE ISLAND WORLD
-                            if(player.getWorld().getName().equals("skyblock-map/"+islandRequest.getIslandID(player.getUniqueId())))
+                            if(player.getWorld().getName().equals("skyBlock-map/"+islandRequest.getIslandID(player.getUniqueId())))
                                 targetPlayer.teleport(LobbyCommand.spawn);
                             targetPlayer.sendMessage("§cVous avez été exclu de votre île !");
                         }
@@ -330,7 +330,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                             }
 
                             final int islandID = islandRequest.getIslandID(player.getUniqueId());
-                            if(!player.getWorld().getName().equals("skyblock-map/"+islandID)){
+                            if(!player.getWorld().getName().equals("skyBlock-map/"+islandID)){
                                 player.sendMessage("§cIl faut être sur votre île pour pouvoir exécuter cette commande");
                                 skyBlock.getDatabase().closeConnection();
                                 return true;

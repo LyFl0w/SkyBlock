@@ -16,8 +16,8 @@ import java.text.DecimalFormat;
 public class MoneyCommand implements CommandExecutor{
 
     private final SkyBlock skyBlock;
-    public MoneyCommand(SkyBlock skyblock) {
-        this.skyBlock = skyblock;
+    public MoneyCommand(SkyBlock skyBlock) {
+        this.skyBlock = skyBlock;
     }
 
     @Override

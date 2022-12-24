@@ -21,7 +21,7 @@ public class PlayerToggleSneakListener implements Listener {
         if(!event.isSneaking()) return;
 
         final Location location = player.getLocation();
-        if(!location.getWorld().getName().contains("skyblock-map")) return;
+        if(!location.getWorld().getName().contains("skyBlock-map")) return;
 
         for(double x=-radius; x<=radius; x++) {
             for(double y=-radius; y<=radius; y++) {
