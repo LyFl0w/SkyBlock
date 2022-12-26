@@ -35,6 +35,7 @@ public class CreateIslandEvent extends Event implements Cancellable {
 
             try {
                 // Make a copy of  Island World
+                // FIXME: 24/12/2022 Use IslandRequest not AccountRequest
                 final String defaultPath = "skyblock-map/"+new AccountRequest(skyBlock.getDatabase(), true).getPlayerID(player);
                 final File islandWorld = new File(skyBlock.getDataFolder(), "../../"+defaultPath);
                 ResourceUtils.saveResourceFolder("maps/skyblock-"+islandDifficulty.name().toLowerCase(), islandWorld, skyBlock, false);
