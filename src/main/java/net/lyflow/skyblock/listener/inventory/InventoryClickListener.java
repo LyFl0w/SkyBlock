@@ -101,8 +101,8 @@ public class InventoryClickListener implements Listener {
                     try {
                         final String lore = selectedItem.getItemMeta().getLore().get(0);
                         player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(
-                                skyBlock, player.getUniqueId(), itemShop, Math.max(Integer.parseInt(lore.substring(lore.lastIndexOf(":")+2)) + Integer.parseInt(
-                                        ChatColor.stripColor(item.getItemMeta().getDisplayName())), 0), page, isBuyInventory));
+                                skyBlock, player.getUniqueId(), itemShop, Math.min(Math.max(Integer.parseInt(lore.substring(lore.lastIndexOf(":")+2)) + Integer.parseInt(
+                                        ChatColor.stripColor(item.getItemMeta().getDisplayName())), 0), 2304), page, isBuyInventory));
                     } catch(SQLException e) {
                         throw new RuntimeException(e);
                     }
