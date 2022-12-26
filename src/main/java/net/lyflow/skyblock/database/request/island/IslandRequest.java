@@ -64,26 +64,33 @@ public class IslandRequest extends DefaultRequest {
         return islandID;
     }
 
-    public void createIsland(UUID uuid, Location spawn, IslandDifficulty islandDifficulty) throws SQLException {
+    public int createIsland(UUID uuid, IslandDifficulty islandDifficulty, String worldPath, double x, double y, double z, float yaw, float pitch) throws SQLException {
         final Connection connection = database.getConnection();
 
-        final PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Island (id_difficulty, spawn_location) VALUES (?, ?)");
+        final PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Island (id_difficulty) VALUES (?)");
         preparedStatement.setInt(1, islandDifficulty.getDifficulty());
-        preparedStatement.setString(2, LocationUtils.getStringFromLocation(spawn));
         preparedStatement.executeUpdate();
 
         final int primaryKey = preparedStatement.getGeneratedKeys().getInt(1);
 
-        final PreparedStatement preparedStatement2 = connection.prepareStatement("""
-            INSERT INTO Island_Mate VALUES (?, (SELECT Player.id FROM Player WHERE Player.UUID = ?), ?)
-            """);
-        preparedStatement2.setInt(1, primaryKey);
-        preparedStatement2.setString(2, uuid.toString());
-        preparedStatement2.setInt(3, PlayerIslandStatus.OWNER.getID());
+        final PreparedStatement preparedStatement2 = connection.prepareStatement("UPDATE Island SET spawn_location = ? WHERE id = ?");
+        preparedStatement2.setString(1, LocationUtils.getStringFromPosition(worldPath+"/"+primaryKey, x, y, z, yaw, pitch));
+        preparedStatement2.setInt(2, primaryKey);
 
         preparedStatement2.execute();
 
+        final PreparedStatement preparedStatement3 = connection.prepareStatement("""
+            INSERT INTO Island_Mate VALUES (?, (SELECT Player.id FROM Player WHERE Player.UUID = ?), ?)
+            """);
+        preparedStatement3.setInt(1, primaryKey);
+        preparedStatement3.setString(2, uuid.toString());
+        preparedStatement3.setInt(3, PlayerIslandStatus.OWNER.getID());
+
+        preparedStatement3.execute();
+
         autoClose();
+
+        return primaryKey;
     }
 
     public void addMate(UUID uuid, int islandID) throws SQLException {
