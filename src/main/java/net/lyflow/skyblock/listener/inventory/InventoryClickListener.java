@@ -120,9 +120,13 @@ public class InventoryClickListener implements Listener {
                     }
                 }
 
-                default -> skyBlock.getServer().getPluginManager().callEvent((isBuyInventory)
-                        ? new PlayerBuyItemEvent(skyBlock, player, itemShop, Integer.parseInt(selectedItem.getItemMeta().getLore().get(0)))
-                        : new PlayerSellItemEvent(skyBlock, player, itemShop, Integer.parseInt(selectedItem.getItemMeta().getLore().get(0))));
+                default -> {
+                    final String lore = selectedItem.getItemMeta().getLore().get(0);
+                    final int count = Integer.parseInt(lore.substring(lore.lastIndexOf(":")+2));
+                    skyBlock.getServer().getPluginManager().callEvent((isBuyInventory)
+                            ? new PlayerBuyItemEvent(skyBlock, player, itemShop, count)
+                            : new PlayerSellItemEvent(skyBlock, player, itemShop, count));
+                }
             }
 
             return;
