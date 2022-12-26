@@ -20,6 +20,11 @@ public class PlayerSellItemEvent extends Event implements Cancellable {
     private boolean isCancelled = false;
 
     public PlayerSellItemEvent(SkyBlock skyBlock, Player player, ItemShop itemShop, int amount) {
+        if(amount <= 0) {
+            player.sendMessage("Le nombre d'item sélectionné doit être suppérieur à 0");
+            return;
+        }
+
         final AccountRequest accountRequest = new AccountRequest(skyBlock.getDatabase(), false);
         try {
             final ItemStack itemStack = new ItemStack(itemShop.getMaterial(), amount);
