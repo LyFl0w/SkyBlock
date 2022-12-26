@@ -9,6 +9,7 @@ import net.lyflow.skyblock.listener.inventory.InventoryClickListener;
 import net.lyflow.skyblock.listener.player.*;
 
 import org.bukkit.command.PluginCommand;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class PluginManager {
 
@@ -26,6 +27,8 @@ public class PluginManager {
         pluginManager.registerEvents(new PlayerQuitListener(skyblock), skyblock);
         pluginManager.registerEvents(new PlayerJoinListener(skyblock), skyblock);
         pluginManager.registerEvents(new PlayerDeathListener(skyblock), skyblock);
+        pluginManager.registerEvents(new PlayerRespawnListener(skyblock), skyblock);
+
         pluginManager.registerEvents(new AsyncPlayerPreLoginListener(skyblock), skyblock);
         pluginManager.registerEvents(new PlayerToggleSneakListener(), skyblock);
 

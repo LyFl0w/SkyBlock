@@ -24,7 +24,6 @@ public class PlayerDeathListener implements Listener {
         final AccountRequest accountRequest = new AccountRequest(skyBlock.getDatabase(), false);
 
         try {
-
             final float money = accountRequest.getMoney(uuid);
             final float toRemove = money*0.05f;
             accountRequest.setMoney(uuid, money-toRemove);
