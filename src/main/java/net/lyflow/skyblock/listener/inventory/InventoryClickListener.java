@@ -127,6 +127,7 @@ public class InventoryClickListener implements Listener {
                     return;
                 }
             }
+            if(item.getType() == Material.GRAY_STAINED_GLASS_PANE) return;
             player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(ItemShop.getItemShopByMaterial(item.getType()), 1, page, isBuyInventory));
         }
 
