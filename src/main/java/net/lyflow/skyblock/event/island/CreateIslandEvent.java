@@ -34,7 +34,7 @@ public class CreateIslandEvent extends Event implements Cancellable {
             player.sendMessage("§bCréation de votre île en cours §6§o(difficulté : "+islandDifficulty.name()+")");
 
             try {
-                final String startPath = "skyblock-map";
+                final String startPath = "skyblock-map/";
                 final double x = -0.5;
                 final double y = 100;
                 final double z = 0.5;

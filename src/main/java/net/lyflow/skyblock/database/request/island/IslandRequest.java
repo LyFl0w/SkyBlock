@@ -74,7 +74,7 @@ public class IslandRequest extends DefaultRequest {
         final int primaryKey = preparedStatement.getGeneratedKeys().getInt(1);
 
         final PreparedStatement preparedStatement2 = connection.prepareStatement("UPDATE Island SET spawn_location = ? WHERE id = ?");
-        preparedStatement2.setString(1, LocationUtils.getStringFromPosition(worldPath+"/"+primaryKey, x, y, z, yaw, pitch));
+        preparedStatement2.setString(1, LocationUtils.getStringFromPosition(worldPath+(worldPath.endsWith("/") ? "" : "/")+primaryKey, x, y, z, yaw, pitch));
         preparedStatement2.setInt(2, primaryKey);
 
         preparedStatement2.execute();
@@ -219,4 +219,13 @@ public class IslandRequest extends DefaultRequest {
         autoClose();
     }
 
+    public void deleteIsland(int id) throws SQLException {
+        final Connection connection = database.getConnection();
+        final PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Island WHERE id = ?");
+        preparedStatement.setInt(1, id);
+
+        preparedStatement.execute();
+
+        autoClose();
+    }
 }
