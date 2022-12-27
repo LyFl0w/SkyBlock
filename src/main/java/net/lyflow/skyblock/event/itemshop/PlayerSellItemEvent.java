@@ -21,8 +21,8 @@ public class PlayerSellItemEvent extends Event implements Cancellable {
 
     private boolean isCancelled = false;
 
-    public PlayerSellItemEvent(SkyBlock skyBlock, Player player, ItemShop itemShop, int amount) {
-        final AccountRequest accountRequest = new AccountRequest(skyBlock.getDatabase(), false);
+    public PlayerSellItemEvent(SkyBlock skyblock, Player player, ItemShop itemShop, int amount) {
+        final AccountRequest accountRequest = new AccountRequest(skyblock.getDatabase(), false);
         try {
             final ItemStack itemStack = new ItemStack(itemShop.getMaterial(), amount);
             final String formatedItemStackName = StringUtils.capitalizeSentence(itemStack.getType().name(), "_", " ");
@@ -33,7 +33,7 @@ public class PlayerSellItemEvent extends Event implements Cancellable {
                 return;
             }
             accountRequest.setMoney(player.getUniqueId(), accountRequest.getMoney(player.getUniqueId())+itemShop.getSellPrice() * amount);
-            skyBlock.getDatabase().closeConnection();
+            skyblock.getDatabase().closeConnection();
 
             removeItems(player, itemShop.getMaterial(), amount);
             player.sendMessage("§aVous avez vendu "+amount+" "+formatedItemStackName);

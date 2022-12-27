@@ -22,9 +22,9 @@ import org.bukkit.inventory.ItemStack;
 
 public class InventoryClickListener implements Listener {
 
-    private final SkyBlock skyBlock;
-    public InventoryClickListener(SkyBlock skyBlock) {
-        this.skyBlock = skyBlock;
+    private final SkyBlock skyblock;
+    public InventoryClickListener(SkyBlock skyblock) {
+        this.skyblock = skyblock;
     }
 
     @EventHandler
@@ -45,8 +45,8 @@ public class InventoryClickListener implements Listener {
                 return;
             }
             //player.closeInventory();
-            skyBlock.getServer().getPluginManager()
-                    .callEvent(new CreateIslandEvent(skyBlock, player, IslandDifficulty.getIslandDifficultyByMaterial(item.getType())));
+            skyblock.getServer().getPluginManager()
+                    .callEvent(new CreateIslandEvent(skyblock, player, IslandDifficulty.getIslandDifficultyByMaterial(item.getType())));
             return;
         }
 
@@ -101,9 +101,9 @@ public class InventoryClickListener implements Listener {
                 case LIGHT_BLUE_STAINED_GLASS_PANE -> player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(
                         itemShop, Math.max(countItemInventory(player.getInventory(), selectedItem.getType()), 1), page, isBuyInventory));
 
-                default -> skyBlock.getServer().getPluginManager().callEvent((isBuyInventory)
-                        ? new PlayerBuyItemEvent(skyBlock, player, itemShop, Integer.parseInt(selectedItem.getItemMeta().getLore().get(0)))
-                        : new PlayerSellItemEvent(skyBlock, player, itemShop, Integer.parseInt(selectedItem.getItemMeta().getLore().get(0))));
+                default -> skyblock.getServer().getPluginManager().callEvent((isBuyInventory)
+                        ? new PlayerBuyItemEvent(skyblock, player, itemShop, Integer.parseInt(selectedItem.getItemMeta().getLore().get(0)))
+                        : new PlayerSellItemEvent(skyblock, player, itemShop, Integer.parseInt(selectedItem.getItemMeta().getLore().get(0))));
             }
 
             return;

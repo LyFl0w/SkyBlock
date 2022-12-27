@@ -23,8 +23,8 @@ public class CreateIslandEvent extends Event implements Cancellable {
 
     private boolean isCancelled = false;
 
-    public CreateIslandEvent(SkyBlock skyBlock, Player player, IslandDifficulty islandDifficulty) {
-        final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
+    public CreateIslandEvent(SkyBlock skyblock, Player player, IslandDifficulty islandDifficulty) {
+        final IslandRequest islandRequest = new IslandRequest(skyblock.getDatabase(), false);
         try {
             if(islandRequest.hasIsland(player.getUniqueId())) {
                 player.sendMessage("§cTu ne peux pas avoir plusieurs îles en même temps !");
@@ -35,20 +35,20 @@ public class CreateIslandEvent extends Event implements Cancellable {
 
             try {
                 // Make a copy of  Island World
-                final String defaultPath = "skyBlock-map/"+new AccountRequest(skyBlock.getDatabase(), true).getPlayerID(player);
-                final File islandWorld = new File(skyBlock.getDataFolder(), "../../"+defaultPath);
-                ResourceUtils.saveResourceFolder("maps/skyBlock-"+islandDifficulty.name().toLowerCase(), islandWorld, skyBlock, false);
+                final String defaultPath = "skyblock-map/"+new AccountRequest(skyblock.getDatabase(), true).getPlayerID(player);
+                final File islandWorld = new File(skyblock.getDataFolder(), "../../"+defaultPath);
+                ResourceUtils.saveResourceFolder("maps/skyblock-"+islandDifficulty.name().toLowerCase(), islandWorld, skyblock, false);
 
                 // Load World
-                skyBlock.getServer().createWorld(new WorldCreator(defaultPath));
-                final Location spawn = new Location(skyBlock.getServer().getWorld(defaultPath), -0.5, 100, 0.5, 90, 0);
+                skyblock.getServer().createWorld(new WorldCreator(defaultPath));
+                final Location spawn = new Location(skyblock.getServer().getWorld(defaultPath), -0.5, 100, 0.5, 90, 0);
 
                 player.sendMessage("§bTéléportation en cours");
 
                 try {
                     // create island in DB
                     islandRequest.createIsland(player.getUniqueId(), spawn, islandDifficulty);
-                    skyBlock.getDatabase().closeConnection();
+                    skyblock.getDatabase().closeConnection();
 
                     // Teleport to the world
                     player.teleport(spawn);

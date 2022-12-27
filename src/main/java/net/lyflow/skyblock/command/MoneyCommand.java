@@ -15,9 +15,9 @@ import java.text.DecimalFormat;
 
 public class MoneyCommand implements CommandExecutor{
 
-    private final SkyBlock skyBlock;
-    public MoneyCommand(SkyBlock skyBlock) {
-        this.skyBlock = skyBlock;
+    private final SkyBlock skyblock;
+    public MoneyCommand(SkyBlock skyblock) {
+        this.skyblock = skyblock;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class MoneyCommand implements CommandExecutor{
         if(commandSender instanceof final Player player) {
             if(args.length == 0) {
                 try {
-                    player.sendMessage("§aVous avez "+new AccountRequest(skyBlock.getDatabase(), true).getMoney(player.getUniqueId())+"$");
+                    player.sendMessage("§aVous avez "+new AccountRequest(skyblock.getDatabase(), true).getMoney(player.getUniqueId())+"$");
                 } catch(SQLException e) {
                     throw new RuntimeException(e);
                 }
@@ -44,17 +44,17 @@ public class MoneyCommand implements CommandExecutor{
                             return true;
                         }
 
-                        final AccountRequest accountRequest = new AccountRequest(skyBlock.getDatabase(), false);
+                        final AccountRequest accountRequest = new AccountRequest(skyblock.getDatabase(), false);
                         final float playerMoney = accountRequest.getMoney(player.getUniqueId());
                         if(playerMoney < amount) {
-                            skyBlock.getDatabase().closeConnection();
+                            skyblock.getDatabase().closeConnection();
                             player.sendMessage("§cVous n'avez pas "+amount+"$");
                             return true;
                         }
 
                         final OfflinePlayer offlinePlayer = accountRequest.getOfflinePlayerByName(args[1]);
                         if(offlinePlayer == null) {
-                            skyBlock.getDatabase().closeConnection();
+                            skyblock.getDatabase().closeConnection();
                             player.sendMessage("§cLe joueur "+args[1]+" n'existe pas");
                             return true;
                         }
@@ -63,7 +63,7 @@ public class MoneyCommand implements CommandExecutor{
                         accountRequest.setMoney(offlinePlayer.getUniqueId(), accountRequest.getMoney(offlinePlayer.getUniqueId()) + amount);
                         if(offlinePlayer.isOnline()) offlinePlayer.getPlayer().sendMessage("§aVous avez reçu "+amount+" $ de "+player.getName());
                         player.sendMessage("§aVous avez envoyé "+amount+"$ à "+offlinePlayer.getName());
-                        skyBlock.getDatabase().closeConnection();
+                        skyblock.getDatabase().closeConnection();
                     } catch(SQLException e) {
                         throw new RuntimeException(e);
                     } catch(NumberFormatException e){

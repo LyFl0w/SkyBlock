@@ -1,10 +1,13 @@
 package net.lyflow.skyblock.challenge;
 
+import net.lyflow.skyblock.database.request.challenge.ChallengeRequest;
+
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,15 +26,29 @@ public class ChallengeProgress<T> {
         this.challenge = challenge;
         this.defaultChallengeStatus = (challenge.getDifficulty() == Challenge.Difficulty.EASY) ? ChallengeStatus.IN_PROGRESS : ChallengeStatus.LOCKED;
         this.counter = new HashMap<>(IntStream.range(0, counterList.size()).boxed().collect(Collectors.toUnmodifiableMap(elementsCounter::get, counterList::get)));
+        counter.forEach((ts, integer) -> System.out.println("to get ("+challenge.getName()+") : "+ts+" / "+integer));
         this.playersCounter = new HashMap<>();
     }
 
-    public void incrementCounter(Player player, int increment, T t) {
-        final HashMap<List<T>, Integer> playerCounter = getPlayerChallengeProgress(player).getPlayerCounter();
+    public void incrementCounter(Player player, int increment, T t) throws SQLException {
+        final PlayerChallengeProgress<T> playerChallengeProgress = getPlayerChallengeProgress(player);
+        if(playerChallengeProgress.getStatus() == ChallengeStatus.SUCCESSFUL || playerChallengeProgress.getStatus() == ChallengeStatus.REWARD_RECOVERED) return;
+
+        final HashMap<List<T>, Integer> playerCounter = playerChallengeProgress.getPlayerCounter();
+        final HashMap<List<T>, Integer> playerCounterClone = (HashMap<List<T>, Integer>) playerCounter.clone();
+
         playerCounter.entrySet().stream().parallel().filter(entry -> entry.getKey().contains(t)).filter(entry -> counter.get(entry.getKey()) > entry.getValue())
                 .forEach(entry -> playerCounter.replace(entry.getKey(), entry.getValue()+increment));
 
+        if(playerCounter.equals(playerCounterClone)) {
+            player.sendMessage("Aucun changement au compteur");
+            return;
+        }
+
         if(hasCompletedChallenge(player)) accomplished(player);
+
+        final ChallengeRequest challengeRequest = new ChallengeRequest(challenge.skyblock.getDatabase(), true);
+        challengeRequest.updateChallenge(challenge.getID(), player.getUniqueId(), playerChallengeProgress);
     }
 
     public final void completedChallenge(Player player) {
@@ -43,6 +60,7 @@ public class ChallengeProgress<T> {
     }
 
     public final void accomplished(Player player) {
+        player.sendMessage("accomplished");
         final PlayerChallengeProgress<T> playerChallengeProgress = getPlayerChallengeProgress(player);
         if(playerChallengeProgress.getStatus() != ChallengeStatus.IN_PROGRESS) throw new RuntimeException("the challenge is not in progress");
         playerChallengeProgress.setStatus(ChallengeStatus.SUCCESSFUL);
@@ -51,10 +69,18 @@ public class ChallengeProgress<T> {
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
     }
 
-    public void initPlayerChallenge(Player player) {
-        if(playersCounter.containsKey(player.getUniqueId())) throw new RuntimeException("The player "+player.getName()+" already has a counter for the Challenge");
+    public PlayerChallengeProgress<T> initPlayerChallenge(Player player) {
+        System.out.println("init player challenge");
+        if(playersCounter.containsKey(player.getUniqueId())) throw new RuntimeException("The player "+player.getName()+" already has a counter for the Challenge ("+playersCounter.get(player.getUniqueId())+") size : "+playersCounter.size());
+
         final HashMap<List<T>, Integer> playerCounter = new HashMap<>(counter.entrySet().stream().parallel().collect(Collectors.toMap(Map.Entry::getKey, r -> 0)));
-        playersCounter.put(player.getUniqueId(), new PlayerChallengeProgress<T>(playerCounter, defaultChallengeStatus));
+        final PlayerChallengeProgress<T> result = new PlayerChallengeProgress<T>(playerCounter, defaultChallengeStatus);
+        playersCounter.put(player.getUniqueId(), result);
+        return result;
+    }
+
+    public void loadPlayerChallenge(UUID playerUUID, PlayerChallengeProgress<T> playerProgress) {
+        playersCounter.put(playerUUID, playerProgress);
     }
 
     private boolean hasCompletedChallenge(Player player) {

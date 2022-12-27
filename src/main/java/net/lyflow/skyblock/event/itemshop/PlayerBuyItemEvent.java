@@ -21,8 +21,8 @@ public class PlayerBuyItemEvent extends Event implements Cancellable {
 
     private boolean isCancelled = false;
 
-    public PlayerBuyItemEvent(SkyBlock skyBlock, Player player, ItemShop itemShop, int amount) {
-        final AccountRequest accountRequest = new AccountRequest(skyBlock.getDatabase(), false);
+    public PlayerBuyItemEvent(SkyBlock skyblock, Player player, ItemShop itemShop, int amount) {
+        final AccountRequest accountRequest = new AccountRequest(skyblock.getDatabase(), false);
         try {
             final float playerMoney = accountRequest.getMoney(player.getUniqueId());
             final float price = itemShop.getBuyPrice() * amount;
@@ -30,13 +30,13 @@ public class PlayerBuyItemEvent extends Event implements Cancellable {
             final String formatedItemStackName = StringUtils.capitalizeSentence(itemStack.getType().name(), "_", " ");
 
             if(playerMoney < price) {
-                skyBlock.getDatabase().closeConnection();
+                skyblock.getDatabase().closeConnection();
                 player.sendMessage("§cVous n'avez pas assez de money pour acheter "+amount+" "+formatedItemStackName);
                 setCancelled(true);
                 return;
             }
             accountRequest.setMoney(player.getUniqueId(), playerMoney-price);
-            skyBlock.getDatabase().closeConnection();
+            skyblock.getDatabase().closeConnection();
 
             player.getInventory().addItem(itemStack);
             player.sendMessage("§aVous avez acheté "+amount+" "+formatedItemStackName);

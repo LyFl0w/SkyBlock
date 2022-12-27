@@ -12,13 +12,14 @@ import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public abstract class Challenge<T extends Event, U> {
 
-    protected final SkyBlock skyBlock;
+    protected final SkyBlock skyblock;
 
     private final int id;
 
@@ -33,8 +34,8 @@ public abstract class Challenge<T extends Event, U> {
 
     protected final ChallengeProgress<U> challengeProgress;
 
-    public Challenge(SkyBlock skyBlock, int id, Difficulty difficulty, Type type, List<Integer> counterList, List<List<U>> elementsCounter, Reward reward, Material material, String name, String... description) {
-        this.skyBlock = skyBlock;
+    public Challenge(SkyBlock skyblock, int id, Difficulty difficulty, Type type, List<Integer> counterList, List<List<U>> elementsCounter, Reward reward, Material material, String name, String... description) {
+        this.skyblock = skyblock;
 
         this.id = id;
 
@@ -48,21 +49,23 @@ public abstract class Challenge<T extends Event, U> {
         this.reward = reward;
 
         this.challengeProgress = new ChallengeProgress<U>(this, counterList, elementsCounter);
-
-        final ChallengeManager challengeManager = skyBlock.getChallengeManager();
-        if(challengeManager.challengeExist(id)) {
-            final Challenge<?, ?> challenge = challengeManager.getChallengeByID(id);
-            throw new RuntimeException((this.equals(challenge)) ? "Their is a duplication of Challenge with id "+id : "The Challenge "+name+" can't be initialized because his id is already use by the Challenge "+challenge.getName());
-        }
-        challengeManager.getRegisteredChallenges().add(this);
     }
 
     protected void onEventTriggered(Player player, T event) {
-        final PlayerChallengeProgress<U> playerChallengeProgress = challengeProgress.getPlayerChallengeProgress(player);
-        if(playerChallengeProgress.getStatus() == ChallengeStatus.IN_PROGRESS) onEvent(event, player, playerChallengeProgress);
+        skyblock.getServer().getScheduler().runTask(skyblock, () -> {
+            final PlayerChallengeProgress<U> playerChallengeProgress = challengeProgress.getPlayerChallengeProgress(player);
+            final ChallengeStatus challengeStatus = playerChallengeProgress.getStatus();
+            if(challengeStatus == ChallengeStatus.IN_PROGRESS || challengeStatus == ChallengeStatus.LOCKED) {
+                try {
+                    onEvent(event, player, playerChallengeProgress);
+                } catch(SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
-    protected abstract void onEvent(T event, Player player, PlayerChallengeProgress<U> playerChallengeProgress);
+    protected abstract void onEvent(T event, Player player, PlayerChallengeProgress<U> playerChallengeProgress) throws SQLException;
 
     public final ItemStack getRepresentation(Player player) {
         final ChallengeStatus status = challengeProgress.getPlayerChallengeProgress(player).getStatus();
@@ -80,7 +83,7 @@ public abstract class Challenge<T extends Event, U> {
         return itemBuilder.toItemStack();
     }
 
-    public int getId() {
+    public int getID() {
         return id;
     }
 

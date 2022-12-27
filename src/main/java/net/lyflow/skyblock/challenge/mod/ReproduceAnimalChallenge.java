@@ -15,23 +15,25 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityBreedEvent;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class ReproduceAnimalChallenge extends EntityChallenge<EntityBreedEvent> {
 
-    public ReproduceAnimalChallenge(SkyBlock skyBlock, int id, Difficulty difficulty, List<Integer> counterList, List<List<EntityType>> elementsCounter, Reward reward, Material material, String name, String... description) {
-        super(skyBlock, id, difficulty, Type.REPRODUCE_ANIMAL, counterList, elementsCounter, reward, material, name, description);
+    public ReproduceAnimalChallenge(SkyBlock skyblock, int id, Difficulty difficulty, List<Integer> counterList, List<List<EntityType>> elementsCounter, Reward reward, Material material, String name, String... description) {
+        super(skyblock, id, difficulty, Type.REPRODUCE_ANIMAL, counterList, elementsCounter, reward, material, name, description);
     }
 
-    public ReproduceAnimalChallenge(SkyBlock skyBlock, int id, Difficulty difficulty, List<Integer> counterList, List<List<EntityType>> elementsCounter, Reward reward) {
-        this(skyBlock, id, difficulty, counterList, elementsCounter, reward, Material.WHEAT, "La pignouf", "generic descrition", "oui il y a une faute");
+    public ReproduceAnimalChallenge(SkyBlock skyblock, int id, Difficulty difficulty, List<Integer> counterList, List<List<EntityType>> elementsCounter, Reward reward) {
+        this(skyblock, id, difficulty, counterList, elementsCounter, reward, Material.WHEAT, "Defi de fou sur la reproduction d'animaux", "generic descrition", "oui il y a une faute");
     }
 
     @Override
-    protected void onEvent(EntityBreedEvent event, Player player, PlayerChallengeProgress<EntityType> playerChallengeProgress) {
+    protected void onEvent(EntityBreedEvent event, Player player, PlayerChallengeProgress<EntityType> playerChallengeProgress) throws SQLException {
         final EntityType entityType = event.getEntityType();
+        player.sendMessage("Reproduce entity challenge (id : "+getID()+")");
         if(!challengeProgress.isValidElement(entityType)) return;
         challengeProgress.incrementCounter(player, 1, entityType);
     }
@@ -46,7 +48,9 @@ public class ReproduceAnimalChallenge extends EntityChallenge<EntityBreedEvent> 
         @EventHandler
         public void onEntityBreed(EntityBreedEvent event) {
             if(!(event.getBreeder() instanceof final Player player)) return;
-            challenges.stream().parallel().forEach(reproduceAnimalChallenge -> reproduceAnimalChallenge.onEventTriggered(player, event));
+            challenges.stream().parallel().forEach(reproduceAnimalChallenge -> {
+                reproduceAnimalChallenge.onEventTriggered(player, event);
+            });
         }
 
     }

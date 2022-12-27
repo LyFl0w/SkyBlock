@@ -20,7 +20,7 @@ public class SkyBlock extends JavaPlugin {
     public void onEnable() {
         INSTANCE = this;
 
-        this.database = new Database(this, "skyBlock.db");
+        this.database = new Database(this, "skyblock.db");
 
         new PluginManager(this);
         challengeManager = new ChallengeManager(this);

@@ -14,16 +14,16 @@ import java.util.UUID;
 
 public class AsyncPlayerPreLoginListener implements Listener {
 
-    private final SkyBlock skyBlock;
+    private final SkyBlock skyblock;
 
-    public AsyncPlayerPreLoginListener(SkyBlock skyBlock) {
-        this.skyBlock = skyBlock;
+    public AsyncPlayerPreLoginListener(SkyBlock skyblock) {
+        this.skyblock = skyblock;
     }
 
     @EventHandler
     public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         final UUID playerUUID = event.getUniqueId();
-        final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
+        final IslandRequest islandRequest = new IslandRequest(skyblock.getDatabase(), false);
         try {
             // LOAD ISLAND WORLD IF IT'S NOT LOADED
             if(islandRequest.hasIsland(playerUUID)) {
@@ -31,23 +31,23 @@ public class AsyncPlayerPreLoginListener implements Listener {
                 final HashMap<String, Integer> unloadWorlds = PlayerQuitListener.getUnloadWorlds();
                 if(unloadWorlds.containsKey(worldName)) {
                     // REMOVE TASK WHO UNLOAD ISLAND WORLD
-                    skyBlock.getServer().getScheduler().cancelTask(unloadWorlds.get(worldName));
+                    skyblock.getServer().getScheduler().cancelTask(unloadWorlds.get(worldName));
                     // REMOVE ISLAND WORLD OF UNLOAD WORLDS LIST
                     unloadWorlds.remove(worldName);
 
-                    skyBlock.getDatabase().closeConnection();
+                    skyblock.getDatabase().closeConnection();
                     return;
                 }
 
-                if(skyBlock.getServer().getWorld(worldName) == null){
-                    skyBlock.getServer().getScheduler().runTask(skyBlock, () -> skyBlock.getServer().createWorld(new WorldCreator(worldName)));
-                    skyBlock.getDatabase().closeConnection();
+                if(skyblock.getServer().getWorld(worldName) == null){
+                    skyblock.getServer().getScheduler().runTask(skyblock, () -> skyblock.getServer().createWorld(new WorldCreator(worldName)));
+                    skyblock.getDatabase().closeConnection();
                     return;
                 }
 
             }
 
-            skyBlock.getDatabase().closeConnection();
+            skyblock.getDatabase().closeConnection();
         } catch(SQLException e) {
             throw new RuntimeException(e);
         }

@@ -15,20 +15,20 @@ public class PlayerQuitListener implements Listener {
 
     private final static HashMap<String, Integer> unloadWorlds = new HashMap<>();
 
-    private final SkyBlock skyBlock;
+    private final SkyBlock skyblock;
 
-    public PlayerQuitListener(SkyBlock skyBlock) {
-        this.skyBlock = skyBlock;
+    public PlayerQuitListener(SkyBlock skyblock) {
+        this.skyblock = skyblock;
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
-        final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
+        final IslandRequest islandRequest = new IslandRequest(skyblock.getDatabase(), false);
 
         try {
             if(!islandRequest.hasIsland(player.getUniqueId())) {
-                skyBlock.getDatabase().closeConnection();
+                skyblock.getDatabase().closeConnection();
                 return;
             }
 
@@ -36,14 +36,14 @@ public class PlayerQuitListener implements Listener {
             if(islandRequest.getMates(player.getUniqueId()).stream().parallel().filter(islandMate -> islandMate.player().isOnline()).count() <= 1) {
                 final String worldName = islandRequest.getIslandWorldName(islandRequest.getIslandID(player.getUniqueId()));
 
-                unloadWorlds.put(worldName, skyBlock.getServer().getScheduler().runTaskLater(skyBlock, () -> {
-                    skyBlock.getServer().unloadWorld(worldName, true);
+                unloadWorlds.put(worldName, skyblock.getServer().getScheduler().runTaskLater(skyblock, () -> {
+                    skyblock.getServer().unloadWorld(worldName, true);
                     // AUTO REMOVE WORLD FROM unloadWorld LIST
                     unloadWorlds.remove(worldName);
                 }, 6000L).getTaskId());
             }
 
-            skyBlock.getDatabase().closeConnection();
+            skyblock.getDatabase().closeConnection();
         } catch(SQLException e) {
             throw new RuntimeException(e);
         }
