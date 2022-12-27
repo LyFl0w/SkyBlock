@@ -8,9 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 public class ChallengeRequest extends DefaultRequest {
@@ -58,7 +56,7 @@ public class ChallengeRequest extends DefaultRequest {
         return challengesData;
     }
 
-    public void updateChallenge(int challengeID, UUID playerUUID, PlayerChallengeProgress<?> playerChallengeProgress) throws SQLException {
+    public void updateChallenge(int challengeID, UUID playerUUID, PlayerChallengeProgress playerChallengeProgress) throws SQLException {
         final Connection connection = database.getConnection();
         final PreparedStatement preparedStatement = connection.prepareStatement("""
                     UPDATE Challenge SET progress = ?

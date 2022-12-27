@@ -10,10 +10,10 @@ import org.bukkit.event.Event;
 
 import java.util.List;
 
-public abstract class EntityChallenge<T extends Event> extends Challenge<T, EntityType> {
+public abstract class EntityChallenge<T extends Event> extends Challenge<T> {
 
     public EntityChallenge(SkyBlock skyblock, int id, Difficulty difficulty, Type type, List<Integer> counterList, List<List<EntityType>> elementsCounter, Reward reward, Material material, String name, String... description) {
-        super(skyblock, id, difficulty, type, counterList, elementsCounter, reward, material, name, description);
+        super(skyblock, id, difficulty, type, counterList, elementsCounter.stream().map(entityTypes -> entityTypes.stream().map(EntityType::name).toList()).toList(), reward, material, name, description);
     }
 
 }

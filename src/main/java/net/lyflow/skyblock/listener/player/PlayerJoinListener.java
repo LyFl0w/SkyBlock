@@ -52,10 +52,10 @@ public class PlayerJoinListener implements Listener {
                 final ChallengeRequest challengeRequest = new ChallengeRequest(skyblock.getDatabase(), false);
                 final HashMap<Integer, String> currentChallengesSerialized = challengeRequest.getChallengesDataSerialized(uuid);
                 final ArrayList<Integer> currentChallengesID = new ArrayList<>(currentChallengesSerialized.keySet());
-                final List<Challenge<? extends Event, ?>> actualChallenges = skyblock.getChallengeManager().getRegisteredChallenges();
+                final List<Challenge<? extends Event>> actualChallenges = skyblock.getChallengeManager().getRegisteredChallenges();
 
                 // ADD NEW CHALLENGES IN HASHMAP TO INIT THEM
-                final HashMap<Integer, PlayerChallengeProgress<?>> dataToSave = new HashMap<>();
+                final HashMap<Integer, PlayerChallengeProgress> dataToSave = new HashMap<>();
 
                 actualChallenges.stream().parallel().filter(challenge -> !currentChallengesID.contains(challenge.getID())).forEach(challenge ->
                         dataToSave.put(challenge.getID(), challenge.getChallengeProgress().initPlayerChallenge(player)));

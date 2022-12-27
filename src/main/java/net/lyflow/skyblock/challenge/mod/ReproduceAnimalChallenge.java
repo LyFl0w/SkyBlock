@@ -1,22 +1,19 @@
 package net.lyflow.skyblock.challenge.mod;
 
 import net.lyflow.skyblock.SkyBlock;
-import net.lyflow.skyblock.challenge.Challenge;
 import net.lyflow.skyblock.challenge.PlayerChallengeProgress;
 import net.lyflow.skyblock.challenge.Reward;
 import net.lyflow.skyblock.challenge.type.EntityChallenge;
-
 import net.lyflow.skyblock.manager.ChallengeManager;
+
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityBreedEvent;
 
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,9 +28,8 @@ public class ReproduceAnimalChallenge extends EntityChallenge<EntityBreedEvent> 
     }
 
     @Override
-    protected void onEvent(EntityBreedEvent event, Player player, PlayerChallengeProgress<EntityType> playerChallengeProgress) throws SQLException {
+    protected void onEvent(EntityBreedEvent event, Player player, PlayerChallengeProgress playerChallengeProgress) throws SQLException {
         final EntityType entityType = event.getEntityType();
-        player.sendMessage("Reproduce entity challenge (id : "+getID()+")");
         if(!challengeProgress.isValidElement(entityType)) return;
         challengeProgress.incrementCounter(player, 1, entityType);
     }
@@ -48,9 +44,7 @@ public class ReproduceAnimalChallenge extends EntityChallenge<EntityBreedEvent> 
         @EventHandler
         public void onEntityBreed(EntityBreedEvent event) {
             if(!(event.getBreeder() instanceof final Player player)) return;
-            challenges.stream().parallel().forEach(reproduceAnimalChallenge -> {
-                reproduceAnimalChallenge.onEventTriggered(player, event);
-            });
+            challenges.stream().parallel().forEach(reproduceAnimalChallenge -> reproduceAnimalChallenge.onEventTriggered(player, event));
         }
 
     }

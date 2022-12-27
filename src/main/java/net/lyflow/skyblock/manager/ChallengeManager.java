@@ -18,7 +18,7 @@ import java.util.List;
 
 public class ChallengeManager {
 
-    private final List<Challenge<? extends Event, ?>> registeredChallenges = new ArrayList<>();
+    private final List<Challenge<? extends Event>> registeredChallenges = new ArrayList<>();
 
     public ChallengeManager(SkyBlock skyblock) {
         createChallenges(skyblock);
@@ -37,7 +37,7 @@ public class ChallengeManager {
         pluginManager.registerEvents(new ReproduceAnimalChallenge.ListenerEvent(this), skyblock);
     }
 
-    public List<Challenge<? extends Event, ?>> getRegisteredChallenges() {
+    public List<Challenge<? extends Event>> getRegisteredChallenges() {
         return registeredChallenges;
     }
 
@@ -46,20 +46,20 @@ public class ChallengeManager {
     }
 
     @Nullable
-    public Challenge<? extends Event, ?> getChallengeByID(int id) {
+    public Challenge<? extends Event> getChallengeByID(int id) {
         return registeredChallenges.stream().parallel().filter(challenge -> challenge.getID() == id).findFirst().orElse(null);
     }
 
-    public List<? extends Challenge<? extends Event, ?>> getChallengesByType(Challenge.Type type) {
+    public List<? extends Challenge<? extends Event>> getChallengesByType(Challenge.Type type) {
         return registeredChallenges.stream().parallel().filter(challenge -> challenge.getType() == type).toList();
     }
 
     @SafeVarargs
-    public final void addNewChallenges(Challenge<? extends Event, ?>... challenges) {
+    public final void addNewChallenges(Challenge<? extends Event>... challenges) {
         Arrays.stream(challenges).forEach(challenge ->  {
             final int id = challenge.getID();
             if(challengeExist(id)) {
-                final Challenge<?, ?> otherChallenge = getChallengeByID(id);
+                final Challenge<?> otherChallenge = getChallengeByID(id);
                 throw new RuntimeException((challenge.equals(otherChallenge)) ? "Their is a duplication of Challenge with id "+id : "The Challenge "+challenge.getName()+" can't be initialized because his id is already use by the Challenge "+otherChallenge.getName());
             }
             getRegisteredChallenges().add(challenge);

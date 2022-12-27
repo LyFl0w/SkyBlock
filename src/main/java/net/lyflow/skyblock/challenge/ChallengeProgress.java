@@ -8,21 +8,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class ChallengeProgress<T> {
+public class ChallengeProgress {
 
-    private final Challenge<? extends Event, T> challenge;
+    private final Challenge<? extends Event> challenge;
     private final ChallengeStatus defaultChallengeStatus;
-    private final HashMap<List<T>, Integer> counter;
-    private final HashMap<UUID, PlayerChallengeProgress<T>> playersCounter;
+    private final HashMap<List<String>, Integer> counter;
+    private final HashMap<UUID, PlayerChallengeProgress> playersCounter;
 
-    public ChallengeProgress(Challenge<? extends Event, T> challenge, List<Integer> counterList, List<List<T>> elementsCounter) {
+    public ChallengeProgress(Challenge<? extends Event> challenge, List<Integer> counterList, List<List<String>> elementsCounter) {
         this.challenge = challenge;
         this.defaultChallengeStatus = (challenge.getDifficulty() == Challenge.Difficulty.EASY) ? ChallengeStatus.IN_PROGRESS : ChallengeStatus.LOCKED;
         this.counter = new HashMap<>(IntStream.range(0, counterList.size()).boxed().collect(Collectors.toUnmodifiableMap(elementsCounter::get, counterList::get)));
@@ -30,20 +27,21 @@ public class ChallengeProgress<T> {
         this.playersCounter = new HashMap<>();
     }
 
-    public void incrementCounter(Player player, int increment, T t) throws SQLException {
-        final PlayerChallengeProgress<T> playerChallengeProgress = getPlayerChallengeProgress(player);
+    public <T extends Enum<T>> void incrementCounter(Player player, int increment, T t) throws SQLException {
+        incrementCounter(player, increment, t.name());
+    }
+
+    public void incrementCounter(Player player, int increment, String t) throws SQLException {
+        final PlayerChallengeProgress playerChallengeProgress = getPlayerChallengeProgress(player);
         if(playerChallengeProgress.getStatus() == ChallengeStatus.SUCCESSFUL || playerChallengeProgress.getStatus() == ChallengeStatus.REWARD_RECOVERED) return;
 
-        final HashMap<List<T>, Integer> playerCounter = playerChallengeProgress.getPlayerCounter();
-        final HashMap<List<T>, Integer> playerCounterClone = (HashMap<List<T>, Integer>) playerCounter.clone();
+        final HashMap<List<String>, Integer> playerCounter = playerChallengeProgress.getPlayerCounter();
+        final HashMap<List<String>, Integer> playerCounterClone = new HashMap<>(playerCounter);
 
         playerCounter.entrySet().stream().parallel().filter(entry -> entry.getKey().contains(t)).filter(entry -> counter.get(entry.getKey()) > entry.getValue())
                 .forEach(entry -> playerCounter.replace(entry.getKey(), entry.getValue()+increment));
 
-        if(playerCounter.equals(playerCounterClone)) {
-            player.sendMessage("Aucun changement au compteur");
-            return;
-        }
+        if(playerCounter.equals(playerCounterClone)) return;
 
         if(hasCompletedChallenge(player)) accomplished(player);
 
@@ -51,8 +49,8 @@ public class ChallengeProgress<T> {
         challengeRequest.updateChallenge(challenge.getID(), player.getUniqueId(), playerChallengeProgress);
     }
 
-    public final void completedChallenge(Player player) {
-        final PlayerChallengeProgress<T> playerChallengeProgress = getPlayerChallengeProgress(player);
+    public final void accessReward(Player player) {
+        final PlayerChallengeProgress playerChallengeProgress = getPlayerChallengeProgress(player);
         if(playerChallengeProgress.getStatus() != ChallengeStatus.SUCCESSFUL) throw new RuntimeException("complete the challenge before validating it");
         playerChallengeProgress.setStatus(ChallengeStatus.REWARD_RECOVERED);
 
@@ -61,7 +59,7 @@ public class ChallengeProgress<T> {
 
     public final void accomplished(Player player) {
         player.sendMessage("accomplished");
-        final PlayerChallengeProgress<T> playerChallengeProgress = getPlayerChallengeProgress(player);
+        final PlayerChallengeProgress playerChallengeProgress = getPlayerChallengeProgress(player);
         if(playerChallengeProgress.getStatus() != ChallengeStatus.IN_PROGRESS) throw new RuntimeException("the challenge is not in progress");
         playerChallengeProgress.setStatus(ChallengeStatus.SUCCESSFUL);
 
@@ -69,17 +67,17 @@ public class ChallengeProgress<T> {
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
     }
 
-    public PlayerChallengeProgress<T> initPlayerChallenge(Player player) {
+    public PlayerChallengeProgress initPlayerChallenge(Player player) {
         System.out.println("init player challenge");
         if(playersCounter.containsKey(player.getUniqueId())) throw new RuntimeException("The player "+player.getName()+" already has a counter for the Challenge ("+playersCounter.get(player.getUniqueId())+") size : "+playersCounter.size());
 
-        final HashMap<List<T>, Integer> playerCounter = new HashMap<>(counter.entrySet().stream().parallel().collect(Collectors.toMap(Map.Entry::getKey, r -> 0)));
-        final PlayerChallengeProgress<T> result = new PlayerChallengeProgress<T>(playerCounter, defaultChallengeStatus);
+        final HashMap<List<String>, Integer> playerCounter = new HashMap<>(counter.entrySet().stream().parallel().collect(Collectors.toMap(Map.Entry::getKey, r -> 0)));
+        final PlayerChallengeProgress result = new PlayerChallengeProgress(playerCounter, defaultChallengeStatus);
         playersCounter.put(player.getUniqueId(), result);
         return result;
     }
 
-    public void loadPlayerChallenge(UUID playerUUID, PlayerChallengeProgress<T> playerProgress) {
+    public void loadPlayerChallenge(UUID playerUUID, PlayerChallengeProgress playerProgress) {
         playersCounter.put(playerUUID, playerProgress);
     }
 
@@ -87,20 +85,24 @@ public class ChallengeProgress<T> {
         return getPlayerChallengeProgress(player).getPlayerCounter().equals(counter);
     }
 
-    public PlayerChallengeProgress<T> getPlayerChallengeProgress(Player player) {
+    public PlayerChallengeProgress getPlayerChallengeProgress(Player player) {
         if(!playersCounter.containsKey(player.getUniqueId())) throw new RuntimeException("The player "+player.getName()+" doesn't have a counter for the Challenge");
         return playersCounter.get(player.getUniqueId());
     }
 
-    public boolean isValidElement(T element) {
+    public <T extends Enum<T>> boolean isValidElement(T element) {
+        return counter.keySet().stream().parallel().anyMatch(ts -> ts.contains(element.name()));
+    }
+
+    public boolean isValidElement(String element) {
         return counter.keySet().stream().parallel().anyMatch(ts -> ts.contains(element));
     }
 
-    public Map<List<T>, Integer> getCounter() {
+    public Map<List<String>, Integer> getCounter() {
         return counter;
     }
 
-    public HashMap<UUID, PlayerChallengeProgress<T>> getPlayersCounter() {
+    public HashMap<UUID, PlayerChallengeProgress> getPlayersCounter() {
         return playersCounter;
     }
 

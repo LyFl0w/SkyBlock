@@ -1,7 +1,6 @@
 package net.lyflow.skyblock.challenge;
 
 import net.lyflow.skyblock.SkyBlock;
-import net.lyflow.skyblock.manager.ChallengeManager;
 import net.lyflow.skyblock.utils.StringUtils;
 import net.lyflow.skyblock.utils.builder.ItemBuilder;
 
@@ -17,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class Challenge<T extends Event, U> {
+public abstract class Challenge<T extends Event> {
 
     protected final SkyBlock skyblock;
 
@@ -32,9 +31,9 @@ public abstract class Challenge<T extends Event, U> {
 
     private final Reward reward;
 
-    protected final ChallengeProgress<U> challengeProgress;
+    protected final ChallengeProgress challengeProgress;
 
-    public Challenge(SkyBlock skyblock, int id, Difficulty difficulty, Type type, List<Integer> counterList, List<List<U>> elementsCounter, Reward reward, Material material, String name, String... description) {
+    public Challenge(SkyBlock skyblock, int id, Difficulty difficulty, Type type, List<Integer> counterList, List<List<String>> elementsCounter, Reward reward, Material material, String name, String... description) {
         this.skyblock = skyblock;
 
         this.id = id;
@@ -48,12 +47,12 @@ public abstract class Challenge<T extends Event, U> {
 
         this.reward = reward;
 
-        this.challengeProgress = new ChallengeProgress<U>(this, counterList, elementsCounter);
+        this.challengeProgress = new ChallengeProgress(this, counterList, elementsCounter);
     }
 
     protected void onEventTriggered(Player player, T event) {
         skyblock.getServer().getScheduler().runTask(skyblock, () -> {
-            final PlayerChallengeProgress<U> playerChallengeProgress = challengeProgress.getPlayerChallengeProgress(player);
+            final PlayerChallengeProgress playerChallengeProgress = challengeProgress.getPlayerChallengeProgress(player);
             final ChallengeStatus challengeStatus = playerChallengeProgress.getStatus();
             if(challengeStatus == ChallengeStatus.IN_PROGRESS || challengeStatus == ChallengeStatus.LOCKED) {
                 try {
@@ -65,7 +64,7 @@ public abstract class Challenge<T extends Event, U> {
         });
     }
 
-    protected abstract void onEvent(T event, Player player, PlayerChallengeProgress<U> playerChallengeProgress) throws SQLException;
+    protected abstract void onEvent(T event, Player player, PlayerChallengeProgress playerChallengeProgress) throws SQLException;
 
     public final ItemStack getRepresentation(Player player) {
         final ChallengeStatus status = challengeProgress.getPlayerChallengeProgress(player).getStatus();
@@ -95,7 +94,7 @@ public abstract class Challenge<T extends Event, U> {
         return type;
     }
 
-    public ChallengeProgress<U> getChallengeProgress() {
+    public ChallengeProgress getChallengeProgress() {
         return challengeProgress;
     }
 
@@ -151,7 +150,7 @@ public abstract class Challenge<T extends Event, U> {
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
-        if(!(o instanceof Challenge<?, ?> challenge)) return false;
+        if(!(o instanceof Challenge<?> challenge)) return false;
         return id == challenge.id && material == challenge.material && name.equals(challenge.name) && Arrays.equals(description, challenge.description) && difficulty == challenge.difficulty && type == challenge.type && reward.equals(challenge.reward);
     }
 
