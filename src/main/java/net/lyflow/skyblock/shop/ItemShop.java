@@ -38,7 +38,7 @@ public enum ItemShop {
 
     COBWEB(Material.COBWEB, 20, -1, ShopCategory.BLOCK),
     SCULK_SENSOR(Material.SCULK_SENSOR, 50, -1, ShopCategory.BLOCK),
-    DEAD_HORN_CORAL_FAN(Material.DEAD_HORN_CORAL_FAN,  50_000, 1_000, ShopCategory.BLOCK),
+    DEAD_HORN_CORAL_FAN(Material.DEAD_HORN_CORAL_FAN,  10_000, 1_000, ShopCategory.BLOCK),
 
 
     // ITEM
@@ -57,7 +57,7 @@ public enum ItemShop {
 
     APPLE(Material.APPLE, -1, 5, ShopCategory.ITEM),
     BAMBOO(Material.BAMBOO, 30, 0.5f, ShopCategory.ITEM),
-    SUGAR_CANE(Material.SUGAR_CANE, 30, 3.5f, ShopCategory.ITEM),
+    SUGAR_CANE(Material.SUGAR_CANE, 30, 5, ShopCategory.ITEM),
     CACTUS(Material.CACTUS, 50, 3.5f, ShopCategory.ITEM),
     CHORUS_FLOWER(Material.CHORUS_FLOWER, 100, -1, ShopCategory.ITEM),
     CHORUS_FRUIT(Material.CHORUS_FRUIT, -1, 1, ShopCategory.ITEM),
