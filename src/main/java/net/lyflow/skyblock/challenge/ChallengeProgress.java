@@ -23,7 +23,6 @@ public class ChallengeProgress {
         this.challenge = challenge;
         this.defaultChallengeStatus = (challenge.getDifficulty() == Challenge.Difficulty.EASY) ? ChallengeStatus.IN_PROGRESS : ChallengeStatus.LOCKED;
         this.counter = new HashMap<>(IntStream.range(0, counterList.size()).boxed().collect(Collectors.toUnmodifiableMap(elementsCounter::get, counterList::get)));
-        counter.forEach((ts, integer) -> System.out.println("to get ("+challenge.getName()+") : "+ts+" / "+integer));
         this.playersCounter = new HashMap<>();
     }
 
@@ -54,11 +53,16 @@ public class ChallengeProgress {
         if(playerChallengeProgress.getStatus() != ChallengeStatus.SUCCESSFUL) throw new RuntimeException("complete the challenge before validating it");
         playerChallengeProgress.setStatus(ChallengeStatus.REWARD_RECOVERED);
 
+        try {
+            new ChallengeRequest(challenge.skyblock.getDatabase(), true).updateChallenge(challenge.getID(), player.getUniqueId(), playerChallengeProgress);
+        } catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         challenge.getReward().getAward(player);
     }
 
     public final void accomplished(Player player) {
-        player.sendMessage("accomplished");
         final PlayerChallengeProgress playerChallengeProgress = getPlayerChallengeProgress(player);
         if(playerChallengeProgress.getStatus() != ChallengeStatus.IN_PROGRESS) throw new RuntimeException("the challenge is not in progress");
         playerChallengeProgress.setStatus(ChallengeStatus.SUCCESSFUL);

@@ -1,24 +1,32 @@
 package net.lyflow.skyblock.listener.inventory;
 
 import net.lyflow.skyblock.SkyBlock;
+import net.lyflow.skyblock.challenge.Challenge;
+import net.lyflow.skyblock.challenge.ChallengeStatus;
+import net.lyflow.skyblock.challenge.PlayerChallengeProgress;
 import net.lyflow.skyblock.event.island.CreateIslandEvent;
 import net.lyflow.skyblock.event.itemshop.PlayerBuyItemEvent;
 import net.lyflow.skyblock.event.itemshop.PlayerSellItemEvent;
+import net.lyflow.skyblock.inventory.challenge.ChallengeInventory;
 import net.lyflow.skyblock.inventory.shop.AmountItemShopInventory;
 import net.lyflow.skyblock.inventory.shop.ShopCategoryInventory;
 import net.lyflow.skyblock.inventory.shop.ShopInventory;
 import net.lyflow.skyblock.island.IslandDifficulty;
+import net.lyflow.skyblock.manager.ChallengeManager;
 import net.lyflow.skyblock.shop.ItemShop;
 import net.lyflow.skyblock.shop.ShopCategory;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
 
 public class InventoryClickListener implements Listener {
 
@@ -128,6 +136,51 @@ public class InventoryClickListener implements Listener {
                 }
             }
             player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(ItemShop.getItemShopByMaterial(item.getType()), 1, page, isBuyInventory));
+            return;
+        }
+
+        if(title.equals("§gChallenges - Menu")) {
+            event.setCancelled(true);
+
+            final Challenge.Difficulty difficulty = Challenge.Difficulty.getChallengeBySlot(event.getSlot());
+            if(skyblock.getChallengeManager().getChallengesByDifficulty(difficulty).isEmpty()) {
+                player.sendMessage("§cIl n'y a pas de défis encore dans cette section");
+                return;
+            }
+            if(!difficulty.playerHasAccess(skyblock.getChallengeManager(), player)) {
+                try {
+                    player.sendMessage("§cVeuillez terminer la moitié des challenges "+difficulty.getBefore().getName());
+                } catch(Exception e) {
+                    throw new RuntimeException(e);
+                }
+                return;
+            }
+            player.openInventory(ChallengeInventory.getChallengeInventory(skyblock.getChallengeManager(), player, difficulty));
+            return;
+        }
+
+        if(title.startsWith("§gChallenges")) {
+            event.setCancelled(true);
+
+            final Challenge.Difficulty difficultyPage = Arrays.stream(Challenge.Difficulty.values()).filter(difficulty -> title.contains(difficulty.getName()))
+                    .findFirst().get();
+            final Challenge<? extends Event> challenge = skyblock.getChallengeManager().getChallengesByDifficulty(difficultyPage).stream().parallel()
+                    .filter(challenges -> challenges.getSlot() == event.getSlot()).findFirst().get();
+
+            final PlayerChallengeProgress playerChallengeProgress = challenge.getChallengeProgress().getPlayerChallengeProgress(player);
+            final ChallengeStatus challengeStatus = playerChallengeProgress.getStatus();
+
+            // TODO : Challenge qui ce déverrouille par d'autre challenge
+            switch(challengeStatus) {
+                case LOCKED -> player.sendMessage("§cPour débloquer ce défi, il vous faudra faire les défis suivants : ...");
+                case IN_PROGRESS -> player.sendMessage("§cVeuillez terminer le défi avant de vouloir récupérer les récompenses");
+                case REWARD_RECOVERED -> player.sendMessage("§cVous avez déjà validé ce défi");
+                case SUCCESSFUL -> {
+                    player.sendMessage("§aVous avez validé le défi §b"+challenge.getName());
+                    challenge.getChallengeProgress().accessReward(player);
+                }
+            }
+            return;
         }
 
     }

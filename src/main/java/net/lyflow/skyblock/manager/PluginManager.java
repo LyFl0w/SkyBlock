@@ -1,10 +1,7 @@
 package net.lyflow.skyblock.manager;
 
 import net.lyflow.skyblock.SkyBlock;
-import net.lyflow.skyblock.command.IslandCommand;
-import net.lyflow.skyblock.command.LobbyCommand;
-import net.lyflow.skyblock.command.MoneyCommand;
-import net.lyflow.skyblock.command.ShopCommand;
+import net.lyflow.skyblock.command.*;
 import net.lyflow.skyblock.listener.block.BlockSpreadListener;
 import net.lyflow.skyblock.listener.inventory.InventoryClickListener;
 import net.lyflow.skyblock.listener.player.AsyncPlayerPreLoginListener;
@@ -46,5 +43,8 @@ public class PluginManager {
 
         skyblock.getCommand("lobby").setExecutor(new LobbyCommand(skyblock));
         skyblock.getCommand("shop").setExecutor(new ShopCommand());
+        skyblock.getCommand("challenge").setExecutor(new ChallengeCommand());
+
+
     }
 }

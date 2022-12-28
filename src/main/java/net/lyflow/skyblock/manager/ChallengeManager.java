@@ -29,7 +29,7 @@ public class ChallengeManager {
         addNewChallenges(
                 new ReproduceAnimalChallenge(skyblock, 1, Challenge.Difficulty.EASY, Arrays.asList(5, 2),
                         Arrays.asList(Arrays.asList(EntityType.COW, EntityType.SHEEP), List.of(EntityType.PIG)),
-                        new Reward(List.of(new ItemStack(Material.IRON_INGOT, 5)), 5))
+                        new Reward(List.of(new ItemStack(Material.IRON_INGOT, 5)), 5), 1)
                 );
     }
 
@@ -45,23 +45,45 @@ public class ChallengeManager {
         return registeredChallenges.stream().parallel().anyMatch(challenge -> challenge.getID() == id);
     }
 
+    public boolean challengeExist(String name) {
+        return registeredChallenges.stream().parallel().anyMatch(challenge -> challenge.getName().equalsIgnoreCase(name));
+    }
+
+
     @Nullable
     public Challenge<? extends Event> getChallengeByID(int id) {
         return registeredChallenges.stream().parallel().filter(challenge -> challenge.getID() == id).findFirst().orElse(null);
     }
 
+    @Nullable
+    public Challenge<? extends Event> getChallengeByName(String name) {
+        return registeredChallenges.stream().parallel().filter(challenge -> challenge.getName() == name).findFirst().orElse(null);
+    }
+
+    @Nullable
     public List<? extends Challenge<? extends Event>> getChallengesByType(Challenge.Type type) {
         return registeredChallenges.stream().parallel().filter(challenge -> challenge.getType() == type).toList();
+    }
+
+    @Nullable
+    public List<? extends Challenge<? extends Event>> getChallengesByDifficulty(Challenge.Difficulty difficulty) {
+        return registeredChallenges.stream().parallel().filter(challenge -> challenge.getDifficulty() == difficulty).toList();
     }
 
     @SafeVarargs
     public final void addNewChallenges(Challenge<? extends Event>... challenges) {
         Arrays.stream(challenges).forEach(challenge ->  {
+            final String name = challenge.getName();
             final int id = challenge.getID();
+
             if(challengeExist(id)) {
                 final Challenge<?> otherChallenge = getChallengeByID(id);
                 throw new RuntimeException((challenge.equals(otherChallenge)) ? "Their is a duplication of Challenge with id "+id : "The Challenge "+challenge.getName()+" can't be initialized because his id is already use by the Challenge "+otherChallenge.getName());
+            } else if(challengeExist(name)) {
+                final Challenge<?> otherChallenge = getChallengeByName(name);
+                throw new RuntimeException((challenge.equals(otherChallenge)) ? "Their is a duplication of Challenge with name "+name : "The Challenge "+challenge.getName()+" can't be initialized because his name is already use by this Challenge ID "+otherChallenge.getID());
             }
+
             getRegisteredChallenges().add(challenge);
         });
 

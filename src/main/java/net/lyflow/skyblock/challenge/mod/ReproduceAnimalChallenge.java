@@ -19,12 +19,12 @@ import java.util.List;
 
 public class ReproduceAnimalChallenge extends EntityChallenge<EntityBreedEvent> {
 
-    public ReproduceAnimalChallenge(SkyBlock skyblock, int id, Difficulty difficulty, List<Integer> counterList, List<List<EntityType>> elementsCounter, Reward reward, Material material, String name, String... description) {
-        super(skyblock, id, difficulty, Type.REPRODUCE_ANIMAL, counterList, elementsCounter, reward, material, name, description);
+    public ReproduceAnimalChallenge(SkyBlock skyblock, int id, Difficulty difficulty, List<Integer> counterList, List<List<EntityType>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
+        super(skyblock, id, difficulty, Type.REPRODUCE_ANIMAL, counterList, elementsCounter, reward, slot, material, name, description);
     }
 
-    public ReproduceAnimalChallenge(SkyBlock skyblock, int id, Difficulty difficulty, List<Integer> counterList, List<List<EntityType>> elementsCounter, Reward reward) {
-        this(skyblock, id, difficulty, counterList, elementsCounter, reward, Material.WHEAT, "Defi de fou sur la reproduction d'animaux", "generic descrition", "oui il y a une faute");
+    public ReproduceAnimalChallenge(SkyBlock skyblock, int id, Difficulty difficulty, List<Integer> counterList, List<List<EntityType>> elementsCounter, Reward reward, int slot) {
+        this(skyblock, id, difficulty, counterList, elementsCounter, reward, slot, Material.WHEAT, "Defi de fou sur la reproduction d'animaux", "generic descrition", "oui il y a une faute");
     }
 
     @Override
