@@ -1,4 +1,4 @@
-package net.lyflow.skyblock.challenge.mod;
+package net.lyflow.skyblock.challenge.mod.entity;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.challenge.PlayerChallengeProgress;

@@ -3,8 +3,14 @@ package net.lyflow.skyblock.manager;
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.challenge.Challenge;
 import net.lyflow.skyblock.challenge.Reward;
-import net.lyflow.skyblock.challenge.mod.ReproduceAnimalChallenge;
+import net.lyflow.skyblock.challenge.mod.CraftItemChallenge;
+import net.lyflow.skyblock.challenge.mod.block.PlaceBlockChallenge;
+import net.lyflow.skyblock.challenge.mod.block.RemoveBlockChallenge;
+import net.lyflow.skyblock.challenge.mod.shop.BuyItemChallenge;
+import net.lyflow.skyblock.challenge.mod.entity.KillEntityChallenge;
+import net.lyflow.skyblock.challenge.mod.entity.ReproduceAnimalChallenge;
 
+import net.lyflow.skyblock.challenge.mod.shop.SellItemChallenge;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
@@ -33,25 +39,22 @@ public class ChallengeManager {
     private void createChallenges(SkyBlock skyblock) {
         addNewChallenges(
                 new ReproduceAnimalChallenge(skyblock, 0, Challenge.Difficulty.EASY, List.of(1), Arrays.asList(1, 1), Arrays.asList(Arrays.asList(EntityType.COW, EntityType.CHICKEN), List.of(EntityType.PIG)),
-                        new Reward(List.of(new ItemStack(Material.IRON_INGOT)), 5), 1, Material.WHEAT, "Started from the bottom"),
-
-                new ReproduceAnimalChallenge(skyblock, 1, Challenge.Difficulty.EASY, List.of(4), List.of(5), List.of(List.of(EntityType.SHEEP)),
-                        new Reward(List.of(new ItemStack(Material.IRON_INGOT, 5))), 2, Material.APPLE, "Still at the bottom"),
-
-                new ReproduceAnimalChallenge(skyblock, 2, Challenge.Difficulty.EASY, List.of(4), List.of(2), List.of(List.of(EntityType.CHICKEN)),
-                        new Reward(List.of(new ItemStack(Material.IRON_INGOT, 5))), 3, Material.APPLE, "Still at the bottom n°2"),
-
-
-                new ReproduceAnimalChallenge(skyblock, 3, Challenge.Difficulty.NORMAL, List.of(4), List.of(5), List.of(List.of(EntityType.PIG)),
-                        new Reward(List.of(new ItemStack(Material.DIAMOND, 2))), 1, Material.BONE_MEAL, "Step up bis", "don't stay stand up"),
-
-                new ReproduceAnimalChallenge(skyblock, 4, Challenge.Difficulty.NORMAL, List.of(10), List.of(List.of(EntityType.COW)),
-                        new Reward(List.of(new ItemStack(Material.DIAMOND, 2))), 2, Material.BONE_MEAL, "Step up", "stay stand up")
+                        new Reward(List.of(new ItemStack(Material.IRON_INGOT)), 5), 1, Material.WHEAT, "Started from the bottom")
                 );
     }
 
     private void registerChallengesEvent(SkyBlock skyblock, PluginManager pluginManager) {
         pluginManager.registerEvents(new ReproduceAnimalChallenge.ListenerEvent(this), skyblock);
+        pluginManager.registerEvents(new KillEntityChallenge.ListenerEvent(this), skyblock);
+
+        pluginManager.registerEvents(new BuyItemChallenge.ListenerEvent(this), skyblock);
+        pluginManager.registerEvents(new SellItemChallenge.ListenerEvent(this), skyblock);
+
+        pluginManager.registerEvents(new PlaceBlockChallenge.ListenerEvent(this), skyblock);
+        pluginManager.registerEvents(new RemoveBlockChallenge.ListenerEvent(this), skyblock);
+
+        pluginManager.registerEvents(new CraftItemChallenge.ListenerEvent(this), skyblock);
+
     }
 
     public List<Challenge<? extends Event>> getRegisteredChallenges() {

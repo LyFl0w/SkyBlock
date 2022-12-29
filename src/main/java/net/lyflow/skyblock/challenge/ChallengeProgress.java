@@ -41,7 +41,7 @@ public class ChallengeProgress {
         final HashMap<List<String>, Integer> playerCounterClone = new HashMap<>(playerCounter);
 
         playerCounter.entrySet().stream().parallel().filter(entry -> entry.getKey().contains(t)).filter(entry -> counter.get(entry.getKey()) > entry.getValue())
-                .forEach(entry -> playerCounter.replace(entry.getKey(), entry.getValue()+increment));
+                .forEach(entry -> playerCounter.replace(entry.getKey(), Math.min(entry.getValue()+increment, counter.get(entry.getKey()))));
 
         if(playerCounter.equals(playerCounterClone)) return;
 

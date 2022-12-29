@@ -3,25 +3,23 @@ package net.lyflow.skyblock.event.itemshop;
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.database.request.account.AccountRequest;
 import net.lyflow.skyblock.shop.ItemShop;
+import net.lyflow.skyblock.utils.InventoryUtils;
 import net.lyflow.skyblock.utils.StringUtils;
-import org.bukkit.Material;
+
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
-public class PlayerSellItemEvent extends Event implements Cancellable {
+public class PlayerSellItemEvent extends ShopEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    private boolean isCancelled = false;
-
     public PlayerSellItemEvent(SkyBlock skyblock, Player player, ItemShop itemShop, int amount) {
+        super(skyblock, player, itemShop, amount);
+
         final AccountRequest accountRequest = new AccountRequest(skyblock.getDatabase(), false);
         try {
             final ItemStack itemStack = new ItemStack(itemShop.getMaterial(), amount);
@@ -35,12 +33,11 @@ public class PlayerSellItemEvent extends Event implements Cancellable {
             accountRequest.setMoney(player.getUniqueId(), accountRequest.getMoney(player.getUniqueId())+itemShop.getSellPrice() * amount);
             skyblock.getDatabase().closeConnection();
 
-            removeItems(player, itemShop.getMaterial(), amount);
+            InventoryUtils.removeItems(player, itemShop.getMaterial(), amount);
             player.sendMessage("§aVous avez vendu "+amount+" "+formatedItemStackName);
         } catch(SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     @Override @NotNull
@@ -50,33 +47,6 @@ public class PlayerSellItemEvent extends Event implements Cancellable {
 
     public static HandlerList getHandlerList() {
         return HANDLERS;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return isCancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean setCancelled) {
-        this.isCancelled = setCancelled;
-    }
-
-    public void removeItems(Player player, Material material, int amount) {
-        final PlayerInventory playerInventory = player.getInventory();
-
-        for(int slot=0; slot<playerInventory.getSize(); slot++) {
-            final ItemStack itemStack = playerInventory.getItem(slot);
-            if(itemStack == null || itemStack.getType() != material) continue;
-
-            amount -= itemStack.getAmount();
-            if(amount < 0)  {
-                itemStack.setAmount(-amount);
-                return;
-            }
-            playerInventory.remove(itemStack);
-            if(amount == 0) return;
-        }
     }
 
 }

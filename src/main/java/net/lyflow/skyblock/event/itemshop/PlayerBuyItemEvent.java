@@ -15,13 +15,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
-public class PlayerBuyItemEvent extends Event implements Cancellable {
+public class PlayerBuyItemEvent extends ShopEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    private boolean isCancelled = false;
-
     public PlayerBuyItemEvent(SkyBlock skyblock, Player player, ItemShop itemShop, int amount) {
+        super(skyblock, player, itemShop, amount);
+
         final AccountRequest accountRequest = new AccountRequest(skyblock.getDatabase(), false);
         try {
             final float playerMoney = accountRequest.getMoney(player.getUniqueId());
@@ -53,16 +53,6 @@ public class PlayerBuyItemEvent extends Event implements Cancellable {
 
     public static HandlerList getHandlerList() {
         return HANDLERS;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return isCancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean setCancelled) {
-        this.isCancelled = setCancelled;
     }
 
 }
