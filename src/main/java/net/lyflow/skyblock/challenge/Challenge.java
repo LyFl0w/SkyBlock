@@ -5,6 +5,7 @@ import net.lyflow.skyblock.manager.ChallengeManager;
 import net.lyflow.skyblock.utils.StringUtils;
 import net.lyflow.skyblock.utils.builder.ItemBuilder;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -13,9 +14,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public abstract class Challenge<T extends Event> {
 
@@ -30,12 +29,13 @@ public abstract class Challenge<T extends Event> {
 
     private final Difficulty difficulty;
     private final Type type;
-
+    private final List<Integer> lockedChallengesID;
     private final Reward reward;
 
     protected final ChallengeProgress challengeProgress;
 
-    public Challenge(SkyBlock skyblock, int id, Difficulty difficulty, Type type, List<Integer> counterList, List<List<String>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
+    public Challenge(SkyBlock skyblock, int id, Difficulty difficulty, Type type, List<Integer> lockedChallengesID, List<Integer> counterList, List<List<String>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
+        if(lockedChallengesID.contains(id)) throw new RuntimeException("the Challenge \""+name+"\" can't block itself");
         this.skyblock = skyblock;
 
         this.id = id;
@@ -47,6 +47,7 @@ public abstract class Challenge<T extends Event> {
 
         this.difficulty = difficulty;
         this.type = type;
+        this.lockedChallengesID = lockedChallengesID;
 
         this.reward = reward;
 
@@ -57,12 +58,11 @@ public abstract class Challenge<T extends Event> {
         skyblock.getServer().getScheduler().runTask(skyblock, () -> {
             final PlayerChallengeProgress playerChallengeProgress = challengeProgress.getPlayerChallengeProgress(player);
             final ChallengeStatus challengeStatus = playerChallengeProgress.getStatus();
-            if(challengeStatus == ChallengeStatus.IN_PROGRESS || challengeStatus == ChallengeStatus.LOCKED) {
-                try {
-                    onEvent(event, player, playerChallengeProgress);
-                } catch(SQLException e) {
-                    throw new RuntimeException(e);
-                }
+            if(challengeStatus != ChallengeStatus.IN_PROGRESS) return;
+            try {
+                onEvent(event, player, playerChallengeProgress);
+            } catch(SQLException e) {
+                throw new RuntimeException(e);
             }
         });
     }
@@ -74,13 +74,19 @@ public abstract class Challenge<T extends Event> {
         final ItemBuilder itemBuilder = new ItemBuilder(material);
 
         if(status == ChallengeStatus.LOCKED) {
-            itemBuilder.setName("§c[Locked] "+name).setLore(StringUtils.prefixWords("§c", description));
+            itemBuilder.setName(getCensoredName());
+            if(getKeyChallenges().size() > 0)
+                itemBuilder.setLore(getKeyChallenges().stream()
+                        .filter(challenge -> !challenge.getChallengeProgress().getPlayerChallengeProgress(player).getStatus().isFinish())
+                        .map(challenge -> "§c- "+ChatColor.stripColor(challenge.getName(player))).toList());
         } else {
             if(status == ChallengeStatus.SUCCESSFUL) {
                 itemBuilder.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 itemBuilder.addEnchant(Enchantment.DAMAGE_ALL, 1);
             }
-            itemBuilder.setName(name).setLore(description);
+            final List<String> lore = new ArrayList<>(Arrays.stream(description).toList());
+            lore.addAll(type.getDefaultDescription(challengeProgress, player));
+            itemBuilder.setName(name).setLore(lore);
         }
         return itemBuilder.toItemStack();
     }
@@ -105,6 +111,14 @@ public abstract class Challenge<T extends Event> {
         return name;
     }
 
+    public String getName(Player player) {
+        return (getChallengeProgress().getPlayerChallengeProgress(player).getStatus() == ChallengeStatus.LOCKED) ? getCensoredName() : name;
+    }
+
+    public String getCensoredName() {
+        return "§c????";
+    }
+
     public String[] getDescription() {
         return description;
     }
@@ -115,6 +129,24 @@ public abstract class Challenge<T extends Event> {
 
     public int getSlot() {
         return slot;
+    }
+
+    public boolean isChallengeLocker() {
+        return !lockedChallengesID.isEmpty();
+    }
+
+    public List<Integer> getLockedChallengesID() {
+        return lockedChallengesID;
+    }
+
+    public List<Challenge<? extends Event>> getChallengesLocker() {
+        return skyblock.getChallengeManager().getRegisteredChallenges().stream().parallel()
+                .filter(challenge -> lockedChallengesID.contains(challenge.getID())).toList();
+    }
+
+    public List<Challenge<? extends Event>> getKeyChallenges() {
+        return skyblock.getChallengeManager().getRegisteredChallenges().stream().parallel()
+                .filter(challenge -> challenge.getLockedChallengesID().contains(id)).toList();
     }
 
     public enum Difficulty {
@@ -169,19 +201,47 @@ public abstract class Challenge<T extends Event> {
             if(this == EASY) throw new Exception("There is no challenge before EASY");
             return getChallengeBySlot(getSlot()-1);
         }
+
+        public Difficulty getNext() throws Exception {
+            if(this == EXTREME) throw new Exception("There is no challenge after EXTREME");
+            return getChallengeBySlot(getSlot()+1);
+        }
     }
 
     public enum Type {
-        KILL_ENTITY,
-        REPRODUCE_ANIMAL,
+        KILL_ENTITY("Tuer les entitées suivantes :"),
+        REPRODUCE_ANIMAL("Reproduire les animaux suivants :"),
 
-        PLACE_BLOCK,
-        REMOVE_BLOCK,
+        PLACE_BLOCK("Placer les blocs suivants :"),
+        REMOVE_BLOCK("Casser les blocs suivants :"),
 
-        CRAFT_ITEM,
+        CRAFT_ITEM("Crafter les objets suivants :"),
 
-        BUY_ITEM,
-        SELL_ITEM,
+        BUY_ITEM("Acheter les objets suivants :"),
+        SELL_ITEM("Vender les objets suivants :");
+
+        private final String defaultDescription;
+
+        Type(String defaultDescription) {
+            this.defaultDescription = defaultDescription;
+        }
+
+        public ArrayList<String> getDefaultDescription(ChallengeProgress challengeProgress, Player player) {
+            final ArrayList<String> description = new ArrayList<>(List.of(defaultDescription));
+            challengeProgress.getPlayerChallengeProgress(player).getPlayerCounter().forEach((objectives, totalPlayer) -> {
+                final StringBuilder line = new StringBuilder();
+                final int totalToReach = challengeProgress.getCounter().get(objectives);
+                line.append((totalPlayer >= totalToReach) ? "§a§m" : "§c").append("- ").append(totalPlayer).append("/").append(totalToReach).append(" ").append(StringUtils.capitalizeWord(objectives.get(0)));
+
+                final List<String> nextObjectives = new ArrayList<>(objectives);
+                nextObjectives.remove(0);
+
+                nextObjectives.forEach(objective -> line.append(" ou ").append(StringUtils.capitalizeWord(objective)));
+
+                description.add(line.toString());
+            });
+            return description;
+        }
     }
 
     @Override

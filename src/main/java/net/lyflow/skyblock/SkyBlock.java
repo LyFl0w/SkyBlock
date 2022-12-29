@@ -24,6 +24,7 @@ public class SkyBlock extends JavaPlugin {
 
         new PluginManager(this);
         challengeManager = new ChallengeManager(this);
+        challengeManager.init();
     }
 
     @Override
