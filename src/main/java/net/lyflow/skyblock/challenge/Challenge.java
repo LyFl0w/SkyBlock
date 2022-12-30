@@ -167,8 +167,8 @@ public abstract class Challenge<T extends Event> {
         EASY(2, new ItemBuilder(Material.LIME_STAINED_GLASS_PANE), "§aFacile"),
         NORMAL(3, new ItemBuilder(Material.LIGHT_BLUE_STAINED_GLASS_PANE), "§3Normal"),
         MEDIUM(4, new ItemBuilder(Material.BLUE_STAINED_GLASS_PANE), "§9Moyen"),
-        HARD(5, new ItemBuilder(Material.LIGHT_BLUE_STAINED_GLASS_PANE), "§5Difficile"),
-        EXTREME(6, new ItemBuilder(Material.RED_STAINED_GLASS_PANE), "§5Extreme");
+        HARD(5, new ItemBuilder(Material.RED_STAINED_GLASS_PANE), "§cDifficile"),
+        EXTREME(6, new ItemBuilder(Material.PURPLE_STAINED_GLASS_PANE), "§5Extreme");
 
         private final ItemBuilder itemBuilder;
         private final String name;
