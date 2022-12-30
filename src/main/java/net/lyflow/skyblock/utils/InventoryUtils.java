@@ -3,6 +3,7 @@ package net.lyflow.skyblock.utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -35,6 +36,16 @@ public class InventoryUtils {
             itemsChecked++;
         }
         return possibleCreations * resultAmount;
+    }
+
+    public static int countItemInventory(Inventory inventory, Material material) {
+        int result = 0;
+        for(int i=0; i<inventory.getSize(); i++) {
+            final ItemStack itemStack = inventory.getItem(i);
+            if(itemStack == null || itemStack.getType() != material) continue;
+            result += itemStack.getAmount();
+        }
+        return result;
     }
 
 }

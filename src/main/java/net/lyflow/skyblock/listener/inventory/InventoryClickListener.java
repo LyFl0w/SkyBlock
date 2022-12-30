@@ -5,7 +5,6 @@ import net.lyflow.skyblock.challenge.Challenge;
 import net.lyflow.skyblock.challenge.ChallengeStatus;
 import net.lyflow.skyblock.challenge.PlayerChallengeProgress;
 import net.lyflow.skyblock.database.request.account.AccountRequest;
-
 import net.lyflow.skyblock.event.island.CreateIslandEvent;
 import net.lyflow.skyblock.event.itemshop.PlayerBuyItemEvent;
 import net.lyflow.skyblock.event.itemshop.PlayerSellItemEvent;
@@ -14,9 +13,9 @@ import net.lyflow.skyblock.inventory.shop.AmountItemShopInventory;
 import net.lyflow.skyblock.inventory.shop.ShopCategoryInventory;
 import net.lyflow.skyblock.inventory.shop.ShopInventory;
 import net.lyflow.skyblock.island.IslandDifficulty;
-import net.lyflow.skyblock.manager.ChallengeManager;
 import net.lyflow.skyblock.shop.ItemShop;
 import net.lyflow.skyblock.shop.ShopCategory;
+import net.lyflow.skyblock.utils.InventoryUtils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -122,7 +121,7 @@ public class InventoryClickListener implements Listener {
                     try {
                         final int count = (isBuyInventory)
                                 ? (int) Math.floor(new AccountRequest(skyblock.getDatabase(), true).getMoney(player.getUniqueId()) / itemShop.getBuyPrice())
-                                : countItemInventory(player.getInventory(), selectedItem.getType());
+                                : InventoryUtils.countItemInventory(player.getInventory(), selectedItem.getType());
                         player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(
                                 skyblock, player.getUniqueId(), itemShop, count , page, isBuyInventory));
                     } catch(SQLException e) {
@@ -214,15 +213,5 @@ public class InventoryClickListener implements Listener {
 
         }
 
-    }
-
-    private int countItemInventory(Inventory inventory, Material material) {
-        int result = 0;
-        for(int i=0; i<inventory.getSize(); i++) {
-            final ItemStack itemStack = inventory.getItem(i);
-            if(itemStack == null || itemStack.getType() != material) continue;
-            result += itemStack.getAmount();
-        }
-        return result;
     }
 }

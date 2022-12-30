@@ -31,7 +31,7 @@ public class CreateIslandEvent extends Event implements Cancellable {
                 return;
             }
 
-            player.sendMessage("§bCréation de votre île en cours §6§o(difficulté : "+islandDifficulty.name()+")");
+            player.sendMessage("§bCréation de votre île en cours §6§o(difficulté : "+islandDifficulty.getName()+")");
 
             try {
                 final String startPath = "skyblock-map/";
@@ -60,7 +60,6 @@ public class CreateIslandEvent extends Event implements Cancellable {
                 player.sendMessage("§bTéléportation en cours");
                 player.teleport(spawn);
             } catch(SQLException e) {
-                // DELETE USELESS WORLD FOLDER IF WE CAN'T GENERATE UTILS INFORMATION IN DATABASE
                 throw new RuntimeException(e);
             }
         } catch(SQLException e) {
