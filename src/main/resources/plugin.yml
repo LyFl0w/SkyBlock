@@ -14,6 +14,7 @@ commands:
   visit:
     usage: §c/visit <player>
     description: command to visit other island
+    aliases: v
 
   lobby:
     usage: §c/lobby
@@ -23,7 +24,9 @@ commands:
   shop:
     usage: §c/shop
     description: command to access to the shop
+    aliases: s
 
   money:
     usage: §c/money or /money <send> <player>
     description: command to see your money or send money to any player
+    aliases: m

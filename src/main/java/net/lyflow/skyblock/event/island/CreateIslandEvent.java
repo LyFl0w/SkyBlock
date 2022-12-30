@@ -2,7 +2,6 @@ package net.lyflow.skyblock.event.island;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.island.IslandDifficulty;
-import net.lyflow.skyblock.database.request.account.AccountRequest;
 import net.lyflow.skyblock.database.request.island.IslandRequest;
 import net.lyflow.skyblock.utils.ResourceUtils;
 
@@ -31,34 +30,37 @@ public class CreateIslandEvent extends Event implements Cancellable {
                 setCancelled(true);
                 return;
             }
+
             player.sendMessage("§bCréation de votre île en cours §6§o(difficulté : "+islandDifficulty.name()+")");
 
             try {
+                final String startPath = "skyblock-map/";
+                final double x = -0.5;
+                final double y = 100;
+                final double z = 0.5;
+                final float yaw = 90;
+                final float pitch = 0;
+
+                final int id = islandRequest.createIsland(player.getUniqueId(), islandDifficulty, startPath, x, y, z, yaw, pitch);
+
                 // Make a copy of  Island World
-                final String defaultPath = "skyblock-map/"+new AccountRequest(skyBlock.getDatabase(), true).getPlayerID(player);
+                // create island in DB
+                final String defaultPath = startPath+id;
                 final File islandWorld = new File(skyBlock.getDataFolder(), "../../"+defaultPath);
                 ResourceUtils.saveResourceFolder("maps/skyblock-"+islandDifficulty.name().toLowerCase(), islandWorld, skyBlock, false);
 
                 // Load World
                 skyBlock.getServer().createWorld(new WorldCreator(defaultPath));
-                final Location spawn = new Location(skyBlock.getServer().getWorld(defaultPath), -0.5, 100, 0.5, 90, 0);
+                final Location spawn = new Location(skyBlock.getServer().getWorld(defaultPath), x, y, z, yaw, pitch);
 
+                skyBlock.getDatabase().closeConnection();
+
+                // Teleport to the world
                 player.sendMessage("§bTéléportation en cours");
-
-                try {
-                    // create island in DB
-                    islandRequest.createIsland(player.getUniqueId(), spawn, islandDifficulty);
-                    skyBlock.getDatabase().closeConnection();
-
-                    // Teleport to the world
-                    player.teleport(spawn);
-                } catch(SQLException e) {
-                    // DELETE USELESS WORLD FOLDER IF WE CAN'T GENERATE UTILS INFORMATION IN DATABASE
-                    islandWorld.delete();
-                    throw new RuntimeException("Database error (therefore the world folder ("+defaultPath+") has been deleted)", e);
-                }
+                player.teleport(spawn);
             } catch(SQLException e) {
-                    throw new RuntimeException("Player ID not found", e);
+                // DELETE USELESS WORLD FOLDER IF WE CAN'T GENERATE UTILS INFORMATION IN DATABASE
+                throw new RuntimeException(e);
             }
         } catch(SQLException e) {
             throw new RuntimeException("Erreur lors de la récupération de la base lors de la création d'une île", e);

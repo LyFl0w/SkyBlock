@@ -7,6 +7,7 @@ import net.lyflow.skyblock.database.request.account.AccountRequest;
 import net.lyflow.skyblock.database.request.island.IslandRequest;
 import net.lyflow.skyblock.utils.CommandUtils;
 
+import org.apache.commons.io.FileUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -17,6 +18,8 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -116,7 +119,9 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                             return true;
                         }
 
-                        if(islandRequest.getPlayerIslandStatus(player.getUniqueId()) == PlayerIslandStatus.OWNER) {
+                        final boolean hasTeamMates = islandRequest.getMates(player.getUniqueId()).size() > 1;
+
+                        if(hasTeamMates && islandRequest.getPlayerIslandStatus(player.getUniqueId()) == PlayerIslandStatus.OWNER) {
                             player.sendMessage("§cVous ne pouvez pas quitter l'île étant Owner, veuillez choisir un autre owner avec la commande §6/island set owner <player>");
                             skyBlock.getDatabase().closeConnection();
                             return true;
@@ -126,12 +131,24 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                         if(player.getWorld().getName().equals("skyblock-map/"+islandRequest.getIslandID(player.getUniqueId())))
                             player.teleport(LobbyCommand.spawn);
 
-                        islandRequest.leaveIsland(player.getUniqueId());
+                        if(!hasTeamMates) {
+                            final int id = islandRequest.getIslandID(player.getUniqueId());
+                            final String path = "skyblock-map/"+id;
+                            final File islandWorld = new File(skyBlock.getDataFolder(), "../../"+path);
+                            skyBlock.getLogger().info(islandWorld.getAbsolutePath());
 
+                            skyBlock.getServer().unloadWorld(path, false);
+                            FileUtils.deleteDirectory(islandWorld);
+
+                            islandRequest.leaveIsland(player.getUniqueId());
+                            islandRequest.deleteIsland(id);
+                        } else {
+                            islandRequest.leaveIsland(player.getUniqueId());
+                        }
                         skyBlock.getDatabase().closeConnection();
 
                         player.sendMessage("§aVous avez bien quitté votre île");
-                    } catch(SQLException e) {
+                    } catch(SQLException|IOException e) {
                         throw new RuntimeException(e);
                     }
                     return true;
@@ -330,7 +347,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                             }
 
                             final int islandID = islandRequest.getIslandID(player.getUniqueId());
-                            if(!player.getWorld().getName().equals("skyblock-map/"+islandID)){
+                            if(!player.getWorld().getName().equals("skyblock-map/"+islandID)) {
                                 player.sendMessage("§cIl faut être sur votre île pour pouvoir exécuter cette commande");
                                 skyBlock.getDatabase().closeConnection();
                                 return true;
@@ -346,7 +363,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
 
                             skyBlock.getDatabase().closeConnection();
 
-                            player.sendMessage("§Le spawn d'île a bien été changé");
+                            player.sendMessage("§aLe spawn d'île a bien été changé");
                         } catch(SQLException e) {
                             throw new RuntimeException(e);
                         }
