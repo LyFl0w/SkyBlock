@@ -4,6 +4,8 @@ import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.challenge.Challenge;
 import net.lyflow.skyblock.challenge.ChallengeStatus;
 import net.lyflow.skyblock.challenge.PlayerChallengeProgress;
+import net.lyflow.skyblock.database.request.account.AccountRequest;
+
 import net.lyflow.skyblock.event.island.CreateIslandEvent;
 import net.lyflow.skyblock.event.itemshop.PlayerBuyItemEvent;
 import net.lyflow.skyblock.event.itemshop.PlayerSellItemEvent;
@@ -26,7 +28,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+
 import java.util.Arrays;
+import java.sql.SQLException;
+
 
 public class InventoryClickListener implements Listener {
 
@@ -102,16 +107,36 @@ public class InventoryClickListener implements Listener {
             final ItemStack selectedItem = inventory.getItem(4);
             final ItemShop itemShop = ItemShop.getItemShopByMaterial(selectedItem.getType());
             switch(item.getType()) {
-                case LIME_STAINED_GLASS_PANE, RED_STAINED_GLASS_PANE -> player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(
-                        itemShop, Math.max(Integer.parseInt(selectedItem.getItemMeta().getLore().get(0)) + Integer.parseInt(
-                                ChatColor.stripColor(item.getItemMeta().getDisplayName())), 1), page, isBuyInventory));
+                case LIME_STAINED_GLASS_PANE, RED_STAINED_GLASS_PANE -> {
+                    try {
+                        final String lore = selectedItem.getItemMeta().getLore().get(0);
+                        player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(
+                                skyBlock, player.getUniqueId(), itemShop, Math.min(Math.max(Integer.parseInt(lore.substring(lore.lastIndexOf(":")+2)) + Integer.parseInt(
+                                        ChatColor.stripColor(item.getItemMeta().getDisplayName())), 0), 2304), page, isBuyInventory));
+                    } catch(SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
 
-                case LIGHT_BLUE_STAINED_GLASS_PANE -> player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(
-                        itemShop, Math.max(countItemInventory(player.getInventory(), selectedItem.getType()), 1), page, isBuyInventory));
+                case LIGHT_BLUE_STAINED_GLASS_PANE -> {
+                    try {
+                        final int count = (isBuyInventory)
+                                ? (int) Math.floor(new AccountRequest(skyBlock.getDatabase(), true).getMoney(player.getUniqueId()) / itemShop.getBuyPrice())
+                                : countItemInventory(player.getInventory(), selectedItem.getType());
+                        player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(
+                                skyBlock, player.getUniqueId(), itemShop, count , page, isBuyInventory));
+                    } catch(SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
 
-                default -> skyblock.getServer().getPluginManager().callEvent((isBuyInventory)
-                        ? new PlayerBuyItemEvent(skyblock, player, itemShop, Integer.parseInt(selectedItem.getItemMeta().getLore().get(0)))
-                        : new PlayerSellItemEvent(skyblock, player, itemShop, Integer.parseInt(selectedItem.getItemMeta().getLore().get(0))));
+                default -> {
+                    final String lore = selectedItem.getItemMeta().getLore().get(0);
+                    final int count = Integer.parseInt(lore.substring(lore.lastIndexOf(":")+2));
+                    skyBlock.getServer().getPluginManager().callEvent((isBuyInventory)
+                            ? new PlayerBuyItemEvent(skyBlock, player, itemShop, count)
+                            : new PlayerSellItemEvent(skyBlock, player, itemShop, count));
+                }
             }
 
             return;
@@ -135,7 +160,12 @@ public class InventoryClickListener implements Listener {
                     return;
                 }
             }
-            player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(ItemShop.getItemShopByMaterial(item.getType()), 1, page, isBuyInventory));
+            if(item.getType() == Material.GRAY_STAINED_GLASS_PANE) return;
+            try {
+                player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(skyBlock, player.getUniqueId(), ItemShop.getItemShopByMaterial(item.getType()), 0, page, isBuyInventory));
+            } catch(SQLException e) {
+                throw new RuntimeException(e);
+            }
             return;
         }
 
@@ -181,6 +211,7 @@ public class InventoryClickListener implements Listener {
                 }
             }
             return;
+
         }
 
     }

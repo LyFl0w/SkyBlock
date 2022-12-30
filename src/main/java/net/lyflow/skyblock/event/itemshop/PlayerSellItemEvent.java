@@ -20,7 +20,13 @@ public class PlayerSellItemEvent extends ShopEvent {
     public PlayerSellItemEvent(SkyBlock skyblock, Player player, ItemShop itemShop, int amount) {
         super(skyblock, player, itemShop, amount);
 
-        final AccountRequest accountRequest = new AccountRequest(skyblock.getDatabase(), false);
+        if(amount <= 0) {
+            player.sendMessage("Le nombre d'item sélectionné doit être suppérieur à 0");
+            return;
+        }
+
+        final AccountRequest accountRequest = new AccountRequest(skyBlock.getDatabase(), false);
+
         try {
             final ItemStack itemStack = new ItemStack(itemShop.getMaterial(), amount);
             final String formatedItemStackName = StringUtils.capitalizeSentence(itemStack.getType().name(), "_", " ");
@@ -35,7 +41,7 @@ public class PlayerSellItemEvent extends ShopEvent {
 
             InventoryUtils.removeItems(player, itemShop.getMaterial(), amount);
             player.sendMessage("§aVous avez vendu "+amount+" "+formatedItemStackName);
-        } catch(SQLException e) {
+        } catch(Exception e) {
             throw new RuntimeException(e);
         }
     }

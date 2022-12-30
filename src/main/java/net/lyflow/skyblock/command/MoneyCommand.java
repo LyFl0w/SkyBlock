@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 
 public class MoneyCommand implements CommandExecutor{
 
@@ -59,7 +58,7 @@ public class MoneyCommand implements CommandExecutor{
                             return true;
                         }
 
-                        accountRequest.setMoney(player.getUniqueId(),  - amount);
+                        accountRequest.setMoney(player.getUniqueId(), accountRequest.getMoney(player.getUniqueId()) - amount);
                         accountRequest.setMoney(offlinePlayer.getUniqueId(), accountRequest.getMoney(offlinePlayer.getUniqueId()) + amount);
                         if(offlinePlayer.isOnline()) offlinePlayer.getPlayer().sendMessage("§aVous avez reçu "+amount+" $ de "+player.getName());
                         player.sendMessage("§aVous avez envoyé "+amount+"$ à "+offlinePlayer.getName());

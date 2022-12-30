@@ -20,4 +20,9 @@ public class LocationUtils {
                 .append(location.getY()).append(location.getZ()).append(location.getYaw()).append(location.getPitch()).toString();
     }
 
+    public static String getStringFromPosition(String worldName, double x, double y, double z, float yaw, float pitch) {
+        return new StringBuilderSeparated(new StringBuilder(worldName), ":").append(x)
+                .append(y).append(z).append(yaw).append(pitch).toString();
+    }
+
 }
