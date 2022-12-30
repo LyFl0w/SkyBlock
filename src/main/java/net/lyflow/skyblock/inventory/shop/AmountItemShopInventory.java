@@ -18,13 +18,13 @@ import java.util.UUID;
 
 public class AmountItemShopInventory {
 
-    public static Inventory getAmountItemShopInventory(SkyBlock skyBlock, UUID playerUUID, ItemShop itemShop, int amount, int page, boolean isBuyInventory) throws SQLException {
+    public static Inventory getAmountItemShopInventory(SkyBlock skyblock, UUID playerUUID, ItemShop itemShop, int amount, int page, boolean isBuyInventory) throws SQLException {
         final ArrayList<String> lore = new ArrayList<>(List.of("§rtotals : "+amount));
         if(amount > 0) {
             final float price = amount*(isBuyInventory ? itemShop.getBuyPrice() : itemShop.getSellPrice());
             lore.add("§2prix total : "+price);
             if(isBuyInventory) {
-                final float money = new AccountRequest(skyBlock.getDatabase(), true).getMoney(playerUUID);
+                final float money = new AccountRequest(skyblock.getDatabase(), true).getMoney(playerUUID);
                 if(money < price) lore.set(0, "§c"+ChatColor.stripColor(lore.get(0)));
                 lore.add("§aVous avez "+money+"$");
             }

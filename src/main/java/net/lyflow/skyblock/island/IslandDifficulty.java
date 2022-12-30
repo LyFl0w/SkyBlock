@@ -6,7 +6,9 @@ import java.util.Arrays;
 
 public enum IslandDifficulty {
 
-    EASY(1, "Facile", Material.LIME_STAINED_GLASS_PANE), NORMAL(2, "Normal", Material.YELLOW_STAINED_GLASS_PANE), HARD(3, "Difficile", Material.RED_STAINED_GLASS_PANE);
+    EASY(1, "§aFacile", Material.LIME_STAINED_GLASS_PANE),
+    NORMAL(2, "§eNormal", Material.YELLOW_STAINED_GLASS_PANE),
+    HARD(3, "§cDifficile", Material.RED_STAINED_GLASS_PANE);
 
     private final int difficulty;
     private final Material material;
@@ -26,7 +28,7 @@ public enum IslandDifficulty {
         return material;
     }
 
-    public String getItemName() {
+    public String getName() {
         return itemName;
     }
 

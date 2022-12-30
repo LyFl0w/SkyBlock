@@ -19,18 +19,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 
-public class PlayerBuyItemEvent extends Event implements Cancellable {
+public class PlayerBuyItemEvent extends ShopEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    private boolean isCancelled = false;
-
-    public PlayerBuyItemEvent(SkyBlock skyBlock, Player player, ItemShop itemShop, int amount) {
+    public PlayerBuyItemEvent(SkyBlock skyblock, Player player, ItemShop itemShop, int amount) {
+        super(skyblock, player, itemShop, amount);
+        
         if(amount <= 0) {
             player.sendMessage("Le nombre d'item sélectionné doit être suppérieur à 0");
             return;
         }
-        final AccountRequest accountRequest = new AccountRequest(skyBlock.getDatabase(), false);
+        final AccountRequest accountRequest = new AccountRequest(skyblock.getDatabase(), false);
+
         try {
             final float playerMoney = accountRequest.getMoney(player.getUniqueId());
             final float price = itemShop.getBuyPrice() * amount;
@@ -38,13 +39,13 @@ public class PlayerBuyItemEvent extends Event implements Cancellable {
             final String formatedItemStackName = StringUtils.capitalizeSentence(itemStack.getType().name(), "_", " ");
 
             if(playerMoney < price) {
-                skyBlock.getDatabase().closeConnection();
+                skyblock.getDatabase().closeConnection();
                 player.sendMessage("§cVous n'avez pas assez de money pour acheter "+amount+" "+formatedItemStackName);
                 setCancelled(true);
                 return;
             }
             accountRequest.setMoney(player.getUniqueId(), playerMoney-price);
-            skyBlock.getDatabase().closeConnection();
+            skyblock.getDatabase().closeConnection();
 
             final PlayerInventory inventory = player.getInventory();
             final int stackNumber = amount/itemStack.getMaxStackSize();
@@ -75,16 +76,6 @@ public class PlayerBuyItemEvent extends Event implements Cancellable {
 
     public static HandlerList getHandlerList() {
         return HANDLERS;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return isCancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean setCancelled) {
-        this.isCancelled = setCancelled;
     }
 
 }

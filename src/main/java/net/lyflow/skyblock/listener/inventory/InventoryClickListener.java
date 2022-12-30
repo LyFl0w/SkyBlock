@@ -1,33 +1,42 @@
 package net.lyflow.skyblock.listener.inventory;
 
 import net.lyflow.skyblock.SkyBlock;
+import net.lyflow.skyblock.challenge.Challenge;
+import net.lyflow.skyblock.challenge.ChallengeStatus;
+import net.lyflow.skyblock.challenge.PlayerChallengeProgress;
 import net.lyflow.skyblock.database.request.account.AccountRequest;
 import net.lyflow.skyblock.event.island.CreateIslandEvent;
 import net.lyflow.skyblock.event.itemshop.PlayerBuyItemEvent;
 import net.lyflow.skyblock.event.itemshop.PlayerSellItemEvent;
+import net.lyflow.skyblock.inventory.challenge.ChallengeInventory;
 import net.lyflow.skyblock.inventory.shop.AmountItemShopInventory;
 import net.lyflow.skyblock.inventory.shop.ShopCategoryInventory;
 import net.lyflow.skyblock.inventory.shop.ShopInventory;
 import net.lyflow.skyblock.island.IslandDifficulty;
 import net.lyflow.skyblock.shop.ItemShop;
 import net.lyflow.skyblock.shop.ShopCategory;
+import net.lyflow.skyblock.utils.InventoryUtils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+
+import java.util.Arrays;
 import java.sql.SQLException;
+
 
 public class InventoryClickListener implements Listener {
 
-    private final SkyBlock skyBlock;
+    private final SkyBlock skyblock;
     public InventoryClickListener(SkyBlock skyblock) {
-        this.skyBlock = skyblock;
+        this.skyblock = skyblock;
     }
 
     @EventHandler
@@ -48,8 +57,8 @@ public class InventoryClickListener implements Listener {
                 return;
             }
             //player.closeInventory();
-            skyBlock.getServer().getPluginManager()
-                    .callEvent(new CreateIslandEvent(skyBlock, player, IslandDifficulty.getIslandDifficultyByMaterial(item.getType())));
+            skyblock.getServer().getPluginManager()
+                    .callEvent(new CreateIslandEvent(skyblock, player, IslandDifficulty.getIslandDifficultyByMaterial(item.getType())));
             return;
         }
 
@@ -101,7 +110,7 @@ public class InventoryClickListener implements Listener {
                     try {
                         final String lore = selectedItem.getItemMeta().getLore().get(0);
                         player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(
-                                skyBlock, player.getUniqueId(), itemShop, Math.min(Math.max(Integer.parseInt(lore.substring(lore.lastIndexOf(":")+2)) + Integer.parseInt(
+                                skyblock, player.getUniqueId(), itemShop, Math.min(Math.max(Integer.parseInt(lore.substring(lore.lastIndexOf(":")+2)) + Integer.parseInt(
                                         ChatColor.stripColor(item.getItemMeta().getDisplayName())), 0), 2304), page, isBuyInventory));
                     } catch(SQLException e) {
                         throw new RuntimeException(e);
@@ -111,10 +120,10 @@ public class InventoryClickListener implements Listener {
                 case LIGHT_BLUE_STAINED_GLASS_PANE -> {
                     try {
                         final int count = (isBuyInventory)
-                                ? (int) Math.floor(new AccountRequest(skyBlock.getDatabase(), true).getMoney(player.getUniqueId()) / itemShop.getBuyPrice())
-                                : countItemInventory(player.getInventory(), selectedItem.getType());
+                                ? (int) Math.floor(new AccountRequest(skyblock.getDatabase(), true).getMoney(player.getUniqueId()) / itemShop.getBuyPrice())
+                                : InventoryUtils.countItemInventory(player.getInventory(), selectedItem.getType());
                         player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(
-                                skyBlock, player.getUniqueId(), itemShop, count , page, isBuyInventory));
+                                skyblock, player.getUniqueId(), itemShop, count , page, isBuyInventory));
                     } catch(SQLException e) {
                         throw new RuntimeException(e);
                     }
@@ -123,9 +132,9 @@ public class InventoryClickListener implements Listener {
                 default -> {
                     final String lore = selectedItem.getItemMeta().getLore().get(0);
                     final int count = Integer.parseInt(lore.substring(lore.lastIndexOf(":")+2));
-                    skyBlock.getServer().getPluginManager().callEvent((isBuyInventory)
-                            ? new PlayerBuyItemEvent(skyBlock, player, itemShop, count)
-                            : new PlayerSellItemEvent(skyBlock, player, itemShop, count));
+                    skyblock.getServer().getPluginManager().callEvent((isBuyInventory)
+                            ? new PlayerBuyItemEvent(skyblock, player, itemShop, count)
+                            : new PlayerSellItemEvent(skyblock, player, itemShop, count));
                 }
             }
 
@@ -152,21 +161,57 @@ public class InventoryClickListener implements Listener {
             }
             if(item.getType() == Material.GRAY_STAINED_GLASS_PANE) return;
             try {
-                player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(skyBlock, player.getUniqueId(), ItemShop.getItemShopByMaterial(item.getType()), 0, page, isBuyInventory));
+                player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(skyblock, player.getUniqueId(), ItemShop.getItemShopByMaterial(item.getType()), 0, page, isBuyInventory));
             } catch(SQLException e) {
                 throw new RuntimeException(e);
             }
+            return;
         }
 
-    }
+        if(title.equals("§gChallenges - Menu")) {
+            event.setCancelled(true);
 
-    private int countItemInventory(Inventory inventory, Material material) {
-        int result = 0;
-        for(int i=0; i<inventory.getSize(); i++) {
-            final ItemStack itemStack = inventory.getItem(i);
-            if(itemStack == null || itemStack.getType() != material) continue;
-            result += itemStack.getAmount();
+            final Challenge.Difficulty difficulty = Challenge.Difficulty.getChallengeBySlot(event.getSlot());
+            if(skyblock.getChallengeManager().getChallengesByDifficulty(difficulty).isEmpty()) {
+                player.sendMessage("§cIl n'y a pas de défis encore dans cette section");
+                return;
+            }
+            if(!difficulty.playerHasAccess(skyblock.getChallengeManager(), player)) {
+                try {
+                    player.sendMessage("§cVeuillez terminer la moitié des challenges "+difficulty.getBefore().getName());
+                } catch(Exception e) {
+                    throw new RuntimeException(e);
+                }
+                return;
+            }
+            player.openInventory(ChallengeInventory.getChallengeInventory(skyblock.getChallengeManager(), player, difficulty));
+            return;
         }
-        return result;
+
+        if(title.startsWith("§gChallenges")) {
+            event.setCancelled(true);
+
+            final Challenge.Difficulty difficultyPage = Arrays.stream(Challenge.Difficulty.values()).filter(difficulty -> title.contains(difficulty.getName()))
+                    .findFirst().get();
+            final Challenge<? extends Event> challenge = skyblock.getChallengeManager().getChallengesByDifficulty(difficultyPage).stream().parallel()
+                    .filter(challenges -> challenges.getSlot() == event.getSlot()).findFirst().get();
+
+            final PlayerChallengeProgress playerChallengeProgress = challenge.getChallengeProgress().getPlayerChallengeProgress(player);
+            final ChallengeStatus challengeStatus = playerChallengeProgress.getStatus();
+
+            switch(challengeStatus) {
+                case LOCKED -> player.sendMessage("§cPour débloquer ce défi, il vous faudra faire les défis suivants : ...");
+                case IN_PROGRESS -> player.sendMessage("§cVeuillez terminer le défi avant de vouloir récupérer les récompenses");
+                case REWARD_RECOVERED -> player.sendMessage("§cVous avez déjà validé ce défi");
+                case SUCCESSFUL -> {
+                    player.sendMessage("§aVous avez validé le défi §b"+challenge.getName());
+                    challenge.getChallengeProgress().accessReward(player);
+                    player.openInventory(ChallengeInventory.getChallengeInventory(skyblock.getChallengeManager(), player, difficultyPage));
+                }
+            }
+            return;
+
+        }
+
     }
 }

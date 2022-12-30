@@ -22,8 +22,8 @@ public class CreateIslandEvent extends Event implements Cancellable {
 
     private boolean isCancelled = false;
 
-    public CreateIslandEvent(SkyBlock skyBlock, Player player, IslandDifficulty islandDifficulty) {
-        final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
+    public CreateIslandEvent(SkyBlock skyblock, Player player, IslandDifficulty islandDifficulty) {
+        final IslandRequest islandRequest = new IslandRequest(skyblock.getDatabase(), false);
         try {
             if(islandRequest.hasIsland(player.getUniqueId())) {
                 player.sendMessage("§cTu ne peux pas avoir plusieurs îles en même temps !");
@@ -31,7 +31,7 @@ public class CreateIslandEvent extends Event implements Cancellable {
                 return;
             }
 
-            player.sendMessage("§bCréation de votre île en cours §6§o(difficulté : "+islandDifficulty.name()+")");
+            player.sendMessage("§bCréation de votre île en cours §6§o(difficulté : "+islandDifficulty.getName()+")");
 
             try {
                 final String startPath = "skyblock-map/";
@@ -44,22 +44,22 @@ public class CreateIslandEvent extends Event implements Cancellable {
                 final int id = islandRequest.createIsland(player.getUniqueId(), islandDifficulty, startPath, x, y, z, yaw, pitch);
 
                 // Make a copy of  Island World
+
                 // create island in DB
                 final String defaultPath = startPath+id;
-                final File islandWorld = new File(skyBlock.getDataFolder(), "../../"+defaultPath);
-                ResourceUtils.saveResourceFolder("maps/skyblock-"+islandDifficulty.name().toLowerCase(), islandWorld, skyBlock, false);
+                final File islandWorld = new File(skyblock.getDataFolder(), "../../"+defaultPath);
+                ResourceUtils.saveResourceFolder("maps/skyblock-"+islandDifficulty.name().toLowerCase(), islandWorld, skyblock, false);
 
                 // Load World
-                skyBlock.getServer().createWorld(new WorldCreator(defaultPath));
-                final Location spawn = new Location(skyBlock.getServer().getWorld(defaultPath), x, y, z, yaw, pitch);
+                skyblock.getServer().createWorld(new WorldCreator(defaultPath));
+                final Location spawn = new Location(skyblock.getServer().getWorld(defaultPath), x, y, z, yaw, pitch);
 
-                skyBlock.getDatabase().closeConnection();
+                skyblock.getDatabase().closeConnection();
 
                 // Teleport to the world
                 player.sendMessage("§bTéléportation en cours");
                 player.teleport(spawn);
             } catch(SQLException e) {
-                // DELETE USELESS WORLD FOLDER IF WE CAN'T GENERATE UTILS INFORMATION IN DATABASE
                 throw new RuntimeException(e);
             }
         } catch(SQLException e) {
