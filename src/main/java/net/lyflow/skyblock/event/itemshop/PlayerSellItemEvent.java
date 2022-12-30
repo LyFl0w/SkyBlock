@@ -25,7 +25,7 @@ public class PlayerSellItemEvent extends ShopEvent {
             return;
         }
 
-        final AccountRequest accountRequest = new AccountRequest(skyBlock.getDatabase(), false);
+        final AccountRequest accountRequest = new AccountRequest(skyblock.getDatabase(), false);
 
         try {
             final ItemStack itemStack = new ItemStack(itemShop.getMaterial(), amount);

@@ -47,14 +47,14 @@ public class CreateIslandEvent extends Event implements Cancellable {
 
                 // create island in DB
                 final String defaultPath = startPath+id;
-                final File islandWorld = new File(skyBlock.getDataFolder(), "../../"+defaultPath);
-                ResourceUtils.saveResourceFolder("maps/skyblock-"+islandDifficulty.name().toLowerCase(), islandWorld, skyBlock, false);
+                final File islandWorld = new File(skyblock.getDataFolder(), "../../"+defaultPath);
+                ResourceUtils.saveResourceFolder("maps/skyblock-"+islandDifficulty.name().toLowerCase(), islandWorld, skyblock, false);
 
                 // Load World
-                skyBlock.getServer().createWorld(new WorldCreator(defaultPath));
-                final Location spawn = new Location(skyBlock.getServer().getWorld(defaultPath), x, y, z, yaw, pitch);
+                skyblock.getServer().createWorld(new WorldCreator(defaultPath));
+                final Location spawn = new Location(skyblock.getServer().getWorld(defaultPath), x, y, z, yaw, pitch);
 
-                skyBlock.getDatabase().closeConnection();
+                skyblock.getDatabase().closeConnection();
 
                 // Teleport to the world
                 player.sendMessage("§bTéléportation en cours");

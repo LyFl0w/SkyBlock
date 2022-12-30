@@ -9,7 +9,7 @@ import org.bukkit.event.Event;
 
 public abstract class ShopEvent extends Event implements Cancellable {
 
-    protected final SkyBlock skyBlock;
+    protected final SkyBlock skyblock;
 
     protected final Player player;
     protected final ItemShop itemShop;
@@ -17,8 +17,8 @@ public abstract class ShopEvent extends Event implements Cancellable {
 
     protected boolean isCancelled = false;
 
-    public ShopEvent(SkyBlock skyBlock, Player player, ItemShop itemShop, int amount) {
-        this.skyBlock = skyBlock;
+    public ShopEvent(SkyBlock skyblock, Player player, ItemShop itemShop, int amount) {
+        this.skyblock = skyblock;
         this.player = player;
         this.itemShop = itemShop;
         this.amount = amount;

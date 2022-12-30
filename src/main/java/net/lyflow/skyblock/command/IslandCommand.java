@@ -134,10 +134,10 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                         if(!hasTeamMates) {
                             final int id = islandRequest.getIslandID(player.getUniqueId());
                             final String path = "skyblock-map/"+id;
-                            final File islandWorld = new File(skyBlock.getDataFolder(), "../../"+path);
-                            skyBlock.getLogger().info(islandWorld.getAbsolutePath());
+                            final File islandWorld = new File(skyblock.getDataFolder(), "../../"+path);
+                            skyblock.getLogger().info(islandWorld.getAbsolutePath());
 
-                            skyBlock.getServer().unloadWorld(path, false);
+                            skyblock.getServer().unloadWorld(path, false);
                             FileUtils.deleteDirectory(islandWorld);
 
                             islandRequest.leaveIsland(player.getUniqueId());
@@ -145,7 +145,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                         } else {
                             islandRequest.leaveIsland(player.getUniqueId());
                         }
-                        skyBlock.getDatabase().closeConnection();
+                        skyblock.getDatabase().closeConnection();
 
                         player.sendMessage("§aVous avez bien quitté votre île");
                     } catch(SQLException|IOException e) {
