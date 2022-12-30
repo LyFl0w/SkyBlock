@@ -9,13 +9,13 @@ import java.util.Arrays;
 
 public enum ItemShop {
     // BLOCK
-    BLOCK_OAK_LOG(Material.OAK_LOG, 3, 2, ShopCategory.BLOCK),
-    BLOCK_SPRUCE_LOG(Material.SPRUCE_LOG, 3, 2, ShopCategory.BLOCK),
-    BLOCK_BIRCH_LOG(Material.BIRCH_LOG, 3, 2, ShopCategory.BLOCK),
-    BLOCK_JUNGLE_LOG(Material.JUNGLE_LOG, 3, 2, ShopCategory.BLOCK),
-    BLOCK_ACACIA_LOG(Material.ACACIA_LOG, 3, 2, ShopCategory.BLOCK),
-    BLOCK_DARK_OAK_LOG(Material.DARK_OAK_LOG, 3, 2, ShopCategory.BLOCK),
-    BLOCK_MANGROVE_LOG(Material.MANGROVE_LOG, 3, 2, ShopCategory.BLOCK),
+    OAK_LOG(Material.OAK_LOG, 3, 2, ShopCategory.BLOCK),
+    SPRUCE_LOG(Material.SPRUCE_LOG, 3, 2, ShopCategory.BLOCK),
+    BIRCH_LOG(Material.BIRCH_LOG, 3, 2, ShopCategory.BLOCK),
+    JUNGLE_LOG(Material.JUNGLE_LOG, 3, 2, ShopCategory.BLOCK),
+    ACACIA_LOG(Material.ACACIA_LOG, 3, 2, ShopCategory.BLOCK),
+    DARK_OAK_LOG(Material.DARK_OAK_LOG, 3, 2, ShopCategory.BLOCK),
+    MANGROVE_LOG(Material.MANGROVE_LOG, 3, 2, ShopCategory.BLOCK),
 
     COBBLESTONE(Material.COBBLESTONE, 2, 1, ShopCategory.BLOCK),
     MOSSY_COBBLESTONE(Material.MOSSY_COBBLESTONE, 3, 2, ShopCategory.BLOCK),

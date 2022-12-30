@@ -170,7 +170,6 @@ public class InventoryClickListener implements Listener {
             final PlayerChallengeProgress playerChallengeProgress = challenge.getChallengeProgress().getPlayerChallengeProgress(player);
             final ChallengeStatus challengeStatus = playerChallengeProgress.getStatus();
 
-            // TODO : Challenge qui ce déverrouille par d'autre challenge
             switch(challengeStatus) {
                 case LOCKED -> player.sendMessage("§cPour débloquer ce défi, il vous faudra faire les défis suivants : ...");
                 case IN_PROGRESS -> player.sendMessage("§cVeuillez terminer le défi avant de vouloir récupérer les récompenses");
@@ -178,6 +177,7 @@ public class InventoryClickListener implements Listener {
                 case SUCCESSFUL -> {
                     player.sendMessage("§aVous avez validé le défi §b"+challenge.getName());
                     challenge.getChallengeProgress().accessReward(player);
+                    player.openInventory(ChallengeInventory.getChallengeInventory(skyblock.getChallengeManager(), player, difficultyPage));
                 }
             }
             return;

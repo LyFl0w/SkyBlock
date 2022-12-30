@@ -41,7 +41,7 @@ public class KillEntityChallenge extends EntityChallenge<EntityDeathEvent> {
             this.challenges = Collections.unmodifiableList((List<KillEntityChallenge>) challengeManager.getChallengesByType(Type.KILL_ENTITY));
         }
 
-        @EventHandler
+        @EventHandler(ignoreCancelled = true)
         public void onEntityDeathEvent(EntityDeathEvent event) {
             final Player player = event.getEntity().getKiller();
             if(player == null) return;

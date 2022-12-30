@@ -7,6 +7,7 @@ import net.lyflow.skyblock.challenge.type.ShopChallenge;
 import net.lyflow.skyblock.event.itemshop.PlayerSellItemEvent;
 import net.lyflow.skyblock.manager.ChallengeManager;
 import net.lyflow.skyblock.shop.ItemShop;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,7 +41,7 @@ public class SellItemChallenge extends ShopChallenge<PlayerSellItemEvent> {
             this.challenges = Collections.unmodifiableList((List<SellItemChallenge>) challengeManager.getChallengesByType(Type.SELL_ITEM));
         }
 
-        @EventHandler
+        @EventHandler(ignoreCancelled = true)
         public void onPlayerSellItem(PlayerSellItemEvent event) {
             challenges.stream().parallel().forEach(sellItemChallenge -> sellItemChallenge.onEventTriggered(event.getPlayer(), event));
         }

@@ -2,8 +2,8 @@ package net.lyflow.skyblock.challenge;
 
 import net.lyflow.skyblock.database.Database;
 import net.lyflow.skyblock.database.request.challenge.ChallengeRequest;
-
 import net.lyflow.skyblock.manager.ChallengeManager;
+
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
@@ -73,19 +73,23 @@ public class ChallengeProgress {
 
             final PlayerChallengeProgress playerChallengeProgress = getPlayerChallengeProgress(player);
             if(playerChallengeProgress.getStatus() != ChallengeStatus.IN_PROGRESS) throw new RuntimeException("the challenge is not in progress");
-            playerChallengeProgress.setStatus(ChallengeStatus.SUCCESSFUL);
+            playerChallengeProgress.setStatus((challenge.getReward().isEmpty()) ? ChallengeStatus.REWARD_RECOVERED : ChallengeStatus.SUCCESSFUL);
 
-            player.sendMessage("§bVous avez accompli le défi §6"+challenge.getName());
+            player.sendMessage("§bVous avez complété le défi §6"+challenge.getName());
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
 
             final Database database = challenge.skyblock.getDatabase();
-            challenge.getLockedChallengesID().stream().map(challengeManager::getChallengeByID).filter(nextChallenge ->
-                    nextChallenge.getChallengeProgress().canUnlockChallenge(player)).forEach(challengeToUnlock -> {
-                        final PlayerChallengeProgress playerNextChallengeProgress = challengeToUnlock.getChallengeProgress().getPlayerChallengeProgress(player);
+            challenge.getLockedChallengesID().stream().map(challengeManager::getChallengeByID).filter(challengeToUnlock ->
+                    challengeToUnlock.getChallengeProgress().canUnlockChallenge(player)).forEach(challengeToUnlock -> {
+                        final ChallengeProgress challengeProgress = challengeToUnlock.getChallengeProgress();
+                        final PlayerChallengeProgress playerNextChallengeProgress = challengeProgress.getPlayerChallengeProgress(player);
+
                         playerNextChallengeProgress.setStatus(ChallengeStatus.IN_PROGRESS);
+                        player.sendMessage("§bVous avez débloqué le challenge "+challengeToUnlock.getName());
+                        if(challengeProgress.hasCompletedChallenge(player)) challengeProgress.accomplished(player);
+
                         try {
                             new ChallengeRequest(database, false).updateChallenge(challengeToUnlock.getID(), player.getUniqueId(), playerNextChallengeProgress);
-                            player.sendMessage("§bVous avez débloqué le challenge "+challengeToUnlock.getName());
                         } catch(SQLException e) {
                             throw new RuntimeException(e);
                         }
@@ -93,18 +97,23 @@ public class ChallengeProgress {
 
             // UNLOCK NEW PAGE
             if(!hasAccessToNextPage && nextDifficulty.playerHasAccess(challengeManager, player)) {
+                player.sendMessage("\n§bVous avez débloqué la page des challenges "+nextDifficulty.getName());
                 challengeManager.getChallengesByDifficulty(nextDifficulty).stream().parallel().filter(newChallenge ->
                         newChallenge.getKeyChallenges().size() == 0).forEach(newChallenge -> {
-                            final PlayerChallengeProgress playerNewChallengeProgress = newChallenge.getChallengeProgress().getPlayerChallengeProgress(player);
+                            final ChallengeProgress challengeProgress = newChallenge.getChallengeProgress();
+                            final PlayerChallengeProgress playerNewChallengeProgress = challengeProgress.getPlayerChallengeProgress(player);
+
                             playerNewChallengeProgress.setStatus(ChallengeStatus.IN_PROGRESS);
-                            newChallenge.getChallengeProgress().getPlayerChallengeProgress(player).setStatus(ChallengeStatus.IN_PROGRESS);
+                            player.sendMessage("§bVous avez débloqué le challenge "+newChallenge.getName());
+                            if(challengeProgress.hasCompletedChallenge(player)) challengeProgress.accomplished(player);
+
                             try {
                                 new ChallengeRequest(database, false).updateChallenge(newChallenge.getID(), player.getUniqueId(), playerNewChallengeProgress);
                             } catch(SQLException e) {
                                 throw new RuntimeException(e);
                             }
                         });
-                player.sendMessage("§bVous avez débloqué la page des challenges "+nextDifficulty.getName());
+
             }
 
             database.closeConnection();
@@ -163,4 +172,7 @@ public class ChallengeProgress {
         this.defaultChallengeStatus = (challenge.getKeyChallenges().size() > 0 || challenge.getDifficulty() != Challenge.Difficulty.EASY) ? ChallengeStatus.LOCKED : ChallengeStatus.IN_PROGRESS;
     }
 
+    protected Challenge<? extends Event> getChallenge() {
+        return challenge;
+    }
 }

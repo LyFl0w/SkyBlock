@@ -20,12 +20,12 @@ import java.util.List;
 
 public class CraftItemChallenge extends MaterialChallenge<CraftItemEvent> {
 
-    public CraftItemChallenge(SkyBlock skyblock, int id, Difficulty difficulty, Type type, List<Integer> linkedChallengeID, List<Integer> counterList, List<List<Material>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
-        super(skyblock, id, difficulty, type, linkedChallengeID, counterList, elementsCounter, reward, slot, material, name, description);
+    public CraftItemChallenge(SkyBlock skyblock, int id, Difficulty difficulty, List<Integer> linkedChallengeID, List<Integer> counterList, List<List<Material>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
+        super(skyblock, id, difficulty, Type.CRAFT_ITEM, linkedChallengeID, counterList, elementsCounter, reward, slot, material, name, description);
     }
 
-    public CraftItemChallenge(SkyBlock skyblock, int id, Difficulty difficulty, Type type, List<Integer> counterList, List<List<Material>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
-        this(skyblock, id, difficulty, type, Collections.emptyList(), counterList, elementsCounter, reward, slot, material, name, description);
+    public CraftItemChallenge(SkyBlock skyblock, int id, Difficulty difficulty, List<Integer> counterList, List<List<Material>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
+        this(skyblock, id, difficulty, Collections.emptyList(), counterList, elementsCounter, reward, slot, material, name, description);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class CraftItemChallenge extends MaterialChallenge<CraftItemEvent> {
             this.challenges = Collections.unmodifiableList((List<CraftItemChallenge>) challengeManager.getChallengesByType(Type.CRAFT_ITEM));
         }
 
-        @EventHandler
+        @EventHandler(ignoreCancelled = true)
         public void onCraftItem(CraftItemEvent event) {
             challenges.stream().parallel().forEach(placeBlockChallenge -> placeBlockChallenge.onEventTriggered((Player) event.getWhoClicked(), event));
         }

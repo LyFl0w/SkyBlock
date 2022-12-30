@@ -11,6 +11,7 @@ import net.lyflow.skyblock.challenge.mod.entity.KillEntityChallenge;
 import net.lyflow.skyblock.challenge.mod.entity.ReproduceAnimalChallenge;
 
 import net.lyflow.skyblock.challenge.mod.shop.SellItemChallenge;
+import net.lyflow.skyblock.shop.ItemShop;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
@@ -38,8 +39,20 @@ public class ChallengeManager {
 
     private void createChallenges(SkyBlock skyblock) {
         addNewChallenges(
-                new ReproduceAnimalChallenge(skyblock, 0, Challenge.Difficulty.EASY, List.of(1), Arrays.asList(1, 1), Arrays.asList(Arrays.asList(EntityType.COW, EntityType.CHICKEN), List.of(EntityType.PIG)),
-                        new Reward(List.of(new ItemStack(Material.IRON_INGOT)), 5), 1, Material.WHEAT, "Started from the bottom")
+                new RemoveBlockChallenge(skyblock, 0, Challenge.Difficulty.EASY, List.of(5), List.of(List.of(Material.OAK_LOG)),
+                        new Reward(List.of(new ItemStack(Material.BREAD, 5))), 1, Material.OAK_LOG, "La voie du bucheron n°1", "Le bois est un element essentiel pour votre surive"),
+
+                new RemoveBlockChallenge(skyblock, 1, Challenge.Difficulty.EASY, List.of(6), List.of(List.of(Material.COBBLESTONE)),
+                        new Reward(List.of(new ItemStack(Material.BREAD, 5))), 2, Material.COBBLESTONE, "La voie du mineur n°1", "La pierre tout comme le bois est un element essentiel"),
+
+                new CraftItemChallenge(skyblock, 2, Challenge.Difficulty.EASY, List.of(1, 1), Arrays.asList(List.of(Material.STONE_AXE), List.of(Material.STONE_PICKAXE)),
+                        new Reward(), 3, Material.SCULK_SENSOR, "Started from the bottom"),
+
+                new SellItemChallenge(skyblock, 3, Challenge.Difficulty.EASY, List.of(64), List.of(List.of(ItemShop.COBBLESTONE)),
+                        new Reward(List.of(new ItemStack(Material.COW_SPAWN_EGG, 2)), 2, 0), 4, Material.SALMON, "Still at the bottom n°1"),
+
+                new SellItemChallenge(skyblock, 4, Challenge.Difficulty.EASY, List.of(64), List.of(List.of(ItemShop.OAK_LOG)),
+                        new Reward(List.of(new ItemStack(Material.SHEEP_SPAWN_EGG, 2)), 2, 0), 5, Material.COOKED_COD, "Still at the bottom n°2")
                 );
     }
 
@@ -54,7 +67,6 @@ public class ChallengeManager {
         pluginManager.registerEvents(new RemoveBlockChallenge.ListenerEvent(this), skyblock);
 
         pluginManager.registerEvents(new CraftItemChallenge.ListenerEvent(this), skyblock);
-
     }
 
     public List<Challenge<? extends Event>> getRegisteredChallenges() {

@@ -41,7 +41,7 @@ public class ReproduceAnimalChallenge extends EntityChallenge<EntityBreedEvent> 
             this.challenges = Collections.unmodifiableList((List<ReproduceAnimalChallenge>) challengeManager.getChallengesByType(Type.REPRODUCE_ANIMAL));
         }
 
-        @EventHandler
+        @EventHandler(ignoreCancelled = true)
         public void onEntityBreed(EntityBreedEvent event) {
             if(!(event.getBreeder() instanceof final Player player)) return;
             challenges.stream().parallel().forEach(reproduceAnimalChallenge -> reproduceAnimalChallenge.onEventTriggered(player, event));

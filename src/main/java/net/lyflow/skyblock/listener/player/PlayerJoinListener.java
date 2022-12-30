@@ -38,7 +38,8 @@ public class PlayerJoinListener implements Listener {
         scheduler.runTaskAsynchronously(skyblock, () -> scheduler.runTask(skyblock, () -> {
             final AccountRequest accountRequest = new AccountRequest(skyblock.getDatabase(), false);
             try {
-                if(!accountRequest.hasAccount(uuid)) {
+                final boolean hasAccount = accountRequest.hasAccount(uuid);
+                if(!hasAccount) {
                     player.teleport(LobbyCommand.spawn);
                     accountRequest.createPlayerAccount(player);
 
@@ -81,6 +82,8 @@ public class PlayerJoinListener implements Listener {
 
                     preparedStatement.executeBatch();
                     connection.commit();
+
+                    player.sendMessage((hasAccount) ? "§6De nouveaux challenges sont disponibles !" : "§6Pour accéder à vos challenge utiliser la commande §e/challenge");
                 }
 
                 skyblock.getDatabase().closeConnection();

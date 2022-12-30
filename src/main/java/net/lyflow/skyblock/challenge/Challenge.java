@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
@@ -32,6 +33,8 @@ public abstract class Challenge<T extends Event> {
     private final List<Integer> lockedChallengesID;
     private final Reward reward;
 
+    private boolean progressWhenBlocked;
+
     protected final ChallengeProgress challengeProgress;
 
     public Challenge(SkyBlock skyblock, int id, Difficulty difficulty, Type type, List<Integer> lockedChallengesID, List<Integer> counterList, List<List<String>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
@@ -51,20 +54,22 @@ public abstract class Challenge<T extends Event> {
 
         this.reward = reward;
 
+        this.progressWhenBlocked = false;
         this.challengeProgress = new ChallengeProgress(this, counterList, elementsCounter);
     }
 
     protected void onEventTriggered(Player player, T event) {
-        skyblock.getServer().getScheduler().runTask(skyblock, () -> {
-            final PlayerChallengeProgress playerChallengeProgress = challengeProgress.getPlayerChallengeProgress(player);
-            final ChallengeStatus challengeStatus = playerChallengeProgress.getStatus();
-            if(challengeStatus != ChallengeStatus.IN_PROGRESS) return;
+        final PlayerChallengeProgress playerChallengeProgress = challengeProgress.getPlayerChallengeProgress(player);
+        final ChallengeStatus challengeStatus = playerChallengeProgress.getStatus();
+
+        if(challengeStatus == ChallengeStatus.IN_PROGRESS || (challengeStatus == ChallengeStatus.LOCKED && progressWhenBlocked)) {
             try {
                 onEvent(event, player, playerChallengeProgress);
             } catch(SQLException e) {
                 throw new RuntimeException(e);
             }
-        });
+        }
+
     }
 
     protected abstract void onEvent(T event, Player player, PlayerChallengeProgress playerChallengeProgress) throws SQLException;
@@ -84,9 +89,9 @@ public abstract class Challenge<T extends Event> {
                 itemBuilder.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 itemBuilder.addEnchant(Enchantment.DAMAGE_ALL, 1);
             }
-            final List<String> lore = new ArrayList<>(Arrays.stream(description).toList());
-            lore.addAll(type.getDefaultDescription(challengeProgress, player));
-            itemBuilder.setName(name).setLore(lore);
+            final List<String> lore = new ArrayList<>(Arrays.stream(StringUtils.prefixWords("§7", description)).toList());
+            lore.addAll(type.getDefaultDescription(reward, challengeProgress, player));
+            itemBuilder.setName("§6"+name).setLore(lore);
         }
         return itemBuilder.toItemStack();
     }
@@ -129,6 +134,15 @@ public abstract class Challenge<T extends Event> {
 
     public int getSlot() {
         return slot;
+    }
+
+    public Challenge<? extends Event> toggleProgressWhenBlocked() {
+        progressWhenBlocked = true;
+        return this;
+    }
+
+    public boolean isProgressWhenBlocked() {
+        return progressWhenBlocked;
     }
 
     public boolean isChallengeLocker() {
@@ -226,20 +240,33 @@ public abstract class Challenge<T extends Event> {
             this.defaultDescription = defaultDescription;
         }
 
-        public ArrayList<String> getDefaultDescription(ChallengeProgress challengeProgress, Player player) {
-            final ArrayList<String> description = new ArrayList<>(List.of(defaultDescription));
+        public ArrayList<String> getDefaultDescription(Reward reward, ChallengeProgress challengeProgress, Player player) {
+            final ArrayList<String> description = new ArrayList<>(Arrays.asList("", "§9§l"+defaultDescription));
+
             challengeProgress.getPlayerChallengeProgress(player).getPlayerCounter().forEach((objectives, totalPlayer) -> {
                 final StringBuilder line = new StringBuilder();
                 final int totalToReach = challengeProgress.getCounter().get(objectives);
-                line.append((totalPlayer >= totalToReach) ? "§a§m" : "§c").append("- ").append(totalPlayer).append("/").append(totalToReach).append(" ").append(StringUtils.capitalizeWord(objectives.get(0)));
+                line.append((totalPlayer >= totalToReach) ? "§a§m" : "§c").append("- ").append(totalPlayer).append("/").append(totalToReach)
+                        .append(" ").append(StringUtils.capitalizeSentence(objectives.get(0), "_", " "));
 
                 final List<String> nextObjectives = new ArrayList<>(objectives);
                 nextObjectives.remove(0);
 
-                nextObjectives.forEach(objective -> line.append(" ou ").append(StringUtils.capitalizeWord(objective)));
+                nextObjectives.forEach(objective -> line.append(" ou ").append(StringUtils.capitalizeSentence(objective, "_", " ")));
 
                 description.add(line.toString());
             });
+
+            description.addAll(Arrays.asList("", "§9§lRécompense :"));
+            if(!reward.isEmpty()) {
+                if(reward.getMoney() > 0) description.add("§a- "+reward.getMoney()+" $");
+                if(reward.getLevel() > 0) description.add("§a- "+reward.getLevel()+" niveau"+(reward.getLevel() > 1 ? "x" : ""));
+                reward.getItemStacksAward().forEach(itemStack -> description.add("§a- "+itemStack.getAmount()+" "+StringUtils.capitalizeSentence(itemStack
+                        .getType().name(), "_", " ")));
+            } else {
+                description.add("§a- Rien");
+            }
+
             return description;
         }
     }
