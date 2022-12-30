@@ -12,22 +12,22 @@ import java.util.UUID;
 
 public class PlayerDeathListener implements Listener {
 
-    private final SkyBlock skyBlock;
+    private final SkyBlock skyblock;
     public PlayerDeathListener(SkyBlock skyblock) {
-        this.skyBlock = skyblock;
+        this.skyblock = skyblock;
     }
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         final Player player = event.getEntity();
         final UUID uuid = player.getUniqueId();
-        final AccountRequest accountRequest = new AccountRequest(skyBlock.getDatabase(), false);
+        final AccountRequest accountRequest = new AccountRequest(skyblock.getDatabase(), false);
 
         try {
             final float money = accountRequest.getMoney(uuid);
             final float toRemove = (money > 150) ? money*0.01f : 15;
             accountRequest.setMoney(uuid, money-toRemove);
-            skyBlock.getDatabase().closeConnection();
+            skyblock.getDatabase().closeConnection();
 
             player.sendMessage("§cVous avez perdu "+toRemove+"$");
         } catch(SQLException e) {

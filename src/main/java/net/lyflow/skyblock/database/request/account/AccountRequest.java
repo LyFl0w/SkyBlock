@@ -95,7 +95,11 @@ public class AccountRequest extends DefaultRequest {
         preparedStatement.setString(1, uuid.toString());
 
         final ResultSet resultSet = preparedStatement.executeQuery();
-        return (resultSet.next()) ? resultSet.getFloat(1) : -1.0f;
+        final float result = (resultSet.next()) ? resultSet.getFloat(1) : -1.0f;
+
+        autoClose();
+
+        return result;
     }
 
     public void setMoney(UUID uuid, float money) throws SQLException {
@@ -105,6 +109,8 @@ public class AccountRequest extends DefaultRequest {
         preparedStatement.setString(2, uuid.toString());
 
         preparedStatement.execute();
+
+        autoClose();
     }
 
 }

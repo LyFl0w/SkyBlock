@@ -14,9 +14,9 @@ public class LobbyCommand implements CommandExecutor {
 
     public final static Location spawn = Bukkit.getServer().getWorld("lobby").getSpawnLocation().add(0.5, 0, 0.5);
 
-    private final SkyBlock skyBlock;
-    public LobbyCommand(SkyBlock skyBlock) {
-        this.skyBlock = skyBlock;
+    private final SkyBlock skyblock;
+    public LobbyCommand(SkyBlock skyblock) {
+        this.skyblock = skyblock;
     }
 
     @Override
