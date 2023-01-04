@@ -2,6 +2,7 @@ package net.lyflow.skyblock.command;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.inventory.island.IslandDifficultyInventory;
+import net.lyflow.skyblock.inventory.upgrade.UpgradeInventory;
 import net.lyflow.skyblock.island.*;
 import net.lyflow.skyblock.database.request.account.AccountRequest;
 import net.lyflow.skyblock.database.request.island.IslandRequest;
@@ -25,7 +26,7 @@ import java.util.*;
 
 public class IslandCommand implements CommandExecutor, TabCompleter {
 
-    private final static String[] fArgsCompletion = new String[]{"create", "sell", "tp", "list", "config", "invite", "accept", "kick", "leave", "set"};
+    private final static String[] fArgsCompletion = new String[]{"create", "sell", "tp", "list", "config", "upgrade", "invite", "accept", "kick", "leave", "set"};
     private final static String[] sArgsCompletion = new String[]{"owner", "spawn"};
     private final static ArrayList<IslandInvitation> islandInvitationList = new ArrayList<>();
 
@@ -76,6 +77,26 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                 // CONFIG
                 if(sub.equalsIgnoreCase("config")) {
                     player.sendMessage("§cWorking Progress");
+                    return true;
+                }
+
+                // UPGRADE
+                if(sub.equalsIgnoreCase("upgrade")) {
+                    final IslandRequest islandRequest = new IslandRequest(skyblock.getDatabase(), false);
+
+                    try {
+                        if(!islandRequest.hasIsland(player.getUniqueId())) {
+                            player.sendMessage("§cVous n'avez pas d'île, créez-vous en une avec la commande §6/island create");
+                            skyblock.getDatabase().closeConnection();
+                            return true;
+                        }
+                        final int islandID = islandRequest.getIslandID(player.getUniqueId());
+                        skyblock.getDatabase().closeConnection();
+
+                        player.openInventory(UpgradeInventory.getUpgradeInventory(skyblock.getIslandUpgradeManager(), islandID));
+                    } catch(SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                     return true;
                 }
 

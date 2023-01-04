@@ -123,7 +123,6 @@ public class ChallengeProgress {
     }
 
     public PlayerChallengeProgress initPlayerChallenge(Player player) {
-        System.out.println("init player challenge");
         if(playersCounter.containsKey(player.getUniqueId()))
             throw new RuntimeException("The player "+player.getName()+" already has a counter for the Challenge ("+playersCounter.get(player.getUniqueId())+") size : "+playersCounter.size());
 

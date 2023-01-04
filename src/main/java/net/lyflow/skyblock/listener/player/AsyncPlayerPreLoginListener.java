@@ -2,8 +2,12 @@ package net.lyflow.skyblock.listener.player;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.database.request.island.IslandRequest;
+import net.lyflow.skyblock.database.request.island.UpgradeIslandRequest;
+import net.lyflow.skyblock.manager.IslandUpgradeManager;
+import net.lyflow.skyblock.upgrade.IslandUpgrade;
+import net.lyflow.skyblock.upgrade.IslandUpgradeStatus;
 
-import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.WorldCreator;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,6 +15,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class AsyncPlayerPreLoginListener implements Listener {
@@ -23,13 +28,14 @@ public class AsyncPlayerPreLoginListener implements Listener {
 
     @EventHandler
     public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
-        Bukkit.getScheduler().runTask(skyblock, () -> {
+        skyblock.getServer().getScheduler().runTask(skyblock, () -> {
             final UUID playerUUID = event.getUniqueId();
             final IslandRequest islandRequest = new IslandRequest(skyblock.getDatabase(), false);
             try {
                 // LOAD ISLAND WORLD IF IT'S NOT LOADED
                 if(islandRequest.hasIsland(playerUUID)) {
-                    final String worldName = islandRequest.getIslandWorldName(islandRequest.getIslandID(playerUUID));
+                    final int islandID = islandRequest.getIslandID(playerUUID);
+                    final String worldName = islandRequest.getIslandWorldName(islandID);
                     final HashMap<String, Integer> unloadWorlds = PlayerQuitListener.getUnloadWorlds();
                     if(unloadWorlds.containsKey(worldName)) {
                         // REMOVE TASK WHO UNLOAD ISLAND WORLD
@@ -42,8 +48,41 @@ public class AsyncPlayerPreLoginListener implements Listener {
                     }
 
                     if(skyblock.getServer().getWorld(worldName) == null){
-                        skyblock.getServer().createWorld(new WorldCreator(worldName));
+                        final UpgradeIslandRequest upgradeIslandRequest = new UpgradeIslandRequest(skyblock.getDatabase(), false);
+                        final HashMap<Integer, IslandUpgradeStatus> alreadyUpgrades = upgradeIslandRequest.getIslandUpgrades(islandID);
+                        final IslandUpgradeManager islandUpgradeManager = skyblock.getIslandUpgradeManager();
+
+                        // LOAD CURRENT UPGRADE
+                        islandUpgradeManager.getIslandUpgrades().stream().parallel().filter(islandUpgrade -> alreadyUpgrades.containsKey(islandUpgrade.getID()))
+                                .forEach(islandUpgrade -> islandUpgrade.getIslandUpgradeStatusManager().loadIslandUpgrade(islandID, alreadyUpgrades.get(islandUpgrade.getID())));
+
+                        final List<IslandUpgrade> islandUpgrades = islandUpgradeManager.getIslandUpgradesBySave(true).stream().parallel()
+                                .filter(islandUpgrade -> !alreadyUpgrades.containsKey(islandUpgrade.getID())).toList();
+
+                        // INIT NEW UPGRADE AVAILABLE
+                        final boolean newUpgradeAvailable = islandUpgrades.size() > 0;
+                        if(newUpgradeAvailable) {
+                            final HashMap<Integer, IslandUpgradeStatus> toSave = new HashMap<>();
+                            final IslandUpgradeStatus islandUpgradeStatus = new IslandUpgradeStatus();
+
+                            islandUpgrades.forEach(islandUpgrade -> islandUpgrade.getIslandUpgradeStatusManager().initIslandUpgrade(islandID, islandUpgradeStatus));
+                            islandUpgrades.stream().parallel().forEach(islandUpgrade -> toSave.put(islandUpgrade.getID(), islandUpgradeStatus));
+
+                            upgradeIslandRequest.addNewIslandUpgrade(islandID, toSave);
+                        }
+
                         skyblock.getDatabase().closeConnection();
+
+                        skyblock.getServer().createWorld(new WorldCreator(worldName));
+
+                        if(newUpgradeAvailable) {
+                            skyblock.getServer().getScheduler().runTaskLater(skyblock, () -> {
+                                final OfflinePlayer offlinePlayer = skyblock.getServer().getOfflinePlayer(playerUUID);
+                                if(!offlinePlayer.isOnline()) return;
+                                offlinePlayer.getPlayer().sendMessage("§aDe nouveaux amélioration d'îles sont disponibles");
+                            }, 20L*5);
+                        }
+
                         return;
                     }
                 }

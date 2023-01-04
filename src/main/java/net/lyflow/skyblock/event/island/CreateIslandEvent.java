@@ -1,8 +1,11 @@
 package net.lyflow.skyblock.event.island;
 
 import net.lyflow.skyblock.SkyBlock;
+import net.lyflow.skyblock.database.request.island.UpgradeIslandRequest;
 import net.lyflow.skyblock.island.IslandDifficulty;
 import net.lyflow.skyblock.database.request.island.IslandRequest;
+import net.lyflow.skyblock.upgrade.IslandUpgrade;
+import net.lyflow.skyblock.upgrade.IslandUpgradeStatus;
 import net.lyflow.skyblock.utils.ResourceUtils;
 
 import org.bukkit.Location;
@@ -15,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
 
 public class CreateIslandEvent extends Event implements Cancellable {
 
@@ -49,6 +54,19 @@ public class CreateIslandEvent extends Event implements Cancellable {
                 final String defaultPath = startPath+id;
                 final File islandWorld = new File(skyblock.getDataFolder(), "../../"+defaultPath);
                 ResourceUtils.saveResourceFolder("maps/skyblock-"+islandDifficulty.name().toLowerCase(), islandWorld, skyblock, false);
+
+                final UpgradeIslandRequest upgradeIslandRequest = new UpgradeIslandRequest(skyblock.getDatabase(), false);
+                final List<IslandUpgrade> islandUpgradeList = skyblock.getIslandUpgradeManager().getIslandUpgradesBySave(true);
+
+                final HashMap<Integer, IslandUpgradeStatus> dataToSave = new HashMap<>();
+                final IslandUpgradeStatus islandUpgradeStatus = new IslandUpgradeStatus();
+                islandUpgradeList.stream().parallel().forEach(islandUpgrade -> {
+                    final int upgradeID = islandUpgrade.getID();
+                    islandUpgrade.getIslandUpgradeStatusManager().initIslandUpgrade(upgradeID, islandUpgradeStatus);
+                    dataToSave.put(upgradeID, islandUpgradeStatus);
+                });
+
+                upgradeIslandRequest.addNewIslandUpgrade(id, dataToSave);
 
                 // Load World
                 skyblock.getServer().createWorld(new WorldCreator(defaultPath));

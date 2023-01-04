@@ -9,7 +9,7 @@ import java.util.List;
 
 public class PlayerChallengeProgress {
 
-    private final static Gson gson = new GsonBuilder().enableComplexMapKeySerialization().serializeNulls().create();
+    private final static Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
 
     private final HashMap<List<String>, Integer> playerCounter;
     private ChallengeStatus challengeStatus;
