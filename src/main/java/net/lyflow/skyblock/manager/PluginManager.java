@@ -22,6 +22,7 @@ public class PluginManager {
         pluginManager.registerEvents(new PlayerJoinListener(skyblock), skyblock);
         pluginManager.registerEvents(new PlayerDeathListener(skyblock), skyblock);
         pluginManager.registerEvents(new PlayerRespawnListener(skyblock), skyblock);
+        pluginManager.registerEvents(new PlayerInteractListener(), skyblock);
 
         pluginManager.registerEvents(new AsyncPlayerPreLoginListener(skyblock), skyblock);
         pluginManager.registerEvents(new PlayerToggleSneakListener(), skyblock);
