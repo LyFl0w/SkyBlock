@@ -4,13 +4,9 @@ import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.database.request.account.AccountRequest;
 import net.lyflow.skyblock.shop.ItemShop;
 import net.lyflow.skyblock.utils.StringUtils;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +21,8 @@ public class PlayerBuyItemEvent extends ShopEvent {
 
     public PlayerBuyItemEvent(SkyBlock skyblock, Player player, ItemShop itemShop, int amount) {
         super(skyblock, player, itemShop, amount);
-        
-        if(amount <= 0) {
+
+        if (amount <= 0) {
             player.sendMessage("Le nombre d'item sélectionné doit être suppérieur à 0");
             return;
         }
@@ -38,43 +34,44 @@ public class PlayerBuyItemEvent extends ShopEvent {
             final ItemStack itemStack = new ItemStack(itemShop.getMaterial());
             final String formatedItemStackName = StringUtils.capitalizeSentence(itemStack.getType().name(), "_", " ");
 
-            if(playerMoney < price) {
+            if (playerMoney < price) {
                 skyblock.getDatabase().closeConnection();
-                player.sendMessage("§cVous n'avez pas assez de money pour acheter "+amount+" "+formatedItemStackName);
+                player.sendMessage("§cVous n'avez pas assez de money pour acheter " + amount + " " + formatedItemStackName);
                 setCancelled(true);
                 return;
             }
-            accountRequest.setMoney(player.getUniqueId(), playerMoney-price);
+            accountRequest.setMoney(player.getUniqueId(), playerMoney - price);
             skyblock.getDatabase().closeConnection();
 
             final PlayerInventory inventory = player.getInventory();
-            final int stackNumber = amount/itemStack.getMaxStackSize();
+            final int stackNumber = amount / itemStack.getMaxStackSize();
             final int rest = amount % itemStack.getMaxStackSize();
             final ItemStack stack = new ItemStack(itemStack.getType(), itemStack.getMaxStackSize());
 
             final ArrayList<ItemStack> dropItems = new ArrayList<>();
 
-            for(int i=0; i<stackNumber; i+=1) {
+            for (int i = 0; i < stackNumber; i += 1) {
                 dropItems.addAll(inventory.addItem(stack).values());
             }
-            if(rest > 0) dropItems.addAll(inventory.addItem(new ItemStack(itemStack.getType(), rest)).values());
+            if (rest > 0) dropItems.addAll(inventory.addItem(new ItemStack(itemStack.getType(), rest)).values());
 
             final Location location = player.getLocation();
             dropItems.forEach(item -> player.getWorld().dropItemNaturally(location, item));
 
-            player.sendMessage("§aVous avez acheté "+amount+" "+formatedItemStackName);
-        } catch(SQLException e) {
+            player.sendMessage("§aVous avez acheté " + amount + " " + formatedItemStackName);
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    @Override @NotNull
-    public HandlerList getHandlers() {
+    public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 
-    public static HandlerList getHandlerList() {
+    @Override
+    @NotNull
+    public HandlerList getHandlers() {
         return HANDLERS;
     }
 

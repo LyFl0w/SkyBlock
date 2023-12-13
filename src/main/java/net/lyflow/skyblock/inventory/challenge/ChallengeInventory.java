@@ -17,7 +17,7 @@ public class ChallengeInventory {
     }
 
     public static Inventory getChallengeInventory(ChallengeManager challengeManager, Player player, Challenge.Difficulty difficulty) {
-        final InventoryBuilder inventoryBuilder = new InventoryBuilder(9, "§gChallenges - "+difficulty.getName());
+        final InventoryBuilder inventoryBuilder = new InventoryBuilder(9, "§gChallenges - " + difficulty.getName());
         challengeManager.getChallengesByDifficulty(difficulty).stream().parallel().forEach(challenge ->
                 inventoryBuilder.setItem(challenge.getSlot(), challenge.getRepresentation(player)));
         return inventoryBuilder.toInventory();

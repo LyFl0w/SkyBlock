@@ -10,7 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -31,7 +30,7 @@ public class CraftItemChallenge extends MaterialChallenge<CraftItemEvent> {
     @Override
     protected void onEvent(CraftItemEvent event, Player player, PlayerChallengeProgress playerChallengeProgress) throws SQLException {
         final ItemStack itemStack = event.getRecipe().getResult();
-        if(!challengeProgress.isValidElement(itemStack.getType())) return;
+        if (!challengeProgress.isValidElement(itemStack.getType())) return;
         challengeProgress.incrementCounter(player, (event.isShiftClick()) ? InventoryUtils.getCraftedItemAmount(event.getInventory())
                 : itemStack.getAmount(), itemStack.getType());
     }
@@ -39,6 +38,7 @@ public class CraftItemChallenge extends MaterialChallenge<CraftItemEvent> {
     public static class ListenerEvent implements Listener {
 
         private final List<CraftItemChallenge> challenges;
+
         public ListenerEvent(ChallengeManager challengeManager) {
             this.challenges = Collections.unmodifiableList((List<CraftItemChallenge>) challengeManager.getChallengesByType(Type.CRAFT_ITEM));
         }

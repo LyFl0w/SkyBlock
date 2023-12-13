@@ -15,7 +15,7 @@ public class LocationUtils {
 
     @Nullable
     public static String getStringFromLocation(Location location) {
-        if(location.getWorld() == null) throw new RuntimeException("The world of location doesn't exist");
+        if (location.getWorld() == null) throw new RuntimeException("The world of location doesn't exist");
         return new StringBuilderSeparated(new StringBuilder(location.getWorld().getName()), ":").append(location.getX())
                 .append(location.getY()).append(location.getZ()).append(location.getYaw()).append(location.getPitch()).toString();
     }

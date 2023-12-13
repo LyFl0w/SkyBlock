@@ -6,7 +6,6 @@ import net.lyflow.skyblock.challenge.Reward;
 import net.lyflow.skyblock.event.itemshop.ShopEvent;
 import net.lyflow.skyblock.shop.ItemShop;
 import org.bukkit.Material;
-import org.bukkit.event.Event;
 
 import java.util.List;
 

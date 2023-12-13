@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class ChallengeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(commandSender instanceof final Player player) {
+        if (commandSender instanceof final Player player) {
             player.openInventory(ChallengeInventory.getMenuChallengeInventory());
             return true;
         }

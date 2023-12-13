@@ -1,7 +1,6 @@
 package net.lyflow.skyblock.shop;
 
 import net.lyflow.skyblock.utils.builder.ItemBuilder;
-
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -46,7 +45,7 @@ public enum ItemShop {
 
     COBWEB(Material.COBWEB, 20, -1, ShopCategory.BLOCK),
     SCULK_SENSOR(Material.SCULK_SENSOR, 50, -1, ShopCategory.BLOCK),
-    DEAD_HORN_CORAL_FAN(Material.DEAD_HORN_CORAL_FAN,  10_000, 1_000, ShopCategory.BLOCK),
+    DEAD_HORN_CORAL_FAN(Material.DEAD_HORN_CORAL_FAN, 10_000, 1_000, ShopCategory.BLOCK),
 
 
     // ITEM
@@ -270,11 +269,11 @@ public enum ItemShop {
     }
 
     public ItemStack getBuyItemStack(int number) {
-        return getItemBuilder(number).setLore("§a"+buyPrice*number+"$").toItemStack();
+        return getItemBuilder(number).setLore("§a" + buyPrice * number + "$").toItemStack();
     }
 
     public ItemStack getSellItemStack(int number) {
-        return getItemBuilder(number).setLore("§a"+sellPrice*number+"$").toItemStack();
+        return getItemBuilder(number).setLore("§a" + sellPrice * number + "$").toItemStack();
     }
 
     public Material getMaterial() {

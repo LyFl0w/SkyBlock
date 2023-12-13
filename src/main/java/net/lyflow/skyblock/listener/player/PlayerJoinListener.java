@@ -7,7 +7,6 @@ import net.lyflow.skyblock.command.LobbyCommand;
 import net.lyflow.skyblock.database.request.account.AccountRequest;
 import net.lyflow.skyblock.database.request.challenge.ChallengeRequest;
 import net.lyflow.skyblock.database.request.island.IslandRequest;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -15,7 +14,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,14 +40,14 @@ public class PlayerJoinListener implements Listener {
             final AccountRequest accountRequest = new AccountRequest(skyblock.getDatabase(), false);
             try {
                 final boolean hasAccount = accountRequest.hasAccount(uuid);
-                if(!hasAccount) {
+                if (!hasAccount) {
                     player.teleport(LobbyCommand.spawn);
                     accountRequest.createPlayerAccount(player);
 
-                    event.setJoinMessage("§6Bienvenue à §b"+player.getName()+" §6!");
+                    event.setJoinMessage("§6Bienvenue à §b" + player.getName() + " §6!");
                 } else {
                     accountRequest.updatePlayerName(player);
-                    if(!new IslandRequest(skyblock.getDatabase(), false).hasIsland(uuid))
+                    if (!new IslandRequest(skyblock.getDatabase(), false).hasIsland(uuid))
                         player.teleport(LobbyCommand.spawn);
                 }
 
@@ -62,7 +63,7 @@ public class PlayerJoinListener implements Listener {
                         dataToSave.put(challenge.getID(), challenge.getChallengeProgress().initPlayerChallenge(player)));
 
                 // INIT NEW CHALLENGES
-                if(dataToSave.size() > 0) {
+                if (dataToSave.size() > 0) {
                     final int playerID = accountRequest.getPlayerID(player);
                     final Connection connection = skyblock.getDatabase().getConnection();
                     final PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Challenge VALUES (?, ?, ?)");
@@ -75,7 +76,7 @@ public class PlayerJoinListener implements Listener {
                             preparedStatement.setString(3, value.serialize());
 
                             preparedStatement.addBatch();
-                        } catch(SQLException e) {
+                        } catch (SQLException e) {
                             throw new RuntimeException(e);
                         }
                     });
@@ -93,7 +94,7 @@ public class PlayerJoinListener implements Listener {
                         .forEach(challenge -> challenge.getChallengeProgress().loadPlayerChallenge(uuid,
                                 PlayerChallengeProgress.deserialize(currentChallengesSerialized.get(challenge.getID()))));
 
-            } catch(SQLException e) {
+            } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         }));

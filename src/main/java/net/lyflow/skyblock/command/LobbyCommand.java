@@ -1,7 +1,6 @@
 package net.lyflow.skyblock.command;
 
 import net.lyflow.skyblock.SkyBlock;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -15,14 +14,15 @@ public class LobbyCommand implements CommandExecutor {
     public final static Location spawn = Bukkit.getServer().getWorld("lobby").getSpawnLocation().add(0.5, 0, 0.5);
 
     private final SkyBlock skyblock;
+
     public LobbyCommand(SkyBlock skyblock) {
         this.skyblock = skyblock;
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(commandSender instanceof final Player player) {
-            if(args.length == 0){
+        if (commandSender instanceof final Player player) {
+            if (args.length == 0) {
                 player.sendMessage("§aTéléportation au §2Lobby");
                 player.teleport(spawn);
                 return true;

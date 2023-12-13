@@ -20,16 +20,16 @@ public class PlayerToggleSneakListener implements Listener {
     @EventHandler
     public void onPLayerToggleSneak(PlayerToggleSneakEvent event) {
         final Player player = event.getPlayer();
-        if(!event.isSneaking()) return;
+        if (!event.isSneaking()) return;
 
         final Location location = player.getLocation();
-        if(!location.getWorld().getName().contains("skyblock-map")) return;
+        if (!location.getWorld().getName().contains("skyblock-map")) return;
 
-        for(double x=-radius; x<=radius; x++) {
-            for(double y=-radius; y<=radius; y++) {
-                for(double z=-radius; z<=radius; z++) {
+        for (double x = -radius; x <= radius; x++) {
+            for (double y = -radius; y <= radius; y++) {
+                for (double z = -radius; z <= radius; z++) {
                     final Block block = location.clone().add(x, y, z).getBlock();
-                    if(((block.getBlockData() instanceof Sapling && !(block.getBlockData() instanceof Bamboo)) || block.getType() == Material.MANGROVE_PROPAGULE) && new SecureRandom().nextInt(17) == 8)
+                    if (((block.getBlockData() instanceof Sapling && !(block.getBlockData() instanceof Bamboo)) || block.getType() == Material.MANGROVE_PROPAGULE) && new SecureRandom().nextInt(17) == 8)
                         block.applyBoneMeal(BlockFace.UP);
                 }
             }

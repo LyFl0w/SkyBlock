@@ -19,6 +19,11 @@ public class PlayerChallengeProgress {
         this.challengeStatus = challengeStatus;
     }
 
+    public static PlayerChallengeProgress deserialize(String data) {
+        return gson.fromJson(data, new TypeToken<PlayerChallengeProgress>() {
+        }.getType());
+    }
+
     public HashMap<List<String>, Integer> getPlayerCounter() {
         return playerCounter;
     }
@@ -33,9 +38,5 @@ public class PlayerChallengeProgress {
 
     public String serialize() {
         return gson.toJson(this);
-    }
-
-    public static PlayerChallengeProgress deserialize(String data) {
-        return gson.fromJson(data, new TypeToken<PlayerChallengeProgress>(){}.getType());
     }
 }

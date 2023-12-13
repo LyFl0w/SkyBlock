@@ -12,11 +12,11 @@ public enum PlayerIslandStatus {
         this.id = id;
     }
 
-    public int getID() {
-        return id;
-    }
-
     public static PlayerIslandStatus getMateStatusByID(int id) {
         return Arrays.stream(values()).filter(playerIslandStatus -> playerIslandStatus.getID() == id).findFirst().get();
+    }
+
+    public int getID() {
+        return id;
     }
 }

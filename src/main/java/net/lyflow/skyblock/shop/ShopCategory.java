@@ -1,7 +1,6 @@
 package net.lyflow.skyblock.shop;
 
 import net.lyflow.skyblock.utils.builder.ItemBuilder;
-
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,6 +23,14 @@ public enum ShopCategory {
         this.pos = pos;
     }
 
+    public static ShopCategory getShopCategory(int slot) {
+        return Arrays.stream(values()).filter(shopCategory -> shopCategory.getPos() == slot).findFirst().get();
+    }
+
+    public static ShopCategory getShopCategoryByInventoryName(String inventoryName) {
+        return Arrays.stream(values()).filter(shopCategory -> inventoryName.contains(shopCategory.getName())).findFirst().get();
+    }
+
     public ItemStack getItemStack() {
         return itemBuilder.setName(name).toItemStack();
     }
@@ -34,13 +41,5 @@ public enum ShopCategory {
 
     public String getName() {
         return name;
-    }
-
-    public static ShopCategory getShopCategory(int slot) {
-        return Arrays.stream(values()).filter(shopCategory -> shopCategory.getPos() == slot).findFirst().get();
-    }
-
-    public static ShopCategory getShopCategoryByInventoryName(String inventoryName) {
-        return Arrays.stream(values()).filter(shopCategory -> inventoryName.contains(shopCategory.getName())).findFirst().get();
     }
 }

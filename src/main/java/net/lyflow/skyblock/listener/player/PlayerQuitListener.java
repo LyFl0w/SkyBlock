@@ -2,7 +2,6 @@ package net.lyflow.skyblock.listener.player;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.database.request.island.IslandRequest;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,19 +20,23 @@ public class PlayerQuitListener implements Listener {
         this.skyblock = skyblock;
     }
 
+    public static HashMap<String, Integer> getUnloadWorlds() {
+        return unloadWorlds;
+    }
+
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
         final IslandRequest islandRequest = new IslandRequest(skyblock.getDatabase(), false);
 
         try {
-            if(!islandRequest.hasIsland(player.getUniqueId())) {
+            if (!islandRequest.hasIsland(player.getUniqueId())) {
                 skyblock.getDatabase().closeConnection();
                 return;
             }
 
             // UNLOAD ISLAND WORLD IF THERE IS NO PLAYER AFTER 5 MIN ( 20 L * 60 = 1200L (ticks) = 60 SEC = 1 MIN, so 1200L * 5 = 6000L (ticks) = 5 MIN)
-            if(islandRequest.getMates(player.getUniqueId()).stream().parallel().filter(islandMate -> islandMate.player().isOnline()).count() <= 1) {
+            if (islandRequest.getMates(player.getUniqueId()).stream().parallel().filter(islandMate -> islandMate.player().isOnline()).count() <= 1) {
                 final String worldName = islandRequest.getIslandWorldName(islandRequest.getIslandID(player.getUniqueId()));
 
                 unloadWorlds.put(worldName, skyblock.getServer().getScheduler().runTaskLater(skyblock, () -> {
@@ -44,13 +47,9 @@ public class PlayerQuitListener implements Listener {
             }
 
             skyblock.getDatabase().closeConnection();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-    }
-
-    public static HashMap<String, Integer> getUnloadWorlds() {
-        return unloadWorlds;
     }
 }

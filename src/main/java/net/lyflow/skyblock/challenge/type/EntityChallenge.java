@@ -3,12 +3,10 @@ package net.lyflow.skyblock.challenge.type;
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.challenge.Challenge;
 import net.lyflow.skyblock.challenge.Reward;
-
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
 
-import java.util.Collections;
 import java.util.List;
 
 public abstract class EntityChallenge<T extends Event> extends Challenge<T> {

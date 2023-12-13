@@ -5,9 +5,7 @@ import net.lyflow.skyblock.command.*;
 import net.lyflow.skyblock.listener.block.BlockSpreadListener;
 import net.lyflow.skyblock.listener.inventory.InventoryClickListener;
 import net.lyflow.skyblock.listener.player.*;
-
 import org.bukkit.command.PluginCommand;
-import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class PluginManager {
 

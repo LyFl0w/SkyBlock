@@ -13,6 +13,7 @@ import java.util.UUID;
 public class PlayerDeathListener implements Listener {
 
     private final SkyBlock skyblock;
+
     public PlayerDeathListener(SkyBlock skyblock) {
         this.skyblock = skyblock;
     }
@@ -25,12 +26,12 @@ public class PlayerDeathListener implements Listener {
 
         try {
             final float money = accountRequest.getMoney(uuid);
-            final float toRemove = (money > 150) ? money*0.01f : 15;
-            accountRequest.setMoney(uuid, money-toRemove);
+            final float toRemove = (money > 150) ? money * 0.01f : 15;
+            accountRequest.setMoney(uuid, money - toRemove);
             skyblock.getDatabase().closeConnection();
 
-            player.sendMessage("§cVous avez perdu "+toRemove+"$");
-        } catch(SQLException e) {
+            player.sendMessage("§cVous avez perdu " + toRemove + "$");
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }

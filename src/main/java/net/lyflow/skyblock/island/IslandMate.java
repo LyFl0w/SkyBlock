@@ -10,7 +10,7 @@ public record IslandMate(OfflinePlayer player, PlayerIslandStatus status) {
 
     public String getStatus() {
         final String isOwner = (status == PlayerIslandStatus.OWNER) ? "Owner/" : "";
-        return (player.isOnline()) ? "["+isOwner+"Online]" : "["+isOwner+"Offline]";
+        return (player.isOnline()) ? "[" + isOwner + "Online]" : "[" + isOwner + "Offline]";
     }
 
 }

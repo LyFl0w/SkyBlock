@@ -4,7 +4,6 @@ import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.database.Database;
 import net.lyflow.skyblock.database.request.account.AccountRequest;
 import net.lyflow.skyblock.utils.StringUtils;
-
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
@@ -44,29 +43,29 @@ public class Reward {
     }
 
     public void getAward(Player player) {
-        if(!itemStacksAward.isEmpty()) {
+        if (!itemStacksAward.isEmpty()) {
             final PlayerInventory playerInventory = player.getInventory();
             itemStacksAward.forEach(award -> {
                 playerInventory.addItem(award);
-                player.sendMessage("§a+"+award.getAmount()+" "+StringUtils.capitalizeSentence(award.getType().name(), "_", " "));
+                player.sendMessage("§a+" + award.getAmount() + " " + StringUtils.capitalizeSentence(award.getType().name(), "_", " "));
             });
         }
 
-        if(level > 0) {
-            player.setLevel(player.getLevel()+level);
-            player.sendMessage("§a+"+level+" level");
+        if (level > 0) {
+            player.setLevel(player.getLevel() + level);
+            player.sendMessage("§a+" + level + " level");
         }
 
-        if(money > 0) {
+        if (money > 0) {
             final Database database = SkyBlock.getInstance().getDatabase();
             try {
                 final AccountRequest accountRequest = new AccountRequest(database, false);
-                accountRequest.setMoney(player.getUniqueId(), accountRequest.getMoney(player.getUniqueId())+money);
+                accountRequest.setMoney(player.getUniqueId(), accountRequest.getMoney(player.getUniqueId()) + money);
 
-                player.sendMessage("§a+"+money+" level");
+                player.sendMessage("§a+" + money + " level");
 
                 database.closeConnection();
-            } catch(SQLException e) {
+            } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         }

@@ -30,13 +30,13 @@ public class StringUtils {
 
     public static String[] toStringList(String startingPoint, List<? extends Enum<?>> enumList) {
         final String[] messages = new String[enumList.size()];
-        for(int i=0; i<enumList.size(); i++) messages[i] = startingPoint+capitalizeWord(enumList.get(i).name());
+        for (int i = 0; i < enumList.size(); i++) messages[i] = startingPoint + capitalizeWord(enumList.get(i).name());
         return messages;
     }
 
     public static String[] prefixWords(String toAdd, String[] message) {
         final String[] messages = new String[message.length];
-        for(int i=0; i<messages.length; i++) messages[i] = toAdd+message[i];
+        for (int i = 0; i < messages.length; i++) messages[i] = toAdd + message[i];
         return messages;
     }
 

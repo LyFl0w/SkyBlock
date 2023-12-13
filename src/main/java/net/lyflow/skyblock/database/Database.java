@@ -21,25 +21,25 @@ public class Database {
         this.logger = javaPlugin.getLogger();
 
         final File database = new File(javaPlugin.getDataFolder(), databaseName);
-        this.databaseLink = "jdbc:sqlite:"+database.getPath();
+        this.databaseLink = "jdbc:sqlite:" + database.getPath();
 
         initDatabase(database);
     }
 
     private void initDatabase(File database) {
         // Generate database if not exist
-        if(!database.exists()) {
-            logger.info("Generate Database in plugin folder ("+database.getName()+")");
+        if (!database.exists()) {
+            logger.info("Generate Database in plugin folder (" + database.getName() + ")");
             javaPlugin.saveResource(database.getName(), false);
         }
     }
 
     public Connection getConnection() throws SQLException {
-        if(connection == null || connection.isClosed()) connection = DriverManager.getConnection(databaseLink);
+        if (connection == null || connection.isClosed()) connection = DriverManager.getConnection(databaseLink);
         return connection;
     }
 
     public void closeConnection() throws SQLException {
-        if(connection != null && !connection.isClosed()) connection.close();
+        if (connection != null && !connection.isClosed()) connection.close();
     }
 }

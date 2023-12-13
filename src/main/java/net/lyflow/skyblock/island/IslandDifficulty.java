@@ -20,6 +20,10 @@ public enum IslandDifficulty {
         this.itemName = itemName;
     }
 
+    public static IslandDifficulty getIslandDifficultyByMaterial(Material material) {
+        return Arrays.stream(values()).filter(islandDifficulty -> islandDifficulty.getMaterial() == material).findFirst().get();
+    }
+
     public int getDifficulty() {
         return difficulty;
     }
@@ -30,9 +34,5 @@ public enum IslandDifficulty {
 
     public String getName() {
         return itemName;
-    }
-
-    public static IslandDifficulty getIslandDifficultyByMaterial(Material material) {
-        return Arrays.stream(values()).filter(islandDifficulty -> islandDifficulty.getMaterial() == material).findFirst().get();
     }
 }

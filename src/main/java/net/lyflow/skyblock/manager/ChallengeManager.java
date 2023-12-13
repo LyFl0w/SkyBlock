@@ -6,14 +6,12 @@ import net.lyflow.skyblock.challenge.Reward;
 import net.lyflow.skyblock.challenge.mod.CraftItemChallenge;
 import net.lyflow.skyblock.challenge.mod.block.PlaceBlockChallenge;
 import net.lyflow.skyblock.challenge.mod.block.RemoveBlockChallenge;
-import net.lyflow.skyblock.challenge.mod.shop.BuyItemChallenge;
 import net.lyflow.skyblock.challenge.mod.entity.KillEntityChallenge;
 import net.lyflow.skyblock.challenge.mod.entity.ReproduceAnimalChallenge;
-
+import net.lyflow.skyblock.challenge.mod.shop.BuyItemChallenge;
 import net.lyflow.skyblock.challenge.mod.shop.SellItemChallenge;
 import net.lyflow.skyblock.shop.ItemShop;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
@@ -53,7 +51,7 @@ public class ChallengeManager {
 
                 new SellItemChallenge(skyblock, 4, Challenge.Difficulty.EASY, List.of(64), List.of(List.of(ItemShop.OAK_LOG)),
                         new Reward(List.of(new ItemStack(Material.SHEEP_SPAWN_EGG, 2)), 2, 0), 5, Material.COOKED_COD, "Still at the bottom n°2")
-                );
+        );
     }
 
     private void registerChallengesEvent(SkyBlock skyblock, PluginManager pluginManager) {
@@ -103,16 +101,16 @@ public class ChallengeManager {
 
     @SafeVarargs
     public final void addNewChallenges(Challenge<? extends Event>... challenges) {
-        Arrays.stream(challenges).forEach(challenge ->  {
+        Arrays.stream(challenges).forEach(challenge -> {
             final String name = challenge.getName();
             final int id = challenge.getID();
 
-            if(challengeExist(id)) {
+            if (challengeExist(id)) {
                 final Challenge<?> otherChallenge = getChallengeByID(id);
-                throw new RuntimeException((challenge.equals(otherChallenge)) ? "Their is a duplication of Challenge with id "+id : "The Challenge "+challenge.getName()+" can't be initialized because his id is already use by the Challenge "+otherChallenge.getName());
-            } else if(challengeExist(name)) {
+                throw new RuntimeException((challenge.equals(otherChallenge)) ? "Their is a duplication of Challenge with id " + id : "The Challenge " + challenge.getName() + " can't be initialized because his id is already use by the Challenge " + otherChallenge.getName());
+            } else if (challengeExist(name)) {
                 final Challenge<?> otherChallenge = getChallengeByName(name);
-                throw new RuntimeException((challenge.equals(otherChallenge)) ? "Their is a duplication of Challenge with name "+name : "The Challenge "+challenge.getName()+" can't be initialized because his name is already use by this Challenge ID "+otherChallenge.getID());
+                throw new RuntimeException((challenge.equals(otherChallenge)) ? "Their is a duplication of Challenge with name " + name : "The Challenge " + challenge.getName() + " can't be initialized because his name is already use by this Challenge ID " + otherChallenge.getID());
             }
 
             getRegisteredChallenges().add(challenge);

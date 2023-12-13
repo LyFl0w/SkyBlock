@@ -4,41 +4,38 @@ import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.manager.ChallengeManager;
 import net.lyflow.skyblock.utils.StringUtils;
 import net.lyflow.skyblock.utils.builder.ItemBuilder;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public abstract class Challenge<T extends Event> {
 
     protected final SkyBlock skyblock;
-
+    protected final ChallengeProgress challengeProgress;
     private final int id;
-
     private final int slot;
     private final Material material;
     private final String name;
     private final String[] description;
-
     private final Difficulty difficulty;
     private final Type type;
     private final List<Integer> lockedChallengesID;
     private final Reward reward;
-
     private boolean progressWhenBlocked;
 
-    protected final ChallengeProgress challengeProgress;
-
     public Challenge(SkyBlock skyblock, int id, Difficulty difficulty, Type type, List<Integer> lockedChallengesID, List<Integer> counterList, List<List<String>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
-        if(lockedChallengesID.contains(id)) throw new RuntimeException("the Challenge \""+name+"\" can't block itself");
+        if (lockedChallengesID.contains(id))
+            throw new RuntimeException("the Challenge \"" + name + "\" can't block itself");
         this.skyblock = skyblock;
 
         this.id = id;
@@ -62,10 +59,10 @@ public abstract class Challenge<T extends Event> {
         final PlayerChallengeProgress playerChallengeProgress = challengeProgress.getPlayerChallengeProgress(player);
         final ChallengeStatus challengeStatus = playerChallengeProgress.getStatus();
 
-        if(challengeStatus == ChallengeStatus.IN_PROGRESS || (challengeStatus == ChallengeStatus.LOCKED && progressWhenBlocked)) {
+        if (challengeStatus == ChallengeStatus.IN_PROGRESS || (challengeStatus == ChallengeStatus.LOCKED && progressWhenBlocked)) {
             try {
                 onEvent(event, player, playerChallengeProgress);
-            } catch(SQLException e) {
+            } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -78,20 +75,20 @@ public abstract class Challenge<T extends Event> {
         final ChallengeStatus status = challengeProgress.getPlayerChallengeProgress(player).getStatus();
         final ItemBuilder itemBuilder = new ItemBuilder(material);
 
-        if(status == ChallengeStatus.LOCKED) {
+        if (status == ChallengeStatus.LOCKED) {
             itemBuilder.setName(getCensoredName());
-            if(getKeyChallenges().size() > 0)
+            if (getKeyChallenges().size() > 0)
                 itemBuilder.setLore(getKeyChallenges().stream()
                         .filter(challenge -> !challenge.getChallengeProgress().getPlayerChallengeProgress(player).getStatus().isFinish())
-                        .map(challenge -> "§c- "+ChatColor.stripColor(challenge.getName(player))).toList());
+                        .map(challenge -> "§c- " + ChatColor.stripColor(challenge.getName(player))).toList());
         } else {
-            if(status == ChallengeStatus.SUCCESSFUL) {
+            if (status == ChallengeStatus.SUCCESSFUL) {
                 itemBuilder.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 itemBuilder.addEnchant(Enchantment.DAMAGE_ALL, 1);
             }
             final List<String> lore = new ArrayList<>(Arrays.stream(StringUtils.prefixWords("§7", description)).toList());
             lore.addAll(type.getDefaultDescription(reward, challengeProgress, player));
-            itemBuilder.setName("§6"+name).setLore(lore);
+            itemBuilder.setName("§6" + name).setLore(lore);
         }
         return itemBuilder.toItemStack();
     }
@@ -163,6 +160,18 @@ public abstract class Challenge<T extends Event> {
                 .filter(challenge -> challenge.getLockedChallengesID().contains(id)).toList();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Challenge<?> challenge)) return false;
+        return id == challenge.id && material == challenge.material && name.equals(challenge.name) && Arrays.equals(description, challenge.description) && difficulty == challenge.difficulty && type == challenge.type && reward.equals(challenge.reward);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, material, name, difficulty, type, reward) * 31 + Arrays.hashCode(description);
+    }
+
     public enum Difficulty {
         EASY(2, new ItemBuilder(Material.LIME_STAINED_GLASS_PANE), "§aFacile"),
         NORMAL(3, new ItemBuilder(Material.LIGHT_BLUE_STAINED_GLASS_PANE), "§3Normal"),
@@ -197,7 +206,7 @@ public abstract class Challenge<T extends Event> {
         }
 
         public boolean playerHasAccess(ChallengeManager challengeManager, Player player) {
-            if(this == EASY) return true;
+            if (this == EASY) return true;
             try {
                 final List<? extends Challenge<? extends Event>> challenges = challengeManager.getChallengesByDifficulty(getBefore());
 
@@ -206,19 +215,19 @@ public abstract class Challenge<T extends Event> {
                     return playerChallengeStatus == ChallengeStatus.SUCCESSFUL || playerChallengeStatus == ChallengeStatus.REWARD_RECOVERED;
                 }).count();
                 return totalChallengesFinished >= challenges.size() / 2d;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
 
         public Difficulty getBefore() throws Exception {
-            if(this == EASY) throw new Exception("There is no challenge before EASY");
-            return getChallengeBySlot(getSlot()-1);
+            if (this == EASY) throw new Exception("There is no challenge before EASY");
+            return getChallengeBySlot(getSlot() - 1);
         }
 
         public Difficulty getNext() throws Exception {
-            if(this == EXTREME) throw new Exception("There is no challenge after EXTREME");
-            return getChallengeBySlot(getSlot()+1);
+            if (this == EXTREME) throw new Exception("There is no challenge after EXTREME");
+            return getChallengeBySlot(getSlot() + 1);
         }
     }
 
@@ -241,7 +250,7 @@ public abstract class Challenge<T extends Event> {
         }
 
         public ArrayList<String> getDefaultDescription(Reward reward, ChallengeProgress challengeProgress, Player player) {
-            final ArrayList<String> description = new ArrayList<>(Arrays.asList("", "§9§l"+defaultDescription));
+            final ArrayList<String> description = new ArrayList<>(Arrays.asList("", "§9§l" + defaultDescription));
 
             challengeProgress.getPlayerChallengeProgress(player).getPlayerCounter().forEach((objectives, totalPlayer) -> {
                 final StringBuilder line = new StringBuilder();
@@ -258,10 +267,11 @@ public abstract class Challenge<T extends Event> {
             });
 
             description.addAll(Arrays.asList("", "§9§lRécompense :"));
-            if(!reward.isEmpty()) {
-                if(reward.getMoney() > 0) description.add("§a- "+reward.getMoney()+" $");
-                if(reward.getLevel() > 0) description.add("§a- "+reward.getLevel()+" niveau"+(reward.getLevel() > 1 ? "x" : ""));
-                reward.getItemStacksAward().forEach(itemStack -> description.add("§a- "+itemStack.getAmount()+" "+StringUtils.capitalizeSentence(itemStack
+            if (!reward.isEmpty()) {
+                if (reward.getMoney() > 0) description.add("§a- " + reward.getMoney() + " $");
+                if (reward.getLevel() > 0)
+                    description.add("§a- " + reward.getLevel() + " niveau" + (reward.getLevel() > 1 ? "x" : ""));
+                reward.getItemStacksAward().forEach(itemStack -> description.add("§a- " + itemStack.getAmount() + " " + StringUtils.capitalizeSentence(itemStack
                         .getType().name(), "_", " ")));
             } else {
                 description.add("§a- Rien");
@@ -269,17 +279,5 @@ public abstract class Challenge<T extends Event> {
 
             return description;
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if(this == o) return true;
-        if(!(o instanceof Challenge<?> challenge)) return false;
-        return id == challenge.id && material == challenge.material && name.equals(challenge.name) && Arrays.equals(description, challenge.description) && difficulty == challenge.difficulty && type == challenge.type && reward.equals(challenge.reward);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, material, name, difficulty, type, reward)*31+Arrays.hashCode(description);
     }
 }

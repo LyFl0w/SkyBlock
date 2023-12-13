@@ -18,36 +18,39 @@ public class PlayerInteractListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if(event.getHand() != EquipmentSlot.HAND) return;
+        if (event.getHand() != EquipmentSlot.HAND) return;
 
         final Player player = event.getPlayer();
         final Action action = event.getAction();
         final Block block = event.getClickedBlock();
         final ItemStack currentItem = event.getItem();
 
-        if(action == Action.RIGHT_CLICK_BLOCK) {
-            if(block.getBlockData() instanceof final Ageable ageable) {
-                if(ageable instanceof Bamboo || ageable instanceof CaveVines || ageable instanceof Cocoa || ageable instanceof Fire || ageable instanceof MangrovePropagule) return;
+        if (action == Action.RIGHT_CLICK_BLOCK) {
+            if (block.getBlockData() instanceof final Ageable ageable) {
+                if (ageable instanceof Bamboo || ageable instanceof CaveVines || ageable instanceof Cocoa || ageable instanceof Fire || ageable instanceof MangrovePropagule)
+                    return;
 
-                if((currentItem != null && currentItem.getType() == Material.BONE_MEAL) || ageable.getAge() != ageable.getMaximumAge()) return;
+                if ((currentItem != null && currentItem.getType() == Material.BONE_MEAL) || ageable.getAge() != ageable.getMaximumAge())
+                    return;
 
                 final ArrayList<ItemStack> drops = new ArrayList<>(block.getDrops());
                 Material materialToRemove = null;
-                switch(block.getType()) {
+                switch (block.getType()) {
                     case WHEAT -> materialToRemove = Material.WHEAT_SEEDS;
                     case BEETROOTS -> materialToRemove = Material.BEETROOT_SEEDS;
                     case CARROTS -> materialToRemove = Material.CARROT;
                     case POTATOES -> {
-                        if(drops.stream().filter(itemStack -> itemStack.getType() == Material.POTATO).count() > 0) materialToRemove = Material.POTATO;
+                        if (drops.stream().filter(itemStack -> itemStack.getType() == Material.POTATO).count() > 0)
+                            materialToRemove = Material.POTATO;
                     }
                 }
-                if(materialToRemove == null) return;
+                if (materialToRemove == null) return;
 
-                for(int i=0; i<drops.size(); i++) {
+                for (int i = 0; i < drops.size(); i++) {
                     final ItemStack itemStack = drops.get(i);
-                    if(itemStack.getType() == materialToRemove) {
-                        final int newAmount = itemStack.getAmount()-1;
-                        if(newAmount > 0) itemStack.setAmount(newAmount);
+                    if (itemStack.getType() == materialToRemove) {
+                        final int newAmount = itemStack.getAmount() - 1;
+                        if (newAmount > 0) itemStack.setAmount(newAmount);
                         else drops.remove(i);
                         break;
                     }

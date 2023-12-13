@@ -2,7 +2,6 @@ package net.lyflow.skyblock.event.itemshop;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.shop.ItemShop;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
