@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.quillcraft</groupId>
+    <groupId>net.lyflow</groupId>
     <artifactId>SkyBlock</artifactId>
     <version>1.0.1-beta</version>
     <packaging>jar</packaging>
@@ -59,7 +59,6 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <filters>
                                 <filter>
                                     <artifact>*</artifact>
@@ -83,6 +82,7 @@
     </repositories>
 
     <dependencies>
+
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
