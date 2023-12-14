@@ -1,7 +1,7 @@
 package net.lyflow.skyblock.utils.builder;
 
 public class StringBuilderSeparated {
-    
+
     private final String cuttingPoint;
     private final StringBuilder stringBuilder;
 

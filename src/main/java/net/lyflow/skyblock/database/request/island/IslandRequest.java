@@ -1,12 +1,11 @@
 package net.lyflow.skyblock.database.request.island;
 
 import net.lyflow.skyblock.database.Database;
+import net.lyflow.skyblock.database.request.DefaultRequest;
 import net.lyflow.skyblock.island.IslandDifficulty;
 import net.lyflow.skyblock.island.IslandMate;
 import net.lyflow.skyblock.island.PlayerIslandStatus;
-import net.lyflow.skyblock.database.request.DefaultRequest;
 import net.lyflow.skyblock.utils.LocationUtils;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
@@ -30,10 +29,10 @@ public class IslandRequest extends DefaultRequest {
 
         // Check if player has an island
         final PreparedStatement preparedStatement = connection.prepareStatement("""
-                    SELECT COUNT(*) FROM Island_Mate
-                    JOIN Player ON Player.id = Island_Mate.player_id
-                    WHERE Player.UUID = ?
-                    """);
+                SELECT COUNT(*) FROM Island_Mate
+                JOIN Player ON Player.id = Island_Mate.player_id
+                WHERE Player.UUID = ?
+                """);
 
         preparedStatement.setString(1, uuid.toString());
 
@@ -49,10 +48,10 @@ public class IslandRequest extends DefaultRequest {
 
         // Check if player has an island
         final PreparedStatement preparedStatement = connection.prepareStatement("""
-                    SELECT Island_Mate.island_id FROM Island_Mate
-                    JOIN Player ON Player.id = Island_Mate.player_id
-                    WHERE Player.UUID = ?
-                    """);
+                SELECT Island_Mate.island_id FROM Island_Mate
+                JOIN Player ON Player.id = Island_Mate.player_id
+                WHERE Player.UUID = ?
+                """);
 
         preparedStatement.setString(1, uuid.toString());
 
@@ -74,14 +73,14 @@ public class IslandRequest extends DefaultRequest {
         final int primaryKey = preparedStatement.getGeneratedKeys().getInt(1);
 
         final PreparedStatement preparedStatement2 = connection.prepareStatement("UPDATE Island SET spawn_location = ? WHERE id = ?");
-        preparedStatement2.setString(1, LocationUtils.getStringFromPosition(worldPath+(worldPath.endsWith("/") ? "" : "/")+primaryKey, x, y, z, yaw, pitch));
+        preparedStatement2.setString(1, LocationUtils.getStringFromPosition(worldPath + (worldPath.endsWith("/") ? "" : "/") + primaryKey, x, y, z, yaw, pitch));
         preparedStatement2.setInt(2, primaryKey);
 
         preparedStatement2.execute();
 
         final PreparedStatement preparedStatement3 = connection.prepareStatement("""
-            INSERT INTO Island_Mate VALUES (?, (SELECT Player.id FROM Player WHERE Player.UUID = ?), ?)
-            """);
+                INSERT INTO Island_Mate VALUES (?, (SELECT Player.id FROM Player WHERE Player.UUID = ?), ?)
+                """);
         preparedStatement3.setInt(1, primaryKey);
         preparedStatement3.setString(2, uuid.toString());
         preparedStatement3.setInt(3, PlayerIslandStatus.OWNER.getID());
@@ -97,8 +96,8 @@ public class IslandRequest extends DefaultRequest {
         final Connection connection = database.getConnection();
 
         final PreparedStatement preparedStatement = connection.prepareStatement("""
-            INSERT INTO Island_Mate VALUES (?, (SELECT Player.id FROM Player WHERE Player.UUID = ?), ?)
-            """);
+                INSERT INTO Island_Mate VALUES (?, (SELECT Player.id FROM Player WHERE Player.UUID = ?), ?)
+                """);
         preparedStatement.setInt(1, islandID);
         preparedStatement.setString(2, uuid.toString());
         preparedStatement.setInt(3, PlayerIslandStatus.MATE.getID());
@@ -112,7 +111,7 @@ public class IslandRequest extends DefaultRequest {
         final List<IslandMate> islandMates = new ArrayList<>();
         final Connection connection = database.getConnection();
 
-        final  PreparedStatement preparedStatement = connection.prepareStatement("""
+        final PreparedStatement preparedStatement = connection.prepareStatement("""
                 SELECT Player.UUID, Island_Mate.status FROM Island_Mate
                 JOIN Player ON Player.id = Island_Mate.player_id
                 WHERE island_id = (
@@ -125,7 +124,7 @@ public class IslandRequest extends DefaultRequest {
         preparedStatement.setString(1, uuid.toString());
 
         final ResultSet resultSet = preparedStatement.executeQuery();
-        while(resultSet.next()) {
+        while (resultSet.next()) {
             islandMates.add(new IslandMate(Bukkit.getOfflinePlayer(UUID.fromString(resultSet.getString(1))),
                     PlayerIslandStatus.getMateStatusByID(resultSet.getInt(2))));
         }

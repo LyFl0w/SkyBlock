@@ -5,7 +5,6 @@ import net.lyflow.skyblock.challenge.PlayerChallengeProgress;
 import net.lyflow.skyblock.challenge.Reward;
 import net.lyflow.skyblock.challenge.type.MaterialChallenge;
 import net.lyflow.skyblock.manager.ChallengeManager;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,13 +28,14 @@ public class RemoveBlockChallenge extends MaterialChallenge<BlockBreakEvent> {
     @Override
     protected void onEvent(BlockBreakEvent event, Player player, PlayerChallengeProgress playerChallengeProgress) throws SQLException {
         final Material material = event.getBlock().getType();
-        if(!challengeProgress.isValidElement(material)) return;
+        if (!challengeProgress.isValidElement(material)) return;
         challengeProgress.incrementCounter(player, 1, material);
     }
 
     public static class ListenerEvent implements Listener {
 
         private final List<RemoveBlockChallenge> challenges;
+
         public ListenerEvent(ChallengeManager challengeManager) {
             this.challenges = Collections.unmodifiableList((List<RemoveBlockChallenge>) challengeManager.getChallengesByType(Type.REMOVE_BLOCK));
         }

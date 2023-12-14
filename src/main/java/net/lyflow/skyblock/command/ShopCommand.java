@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class ShopCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(args.length == 0 && commandSender instanceof final Player player) {
+        if (args.length == 0 && commandSender instanceof final Player player) {
             player.openInventory(ShopInventory.getShopMenuInventory());
             return true;
         }

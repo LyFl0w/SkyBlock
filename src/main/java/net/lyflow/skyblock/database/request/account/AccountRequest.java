@@ -2,7 +2,6 @@ package net.lyflow.skyblock.database.request.account;
 
 import net.lyflow.skyblock.database.Database;
 import net.lyflow.skyblock.database.request.DefaultRequest;
-
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

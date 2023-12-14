@@ -2,7 +2,6 @@ package net.lyflow.skyblock.listener.player;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.database.request.island.IslandRequest;
-
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
 import org.bukkit.event.EventHandler;
@@ -28,10 +27,10 @@ public class AsyncPlayerPreLoginListener implements Listener {
             final IslandRequest islandRequest = new IslandRequest(skyblock.getDatabase(), false);
             try {
                 // LOAD ISLAND WORLD IF IT'S NOT LOADED
-                if(islandRequest.hasIsland(playerUUID)) {
+                if (islandRequest.hasIsland(playerUUID)) {
                     final String worldName = islandRequest.getIslandWorldName(islandRequest.getIslandID(playerUUID));
                     final HashMap<String, Integer> unloadWorlds = PlayerQuitListener.getUnloadWorlds();
-                    if(unloadWorlds.containsKey(worldName)) {
+                    if (unloadWorlds.containsKey(worldName)) {
                         // REMOVE TASK WHO UNLOAD ISLAND WORLD
                         skyblock.getServer().getScheduler().cancelTask(unloadWorlds.get(worldName));
                         // REMOVE ISLAND WORLD OF UNLOAD WORLDS LIST
@@ -41,14 +40,14 @@ public class AsyncPlayerPreLoginListener implements Listener {
                         return;
                     }
 
-                    if(skyblock.getServer().getWorld(worldName) == null){
+                    if (skyblock.getServer().getWorld(worldName) == null) {
                         skyblock.getServer().createWorld(new WorldCreator(worldName));
                         skyblock.getDatabase().closeConnection();
                         return;
                     }
                 }
                 skyblock.getDatabase().closeConnection();
-            } catch(SQLException e) {
+            } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         });
