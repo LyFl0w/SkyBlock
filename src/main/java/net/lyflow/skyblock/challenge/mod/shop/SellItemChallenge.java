@@ -29,7 +29,7 @@ public class SellItemChallenge extends ShopChallenge<PlayerSellItemEvent> {
     @Override
     protected void onEvent(PlayerSellItemEvent event, Player player, PlayerChallengeProgress playerChallengeProgress) throws SQLException {
         final ItemShop itemShop = event.getItemShop();
-        if (!challengeProgress.isValidElement(itemShop)) return;
+        if (challengeProgress.isNotValidElement(itemShop)) return;
         challengeProgress.incrementCounter(player, event.getAmount(), itemShop);
     }
 

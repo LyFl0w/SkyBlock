@@ -13,6 +13,7 @@ import org.bukkit.inventory.PlayerInventory;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 public class Reward {
 
@@ -66,7 +67,8 @@ public class Reward {
 
                 database.closeConnection();
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                SkyBlock.getInstance().getLogger().log(Level.SEVERE, e.getMessage(), e);
+                return;
             }
         }
 

@@ -9,10 +9,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class PlayerQuitListener implements Listener {
 
-    private final static HashMap<String, Integer> unloadWorlds = new HashMap<>();
+    private static final HashMap<String, Integer> unloadWorlds = new HashMap<>();
 
     private final SkyBlock skyblock;
 
@@ -20,7 +21,7 @@ public class PlayerQuitListener implements Listener {
         this.skyblock = skyblock;
     }
 
-    public static HashMap<String, Integer> getUnloadWorlds() {
+    public static Map<String, Integer> getUnloadWorlds() {
         return unloadWorlds;
     }
 

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class LobbyCommand implements CommandExecutor {
 
-    public final static Location spawn = Bukkit.getServer().getWorld("lobby").getSpawnLocation().add(0.5, 0, 0.5);
+    public static final Location spawn = Bukkit.getServer().getWorld("lobby").getSpawnLocation().add(0.5, 0, 0.5);
 
     private final SkyBlock skyblock;
 

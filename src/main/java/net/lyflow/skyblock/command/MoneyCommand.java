@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 public class MoneyCommand implements CommandExecutor {
 
@@ -26,7 +27,7 @@ public class MoneyCommand implements CommandExecutor {
                 try {
                     player.sendMessage("§aVous avez " + new AccountRequest(skyblock.getDatabase(), true).getMoney(player.getUniqueId()) + "$");
                 } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                    skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
                 }
                 return true;
             }
@@ -65,7 +66,7 @@ public class MoneyCommand implements CommandExecutor {
                         player.sendMessage("§aVous avez envoyé " + amount + "$ à " + offlinePlayer.getName());
                         skyblock.getDatabase().closeConnection();
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
                     } catch (NumberFormatException e) {
                         player.sendMessage("§c" + args[2] + " n'est pas un nombre valide");
                     }

@@ -4,17 +4,17 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PlayerChallengeProgress {
 
-    private final static Gson gson = new GsonBuilder().enableComplexMapKeySerialization().serializeNulls().create();
+    private static final Gson gson = new GsonBuilder().enableComplexMapKeySerialization().serializeNulls().create();
 
-    private final HashMap<List<String>, Integer> playerCounter;
+    private final Map<List<String>, Integer> playerCounter;
     private ChallengeStatus challengeStatus;
 
-    public PlayerChallengeProgress(HashMap<List<String>, Integer> playerCounter, ChallengeStatus challengeStatus) {
+    public PlayerChallengeProgress(Map<List<String>, Integer> playerCounter, ChallengeStatus challengeStatus) {
         this.playerCounter = playerCounter;
         this.challengeStatus = challengeStatus;
     }
@@ -24,7 +24,7 @@ public class PlayerChallengeProgress {
         }.getType());
     }
 
-    public HashMap<List<String>, Integer> getPlayerCounter() {
+    public Map<List<String>, Integer> getPlayerCounter() {
         return playerCounter;
     }
 

@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public enum ItemShop {
 
@@ -249,7 +250,8 @@ public enum ItemShop {
     EMERALD(Material.EMERALD, 50, 40, ShopCategory.ORE);
 
 
-    private final float buyPrice, sellPrice;
+    private final float buyPrice;
+    private final float sellPrice;
     private final Material material;
     private final ShopCategory shopCategory;
 
@@ -261,7 +263,10 @@ public enum ItemShop {
     }
 
     public static ItemShop getItemShopByMaterial(Material material) {
-        return Arrays.stream(values()).parallel().filter(itemShop -> itemShop.getMaterial() == material).findFirst().get();
+        final Optional<ItemShop> optionalItemShop = Arrays.stream(values()).parallel().filter(itemShop -> itemShop.getMaterial() == material).findFirst();
+        if (optionalItemShop.isEmpty())
+            throw new IllegalArgumentException("Aucun item dans le shop fait référence à " + material.name());
+        return optionalItemShop.get();
     }
 
     public ItemBuilder getItemBuilder(int number) {

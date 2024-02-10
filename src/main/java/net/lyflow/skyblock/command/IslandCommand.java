@@ -4,7 +4,6 @@ import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.database.request.account.AccountRequest;
 import net.lyflow.skyblock.database.request.island.IslandRequest;
 import net.lyflow.skyblock.inventory.island.IslandDifficultyInventory;
-import net.lyflow.skyblock.island.IslandInvitation;
 import net.lyflow.skyblock.island.IslandMate;
 import net.lyflow.skyblock.island.PlayerIslandStatus;
 import net.lyflow.skyblock.utils.CommandUtils;
@@ -23,12 +22,13 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Level;
 
 public class IslandCommand implements CommandExecutor, TabCompleter {
 
-    private final static String[] fArgsCompletion = new String[]{"create", "sell", "tp", "list", "config", "invite", "accept", "kick", "leave", "set"};
-    private final static String[] sArgsCompletion = new String[]{"owner", "spawn"};
-    private final static ArrayList<IslandInvitation> islandInvitationList = new ArrayList<>();
+    private static final String[] fArgsCompletion = new String[]{"create", "sell", "tp", "list", "config", "invite", "accept", "kick", "leave", "set"};
+    private static final String[] sArgsCompletion = new String[]{"owner", "spawn"};
+    private static final ArrayList<IslandInvitation> islandInvitationList = new ArrayList<>();
 
     private final SkyBlock skyblock;
 
@@ -69,7 +69,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                         player.teleport(islandRequest.getSpawnLocation(islandRequest.getIslandID(player.getUniqueId())));
 
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
                     }
                     return true;
                 }
@@ -93,7 +93,10 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
 
                         skyblock.getDatabase().closeConnection();
 
-                        final IslandMate owner = islandMates.stream().parallel().filter(islandMate -> islandMate.status() == PlayerIslandStatus.OWNER).findFirst().get();
+                        final Optional<IslandMate> optionalIslandMate = islandMates.stream().parallel().filter(islandMate -> islandMate.status() == PlayerIslandStatus.OWNER).findFirst();
+                        if (optionalIslandMate.isEmpty())
+                            throw new IllegalCallerException("Le joueur ne possède pas d'owner sur son ile !");
+                        final IslandMate owner = optionalIslandMate.get();
 
                         final StringBuilder messageBuilder = new StringBuilder("List des joueurs de votre île\n").append(owner.getStatus())
                                 .append(" ").append(owner.player().getName());
@@ -105,7 +108,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
 
                         player.sendMessage(messageBuilder.toString());
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
                     }
                     return true;
                 }
@@ -150,7 +153,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
 
                         player.sendMessage("§aVous avez bien quitté votre île");
                     } catch (SQLException | IOException e) {
-                        throw new RuntimeException(e);
+                        skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
                     }
                     return true;
                 }
@@ -205,13 +208,12 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
 
                         // AUTO REMOVE INVITATION AFTER 5 MIN
                         skyblock.getServer().getScheduler().runTaskLater(skyblock, () -> {
-                            if (islandInvitationList.contains(islandInvitation))
-                                islandInvitationList.remove(islandInvitation);
+                            islandInvitationList.remove(islandInvitation);
                         }, 6000L);
 
 
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
                     }
                     return true;
                 }
@@ -273,7 +275,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
 
                         skyblock.getDatabase().closeConnection();
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
                     }
                     return true;
                 }
@@ -326,7 +328,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
 
                         player.sendMessage("§aLe joueur §2" + args[1] + " §aa bien été exclu de votre île");
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
                     }
                     return true;
                 }
@@ -367,7 +369,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
 
                             player.sendMessage("§aLe spawn d'île a bien été changé");
                         } catch (SQLException e) {
-                            throw new RuntimeException(e);
+                            skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
                         }
                         return true;
                     }
@@ -425,7 +427,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
 
                             player.sendMessage("§6Vous n'êtes plus Owner de votre île");
                         } catch (SQLException e) {
-                            throw new RuntimeException(e);
+                            skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
                         }
                         return true;
                     }
@@ -460,7 +462,13 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
     }
 
     private IslandInvitation getInvitation(UUID playerUUID, String targetPlayerName) {
-        return islandInvitationList.stream().parallel().filter(islandInvitation ->
-                islandInvitation.playerUUID() == playerUUID && islandInvitation.targetPlayerName().equals(targetPlayerName)).findFirst().get();
+        final Optional<IslandInvitation> optionalIslandInvitation = islandInvitationList.stream().parallel().filter(islandInvitation ->
+                islandInvitation.playerUUID() == playerUUID && islandInvitation.targetPlayerName().equals(targetPlayerName)).findFirst();
+
+        if (optionalIslandInvitation.isEmpty()) throw new IllegalCallerException("Le joueur n'a pas recu d'invitation");
+        return optionalIslandInvitation.get();
+    }
+
+    private record IslandInvitation(UUID playerUUID, int islandID, String targetPlayerName) {
     }
 }

@@ -28,7 +28,7 @@ public class RemoveBlockChallenge extends MaterialChallenge<BlockBreakEvent> {
     @Override
     protected void onEvent(BlockBreakEvent event, Player player, PlayerChallengeProgress playerChallengeProgress) throws SQLException {
         final Material material = event.getBlock().getType();
-        if (!challengeProgress.isValidElement(material)) return;
+        if (challengeProgress.isNotValidElement(material)) return;
         challengeProgress.incrementCounter(player, 1, material);
     }
 

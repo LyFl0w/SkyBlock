@@ -28,7 +28,7 @@ public class PlaceBlockChallenge extends MaterialChallenge<BlockPlaceEvent> {
     @Override
     protected void onEvent(BlockPlaceEvent event, Player player, PlayerChallengeProgress playerChallengeProgress) throws SQLException {
         final Material material = event.getBlockPlaced().getType();
-        if (!challengeProgress.isValidElement(material)) return;
+        if (challengeProgress.isNotValidElement(material)) return;
         challengeProgress.incrementCounter(player, 1, material);
     }
 

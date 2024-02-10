@@ -29,7 +29,7 @@ public class ReproduceAnimalChallenge extends EntityChallenge<EntityBreedEvent> 
     @Override
     protected void onEvent(EntityBreedEvent event, Player player, PlayerChallengeProgress playerChallengeProgress) throws SQLException {
         final EntityType entityType = event.getEntityType();
-        if (!challengeProgress.isValidElement(entityType)) return;
+        if (challengeProgress.isNotValidElement(entityType)) return;
         challengeProgress.incrementCounter(player, 1, entityType);
     }
 

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 public class CreateIslandEvent extends Event implements Cancellable {
 
@@ -59,10 +60,10 @@ public class CreateIslandEvent extends Event implements Cancellable {
                 player.sendMessage("§bTéléportation en cours");
                 player.teleport(spawn);
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la récupération de la base lors de la création d'une île", e);
+            skyblock.getLogger().log(Level.SEVERE, "Erreur lors de la récupération de la base lors de la création d'une île", e);
         }
     }
 
@@ -73,7 +74,7 @@ public class CreateIslandEvent extends Event implements Cancellable {
     @Override
     @NotNull
     public HandlerList getHandlers() {
-        return HANDLERS;
+        return getHandlerList();
     }
 
     @Override

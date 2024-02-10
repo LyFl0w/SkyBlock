@@ -11,6 +11,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class IslandDifficultyInventory {
 
+    private IslandDifficultyInventory() {
+        throw new IllegalStateException("Inventory class");
+    }
+
     public static Inventory getInventory() {
         final InventoryBuilder inventoryBuilder = new InventoryBuilder(9, "§6Difficulté de l'île");
 

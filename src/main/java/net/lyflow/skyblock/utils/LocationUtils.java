@@ -7,6 +7,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class LocationUtils {
 
+    private LocationUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static Location getLocationFromString(String locationString) {
         final String[] pars = locationString.split(":");
         return new Location(Bukkit.getWorld(pars[0]), Double.parseDouble(pars[1]), Double.parseDouble(pars[2]), Double.parseDouble(pars[3]),

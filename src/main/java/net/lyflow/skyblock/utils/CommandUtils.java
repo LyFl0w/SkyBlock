@@ -8,6 +8,10 @@ import java.util.List;
 
 public class CommandUtils {
 
+    private CommandUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static List<String> completionTable(String arg, List<String> completions) {
         // Copy the matches of the first argument of the list (e.g. if the first argument is 'm', it will just return 'minecraft')
         return (arg == null) ? null :

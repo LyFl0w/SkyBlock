@@ -17,10 +17,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerJoinListener implements Listener {
 
@@ -52,7 +49,7 @@ public class PlayerJoinListener implements Listener {
                 }
 
                 final ChallengeRequest challengeRequest = new ChallengeRequest(skyblock.getDatabase(), false);
-                final HashMap<Integer, String> currentChallengesSerialized = challengeRequest.getChallengesDataSerialized(uuid);
+                final Map<Integer, String> currentChallengesSerialized = challengeRequest.getChallengesDataSerialized(uuid);
                 final ArrayList<Integer> currentChallengesID = new ArrayList<>(currentChallengesSerialized.keySet());
                 final List<Challenge<? extends Event>> actualChallenges = skyblock.getChallengeManager().getRegisteredChallenges();
 
@@ -63,7 +60,7 @@ public class PlayerJoinListener implements Listener {
                         dataToSave.put(challenge.getID(), challenge.getChallengeProgress().initPlayerChallenge(player)));
 
                 // INIT NEW CHALLENGES
-                if (dataToSave.size() > 0) {
+                if (!dataToSave.isEmpty()) {
                     final int playerID = accountRequest.getPlayerID(player);
                     final Connection connection = skyblock.getDatabase().getConnection();
                     final PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Challenge VALUES (?, ?, ?)");
@@ -77,7 +74,7 @@ public class PlayerJoinListener implements Listener {
 
                             preparedStatement.addBatch();
                         } catch (SQLException e) {
-                            throw new RuntimeException(e);
+                            throw new IllegalCallerException(e);
                         }
                     });
 
@@ -95,7 +92,7 @@ public class PlayerJoinListener implements Listener {
                                 PlayerChallengeProgress.deserialize(currentChallengesSerialized.get(challenge.getID()))));
 
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                throw new IllegalCallerException(e);
             }
         }));
     }

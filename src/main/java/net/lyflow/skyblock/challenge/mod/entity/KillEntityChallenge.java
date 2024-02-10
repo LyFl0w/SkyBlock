@@ -29,7 +29,7 @@ public class KillEntityChallenge extends EntityChallenge<EntityDeathEvent> {
     @Override
     protected void onEvent(EntityDeathEvent event, Player player, PlayerChallengeProgress playerChallengeProgress) throws SQLException {
         final EntityType entityType = event.getEntityType();
-        if (!challengeProgress.isValidElement(entityType)) return;
+        if (challengeProgress.isNotValidElement(entityType)) return;
         challengeProgress.incrementCounter(player, 1, entityType);
     }
 

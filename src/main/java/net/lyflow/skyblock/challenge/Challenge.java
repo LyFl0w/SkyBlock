@@ -13,10 +13,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.logging.Level;
 
 public abstract class Challenge<T extends Event> {
 
@@ -33,9 +31,9 @@ public abstract class Challenge<T extends Event> {
     private final Reward reward;
     private boolean progressWhenBlocked;
 
-    public Challenge(SkyBlock skyblock, int id, Difficulty difficulty, Type type, List<Integer> lockedChallengesID, List<Integer> counterList, List<List<String>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
+    protected Challenge(SkyBlock skyblock, int id, Difficulty difficulty, Type type, List<Integer> lockedChallengesID, List<Integer> counterList, List<List<String>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
         if (lockedChallengesID.contains(id))
-            throw new RuntimeException("the Challenge \"" + name + "\" can't block itself");
+            throw new IllegalArgumentException("the Challenge \"" + name + "\" can't block itself");
         this.skyblock = skyblock;
 
         this.id = id;
@@ -63,10 +61,9 @@ public abstract class Challenge<T extends Event> {
             try {
                 onEvent(event, player, playerChallengeProgress);
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
             }
         }
-
     }
 
     protected abstract void onEvent(T event, Player player, PlayerChallengeProgress playerChallengeProgress) throws SQLException;
@@ -77,7 +74,7 @@ public abstract class Challenge<T extends Event> {
 
         if (status == ChallengeStatus.LOCKED) {
             itemBuilder.setName(getCensoredName());
-            if (getKeyChallenges().size() > 0)
+            if (!getKeyChallenges().isEmpty())
                 itemBuilder.setLore(getKeyChallenges().stream()
                         .filter(challenge -> !challenge.getChallengeProgress().getPlayerChallengeProgress(player).getStatus().isFinish())
                         .map(challenge -> "§c- " + ChatColor.stripColor(challenge.getName(player))).toList());
@@ -190,7 +187,9 @@ public abstract class Challenge<T extends Event> {
         }
 
         public static Difficulty getChallengeBySlot(int slot) {
-            return Arrays.stream(values()).filter(difficulty1 -> difficulty1.getSlot() == slot).findFirst().get();
+            final Optional<Difficulty> difficultyOptional = Arrays.stream(values()).filter(difficulty1 -> difficulty1.getSlot() == slot).findFirst();
+            if (difficultyOptional.isPresent()) return difficultyOptional.get();
+            throw new IllegalArgumentException("Slot doesn't contain difficulty item");
         }
 
         public ItemStack getItemStack() {
@@ -207,26 +206,24 @@ public abstract class Challenge<T extends Event> {
 
         public boolean playerHasAccess(ChallengeManager challengeManager, Player player) {
             if (this == EASY) return true;
-            try {
-                final List<? extends Challenge<? extends Event>> challenges = challengeManager.getChallengesByDifficulty(getBefore());
 
-                final long totalChallengesFinished = challenges.stream().parallel().filter(challenge -> {
-                    final ChallengeStatus playerChallengeStatus = challenge.getChallengeProgress().getPlayerChallengeProgress(player).getStatus();
-                    return playerChallengeStatus == ChallengeStatus.SUCCESSFUL || playerChallengeStatus == ChallengeStatus.REWARD_RECOVERED;
-                }).count();
-                return totalChallengesFinished >= challenges.size() / 2d;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            final List<? extends Challenge<? extends Event>> challenges = challengeManager.getChallengesByDifficulty(getBefore());
+
+            final long totalChallengesFinished = challenges.stream().parallel().filter(challenge -> {
+                final ChallengeStatus playerChallengeStatus = challenge.getChallengeProgress().getPlayerChallengeProgress(player).getStatus();
+                return playerChallengeStatus == ChallengeStatus.SUCCESSFUL || playerChallengeStatus == ChallengeStatus.REWARD_RECOVERED;
+            }).count();
+            return totalChallengesFinished >= challenges.size() / 2d;
+
         }
 
-        public Difficulty getBefore() throws Exception {
-            if (this == EASY) throw new Exception("There is no challenge before EASY");
+        public Difficulty getBefore() {
+            if (this == EASY) throw new IllegalCallerException("There is no challenge before EASY");
             return getChallengeBySlot(getSlot() - 1);
         }
 
-        public Difficulty getNext() throws Exception {
-            if (this == EXTREME) throw new Exception("There is no challenge after EXTREME");
+        public Difficulty getNext() {
+            if (this == EXTREME) throw new IllegalCallerException("There is no challenge after EXTREME");
             return getChallengeBySlot(getSlot() + 1);
         }
     }
@@ -249,7 +246,7 @@ public abstract class Challenge<T extends Event> {
             this.defaultDescription = defaultDescription;
         }
 
-        public ArrayList<String> getDefaultDescription(Reward reward, ChallengeProgress challengeProgress, Player player) {
+        public List<String> getDefaultDescription(Reward reward, ChallengeProgress challengeProgress, Player player) {
             final ArrayList<String> description = new ArrayList<>(Arrays.asList("", "§9§l" + defaultDescription));
 
             challengeProgress.getPlayerChallengeProgress(player).getPlayerCounter().forEach((objectives, totalPlayer) -> {

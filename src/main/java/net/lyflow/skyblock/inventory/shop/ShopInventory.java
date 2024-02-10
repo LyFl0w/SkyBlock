@@ -13,6 +13,10 @@ import java.util.List;
 
 public class ShopInventory {
 
+    private ShopInventory() {
+        throw new IllegalStateException("Inventory class");
+    }
+
     public static Inventory getShopMenuInventory() {
         return new InventoryBuilder(9, "§9Shop")
                 .setItem(2, new ItemBuilder(Material.CLOCK).setName("§6Serveur Shop").toItemStack())
