@@ -61,7 +61,7 @@ public abstract class Challenge<T extends Event> {
             try {
                 onEvent(event, player, playerChallengeProgress);
             } catch (SQLException e) {
-                skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
+                throw new IllegalCallerException(e);
             }
         }
     }

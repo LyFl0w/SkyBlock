@@ -56,8 +56,10 @@ public class ResourceUtils {
 
         try {
             // decode the compiled jar for iteration
-            final JarFile jar = new JarFile(URLDecoder.decode(jarPath, StandardCharsets.UTF_8));
-            final Enumeration<JarEntry> entries = jar.entries();
+            final Enumeration<JarEntry> entries;
+            try (final JarFile jar = new JarFile(URLDecoder.decode(jarPath, StandardCharsets.UTF_8))) {
+                entries = jar.entries();
+            }
 
             while (entries.hasMoreElements()) {
                 final String name = entries.nextElement().getName().replace('\\', '/');
@@ -69,7 +71,7 @@ public class ResourceUtils {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalCallerException(e);
         }
     }
 

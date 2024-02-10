@@ -106,7 +106,7 @@ public class ItemBuilder implements Cloneable {
     }
 
     public ItemBuilder setPotionData(PotionData potionData) {
-        Validate.isTrue((itemStack.getType() == Material.POTION || itemStack.getType() == Material.SPLASH_POTION || itemStack.getType() == Material.SPLASH_POTION), "The item must be a potion");
+        Validate.isTrue((itemStack.getType() == Material.POTION || itemStack.getType() == Material.SPLASH_POTION || itemStack.getType() == Material.LINGERING_POTION), "The item must be a potion");
         final PotionMeta potionMeta = (PotionMeta) getItemMeta();
         potionMeta.setBasePotionData(potionData);
         itemStack.setItemMeta(potionMeta);
