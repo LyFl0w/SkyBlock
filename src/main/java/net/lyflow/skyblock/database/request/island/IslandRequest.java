@@ -29,7 +29,7 @@ public class IslandRequest extends DefaultRequest {
 
         // Check if player has an island
         final boolean result;
-        try (PreparedStatement preparedStatement = connection.prepareStatement("""
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("""
                 SELECT COUNT(*) FROM Island_Mate
                 JOIN Player ON Player.id = Island_Mate.player_id
                 WHERE Player.UUID = ?
@@ -50,7 +50,7 @@ public class IslandRequest extends DefaultRequest {
 
         // Check if player has an island
         final ResultSet resultSet;
-        try (PreparedStatement preparedStatement = connection.prepareStatement("""
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("""
                 SELECT Island_Mate.island_id FROM Island_Mate
                 JOIN Player ON Player.id = Island_Mate.player_id
                 WHERE Player.UUID = ?
@@ -126,7 +126,7 @@ public class IslandRequest extends DefaultRequest {
         final Connection connection = database.getConnection();
 
         final ResultSet resultSet;
-        try (PreparedStatement preparedStatement = connection.prepareStatement("""
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("""
                 SELECT Player.UUID, Island_Mate.status FROM Island_Mate
                 JOIN Player ON Player.id = Island_Mate.player_id
                 WHERE island_id = (
@@ -155,7 +155,7 @@ public class IslandRequest extends DefaultRequest {
     public String getSpawnLocationFormattedString(int islandID) throws SQLException {
         final Connection connection = database.getConnection();
         final ResultSet resultSet;
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT spawn_location FROM Island WHERE id = ?")) {
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("SELECT spawn_location FROM Island WHERE id = ?")) {
             preparedStatement.setInt(1, islandID);
 
             resultSet = preparedStatement.executeQuery();
@@ -185,7 +185,7 @@ public class IslandRequest extends DefaultRequest {
     public PlayerIslandStatus getPlayerIslandStatus(UUID uuid) throws SQLException {
         final Connection connection = database.getConnection();
         final ResultSet resultSet;
-        try (PreparedStatement preparedStatement = connection.prepareStatement("""
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("""
                 SELECT status FROM Island_Mate
                 JOIN Player ON Player.id = Island_Mate.player_id
                 WHERE Player.UUID = ?
@@ -203,7 +203,7 @@ public class IslandRequest extends DefaultRequest {
 
     public void setPlayerIslandStatus(UUID uuid, PlayerIslandStatus playerIslandStatus) throws SQLException {
         final Connection connection = database.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("""
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("""
                 UPDATE Island_Mate SET status = ?
                 WHERE player_id = (SELECT id FROM Player WHERE Player.UUID = ?)
                 """)) {
@@ -218,7 +218,7 @@ public class IslandRequest extends DefaultRequest {
 
     public void setIslandSpawn(int islandID, Location location) throws SQLException {
         final Connection connection = database.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE Island SET spawn_location = ? WHERE id = ?")) {
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("UPDATE Island SET spawn_location = ? WHERE id = ?")) {
             preparedStatement.setString(1, LocationUtils.getStringFromLocation(location));
             preparedStatement.setInt(2, islandID);
 
@@ -230,7 +230,7 @@ public class IslandRequest extends DefaultRequest {
 
     public void leaveIsland(UUID uuid) throws SQLException {
         final Connection connection = database.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("""
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("""
                 DELETE FROM Island_Mate
                 WHERE player_id = (SELECT id FROM Player WHERE UUID = ?)
                 """)) {
@@ -244,7 +244,7 @@ public class IslandRequest extends DefaultRequest {
 
     public void deleteIsland(int id) throws SQLException {
         final Connection connection = database.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Island WHERE id = ?")) {
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Island WHERE id = ?")) {
             preparedStatement.setInt(1, id);
 
             preparedStatement.execute();

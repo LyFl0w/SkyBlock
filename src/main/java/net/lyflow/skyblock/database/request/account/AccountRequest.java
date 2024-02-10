@@ -23,7 +23,7 @@ public class AccountRequest extends DefaultRequest {
     public UUID getPlayerUUIDByName(String name) throws SQLException {
         final Connection connection = database.getConnection();
         final ResultSet resultSet;
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT UUID FROM Player WHERE name = ?")) {
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("SELECT UUID FROM Player WHERE name = ?")) {
             preparedStatement.setString(1, name);
             resultSet = preparedStatement.executeQuery();
         }
@@ -43,7 +43,7 @@ public class AccountRequest extends DefaultRequest {
     public int getPlayerID(OfflinePlayer offlinePlayer) throws SQLException {
         final Connection connection = database.getConnection();
         final ResultSet resultSet;
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM Player WHERE UUID = ?")) {
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM Player WHERE UUID = ?")) {
             preparedStatement.setString(1, offlinePlayer.getUniqueId().toString());
             resultSet = preparedStatement.executeQuery();
         }
@@ -57,7 +57,7 @@ public class AccountRequest extends DefaultRequest {
     public boolean hasAccount(UUID uuid) throws SQLException {
         final Connection connection = database.getConnection();
         final boolean hasAccount;
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM Player WHERE UUID = ?")) {
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM Player WHERE UUID = ?")) {
             preparedStatement.setString(1, uuid.toString());
 
             // Check if player has an account
@@ -71,7 +71,7 @@ public class AccountRequest extends DefaultRequest {
 
     public void createPlayerAccount(Player player) throws SQLException {
         final Connection connection = database.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Player (UUID, name, money) VALUES (?, ?, ?)")) {
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Player (UUID, name, money) VALUES (?, ?, ?)")) {
             preparedStatement.setString(1, player.getUniqueId().toString());
             preparedStatement.setString(2, player.getName());
             preparedStatement.setFloat(3, 50.0f);
@@ -83,7 +83,7 @@ public class AccountRequest extends DefaultRequest {
 
     public void updatePlayerName(Player player) throws SQLException {
         final Connection connection = database.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE Player SET name = ? WHERE UUID = ?")) {
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("UPDATE Player SET name = ? WHERE UUID = ?")) {
             preparedStatement.setString(1, player.getName());
             preparedStatement.setString(2, player.getUniqueId().toString());
 
@@ -96,7 +96,7 @@ public class AccountRequest extends DefaultRequest {
     public float getMoney(UUID uuid) throws SQLException {
         final Connection connection = database.getConnection();
         final ResultSet resultSet;
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT money FROM Player WHERE uuid = ?")) {
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("SELECT money FROM Player WHERE uuid = ?")) {
             preparedStatement.setString(1, uuid.toString());
 
             resultSet = preparedStatement.executeQuery();
@@ -110,7 +110,7 @@ public class AccountRequest extends DefaultRequest {
 
     public void setMoney(UUID uuid, float money) throws SQLException {
         final Connection connection = database.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE Player SET money = ? WHERE uuid = ?")) {
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("UPDATE Player SET money = ? WHERE uuid = ?")) {
             preparedStatement.setFloat(1, money);
             preparedStatement.setString(2, uuid.toString());
 

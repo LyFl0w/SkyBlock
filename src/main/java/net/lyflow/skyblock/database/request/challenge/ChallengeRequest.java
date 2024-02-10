@@ -22,7 +22,7 @@ public class ChallengeRequest extends DefaultRequest {
         final HashMap<Integer, String> challengesData = new HashMap<>();
         final Connection connection = database.getConnection();
         final ResultSet resultSet;
-        try (PreparedStatement preparedStatement = connection.prepareStatement("""
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("""
                 SELECT challenge_id, progress FROM Challenge
                 WHERE player_id = (
                 SELECT id FROM Player WHERE UUID = ?
@@ -43,7 +43,7 @@ public class ChallengeRequest extends DefaultRequest {
 
     public void updateChallenge(int challengeID, UUID playerUUID, PlayerChallengeProgress playerChallengeProgress) throws SQLException {
         final Connection connection = database.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("""
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("""
                 UPDATE Challenge SET progress = ?
                 WHERE challenge_id = ? AND player_id = (
                 SELECT id FROM Player WHERE UUID = ?
