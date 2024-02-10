@@ -6,6 +6,10 @@ import java.util.List;
 
 public class StringUtils {
 
+    private StringUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static String capitalizeSentence(String sentence, String space, String replace) {
         final ArrayList<String> words = new ArrayList<>(Arrays.stream(sentence.split(space)).toList());
         final StringBuilder stringBuilder = new StringBuilder(capitalizeWord(words.get(0)));

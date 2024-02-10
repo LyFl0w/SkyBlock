@@ -9,8 +9,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class AsyncPlayerPreLoginListener implements Listener {
 
@@ -29,7 +30,7 @@ public class AsyncPlayerPreLoginListener implements Listener {
                 // LOAD ISLAND WORLD IF IT'S NOT LOADED
                 if (islandRequest.hasIsland(playerUUID)) {
                     final String worldName = islandRequest.getIslandWorldName(islandRequest.getIslandID(playerUUID));
-                    final HashMap<String, Integer> unloadWorlds = PlayerQuitListener.getUnloadWorlds();
+                    final Map<String, Integer> unloadWorlds = PlayerQuitListener.getUnloadWorlds();
                     if (unloadWorlds.containsKey(worldName)) {
                         // REMOVE TASK WHO UNLOAD ISLAND WORLD
                         skyblock.getServer().getScheduler().cancelTask(unloadWorlds.get(worldName));
@@ -48,7 +49,7 @@ public class AsyncPlayerPreLoginListener implements Listener {
                 }
                 skyblock.getDatabase().closeConnection();
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
             }
         });
     }

@@ -9,6 +9,10 @@ import org.bukkit.inventory.PlayerInventory;
 
 public class InventoryUtils {
 
+    private InventoryUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static void removeItems(Player player, Material material, int amount) {
         final PlayerInventory playerInventory = player.getInventory();
 

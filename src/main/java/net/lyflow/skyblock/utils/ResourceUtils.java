@@ -14,6 +14,10 @@ import java.util.logging.Level;
 
 public class ResourceUtils {
 
+    private ResourceUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static void saveResourceFile(@NotNull String resourcePath, @NotNull File destFile, @NotNull JavaPlugin javaPlugin, boolean replace) {
         if (resourcePath.isBlank()) throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         if (!resourcePath.contains(".")) throw new IllegalArgumentException("ResourcePath cannot be a folder");

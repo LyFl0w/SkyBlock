@@ -10,6 +10,10 @@ import java.util.Arrays;
 
 public class ShopCategoryInventory {
 
+    private ShopCategoryInventory() {
+        throw new IllegalStateException("Inventory class");
+    }
+
     public static Inventory getShopCategoryInventory(boolean isBuyInventory) {
         final InventoryBuilder inventoryBuilder = new InventoryBuilder(9, "§aShop/Category/" + (isBuyInventory ? "Buy" : "Sell"))
                 .setItem(0, new ItemBuilder(Material.PAPER).setName("§9Back").toItemStack());

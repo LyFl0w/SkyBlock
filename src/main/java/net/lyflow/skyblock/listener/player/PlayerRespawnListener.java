@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 public class PlayerRespawnListener implements Listener {
 
@@ -26,7 +27,7 @@ public class PlayerRespawnListener implements Listener {
                 event.setRespawnLocation(islandRequest.getSpawnLocation(islandRequest.getIslandID(player.getUniqueId())));
             skyblock.getDatabase().closeConnection();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
     }
 }

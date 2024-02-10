@@ -30,7 +30,7 @@ public class CraftItemChallenge extends MaterialChallenge<CraftItemEvent> {
     @Override
     protected void onEvent(CraftItemEvent event, Player player, PlayerChallengeProgress playerChallengeProgress) throws SQLException {
         final ItemStack itemStack = event.getRecipe().getResult();
-        if (!challengeProgress.isValidElement(itemStack.getType())) return;
+        if (challengeProgress.isNotValidElement(itemStack.getType())) return;
         challengeProgress.incrementCounter(player, (event.isShiftClick()) ? InventoryUtils.getCraftedItemAmount(event.getInventory())
                 : itemStack.getAmount(), itemStack.getType());
     }

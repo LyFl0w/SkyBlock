@@ -9,6 +9,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class PlayerDeathListener implements Listener {
 
@@ -32,7 +33,7 @@ public class PlayerDeathListener implements Listener {
 
             player.sendMessage("§cVous avez perdu " + toRemove + "$");
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
     }
 

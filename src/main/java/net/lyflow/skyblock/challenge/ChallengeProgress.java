@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -40,7 +41,7 @@ public class ChallengeProgress {
         if (challengeStatus == ChallengeStatus.SUCCESSFUL || challengeStatus == ChallengeStatus.REWARD_RECOVERED)
             return;
 
-        final HashMap<List<String>, Integer> playerCounter = playerChallengeProgress.getPlayerCounter();
+        final Map<List<String>, Integer> playerCounter = playerChallengeProgress.getPlayerCounter();
         final HashMap<List<String>, Integer> playerCounterClone = new HashMap<>(playerCounter);
 
         playerCounter.entrySet().stream().parallel().filter(entry -> entry.getKey().contains(t)).filter(entry -> counter.get(entry.getKey()) > entry.getValue())
@@ -57,13 +58,13 @@ public class ChallengeProgress {
     public final void accessReward(Player player) {
         final PlayerChallengeProgress playerChallengeProgress = getPlayerChallengeProgress(player);
         if (playerChallengeProgress.getStatus() != ChallengeStatus.SUCCESSFUL)
-            throw new RuntimeException("complete the challenge before validating it");
+            throw new IllegalCallerException("complete the challenge before validating it");
         playerChallengeProgress.setStatus(ChallengeStatus.REWARD_RECOVERED);
 
         try {
             new ChallengeRequest(challenge.skyblock.getDatabase(), true).updateChallenge(challenge.getID(), player.getUniqueId(), playerChallengeProgress);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            challenge.skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
 
         challenge.getReward().getAward(player);
@@ -77,7 +78,7 @@ public class ChallengeProgress {
 
             final PlayerChallengeProgress playerChallengeProgress = getPlayerChallengeProgress(player);
             if (playerChallengeProgress.getStatus() != ChallengeStatus.IN_PROGRESS)
-                throw new RuntimeException("the challenge is not in progress");
+                throw new IllegalCallerException("the challenge is not in progress");
             playerChallengeProgress.setStatus((challenge.getReward().isEmpty()) ? ChallengeStatus.REWARD_RECOVERED : ChallengeStatus.SUCCESSFUL);
 
             player.sendMessage("§bVous avez complété le défi §6" + challenge.getName());
@@ -96,7 +97,7 @@ public class ChallengeProgress {
                 try {
                     new ChallengeRequest(database, false).updateChallenge(challengeToUnlock.getID(), player.getUniqueId(), playerNextChallengeProgress);
                 } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                    challenge.skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
                 }
             });
 
@@ -104,7 +105,7 @@ public class ChallengeProgress {
             if (!hasAccessToNextPage && nextDifficulty.playerHasAccess(challengeManager, player)) {
                 player.sendMessage("\n§bVous avez débloqué la page des challenges " + nextDifficulty.getName());
                 challengeManager.getChallengesByDifficulty(nextDifficulty).stream().parallel().filter(newChallenge ->
-                        newChallenge.getKeyChallenges().size() == 0).forEach(newChallenge -> {
+                        newChallenge.getKeyChallenges().isEmpty()).forEach(newChallenge -> {
                     final ChallengeProgress challengeProgress = newChallenge.getChallengeProgress();
                     final PlayerChallengeProgress playerNewChallengeProgress = challengeProgress.getPlayerChallengeProgress(player);
 
@@ -115,7 +116,7 @@ public class ChallengeProgress {
                     try {
                         new ChallengeRequest(database, false).updateChallenge(newChallenge.getID(), player.getUniqueId(), playerNewChallengeProgress);
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        challenge.skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
                     }
                 });
 
@@ -123,14 +124,13 @@ public class ChallengeProgress {
 
             database.closeConnection();
         } catch (Exception e) {
-            e.printStackTrace();
+            challenge.skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
     public PlayerChallengeProgress initPlayerChallenge(Player player) {
-        System.out.println("init player challenge");
         if (playersCounter.containsKey(player.getUniqueId()))
-            throw new RuntimeException("The player " + player.getName() + " already has a counter for the Challenge (" + playersCounter.get(player.getUniqueId()) + ") size : " + playersCounter.size());
+            throw new IllegalArgumentException("The player " + player.getName() + " already has a counter for the Challenge (" + playersCounter.get(player.getUniqueId()) + ") size : " + playersCounter.size());
 
         final HashMap<List<String>, Integer> playerCounter = new HashMap<>(counter.entrySet().stream().parallel().collect(Collectors.toMap(Map.Entry::getKey, r -> 0)));
         final PlayerChallengeProgress result = new PlayerChallengeProgress(playerCounter, defaultChallengeStatus);
@@ -148,19 +148,19 @@ public class ChallengeProgress {
 
     public PlayerChallengeProgress getPlayerChallengeProgress(Player player) {
         if (!playersCounter.containsKey(player.getUniqueId()))
-            throw new RuntimeException("The player " + player.getName() + " doesn't have a counter for the Challenge");
+            throw new IllegalArgumentException("The player " + player.getName() + " doesn't have a counter for the Challenge");
         return playersCounter.get(player.getUniqueId());
     }
 
     public boolean canUnlockChallenge(Player player) {
         if (getPlayerChallengeProgress(player).getStatus() != ChallengeStatus.LOCKED)
-            throw new RuntimeException("The Challenge " + challenge.getName() + " is already unlocked");
+            throw new IllegalArgumentException("The Challenge " + challenge.getName() + " is already unlocked");
         return challenge.getKeyChallenges().stream().parallel().filter(keyChallenge ->
                 !keyChallenge.getChallengeProgress().getPlayerChallengeProgress(player).getStatus().isFinish()).count() == 0;
     }
 
-    public <T extends Enum<T>> boolean isValidElement(T element) {
-        return counter.keySet().stream().parallel().anyMatch(ts -> ts.contains(element.name()));
+    public <T extends Enum<T>> boolean isNotValidElement(T element) {
+        return counter.keySet().stream().parallel().noneMatch(ts -> ts.contains(element.name()));
     }
 
     public boolean isValidElement(String element) {
@@ -171,12 +171,12 @@ public class ChallengeProgress {
         return counter;
     }
 
-    public HashMap<UUID, PlayerChallengeProgress> getPlayersCounter() {
+    public Map<UUID, PlayerChallengeProgress> getPlayersCounter() {
         return playersCounter;
     }
 
     public void updateDefaultChallengeStatus() {
-        this.defaultChallengeStatus = (challenge.getKeyChallenges().size() > 0 || challenge.getDifficulty() != Challenge.Difficulty.EASY) ? ChallengeStatus.LOCKED : ChallengeStatus.IN_PROGRESS;
+        this.defaultChallengeStatus = (!challenge.getKeyChallenges().isEmpty() || challenge.getDifficulty() != Challenge.Difficulty.EASY) ? ChallengeStatus.LOCKED : ChallengeStatus.IN_PROGRESS;
     }
 
     protected Challenge<? extends Event> getChallenge() {

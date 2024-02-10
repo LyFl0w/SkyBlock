@@ -10,6 +10,10 @@ import java.util.Arrays;
 
 public class ChallengeInventory {
 
+    private ChallengeInventory() {
+        throw new IllegalStateException("Inventory class");
+    }
+
     public static Inventory getMenuChallengeInventory() {
         final InventoryBuilder inventoryBuilder = new InventoryBuilder(9, "§gChallenges - Menu");
         Arrays.stream(Challenge.Difficulty.values()).forEach(difficulty -> inventoryBuilder.setItem(difficulty.getSlot(), difficulty.getItemStack()));

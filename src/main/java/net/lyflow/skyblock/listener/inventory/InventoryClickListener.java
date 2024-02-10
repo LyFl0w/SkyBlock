@@ -28,6 +28,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.logging.Level;
 
 
 public class InventoryClickListener implements Listener {
@@ -113,7 +115,7 @@ public class InventoryClickListener implements Listener {
                                 skyblock, player.getUniqueId(), itemShop, Math.min(Math.max(Integer.parseInt(lore.substring(lore.lastIndexOf(":") + 2)) + Integer.parseInt(
                                         ChatColor.stripColor(item.getItemMeta().getDisplayName())), 0), 2304), page, isBuyInventory));
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
                     }
                 }
 
@@ -125,7 +127,7 @@ public class InventoryClickListener implements Listener {
                         player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(
                                 skyblock, player.getUniqueId(), itemShop, count, page, isBuyInventory));
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
                     }
                 }
 
@@ -163,7 +165,7 @@ public class InventoryClickListener implements Listener {
             try {
                 player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(skyblock, player.getUniqueId(), ItemShop.getItemShopByMaterial(item.getType()), 0, page, isBuyInventory));
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
             }
             return;
         }
@@ -180,7 +182,7 @@ public class InventoryClickListener implements Listener {
                 try {
                     player.sendMessage("§cVeuillez terminer la moitié des challenges " + difficulty.getBefore().getName());
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
                 }
                 return;
             }
@@ -191,10 +193,15 @@ public class InventoryClickListener implements Listener {
         if (title.startsWith("§gChallenges")) {
             event.setCancelled(true);
 
-            final Challenge.Difficulty difficultyPage = Arrays.stream(Challenge.Difficulty.values()).filter(difficulty -> title.contains(difficulty.getName()))
-                    .findFirst().get();
-            final Challenge<? extends Event> challenge = skyblock.getChallengeManager().getChallengesByDifficulty(difficultyPage).stream().parallel()
-                    .filter(challenges -> challenges.getSlot() == event.getSlot()).findFirst().get();
+            final Optional<Challenge.Difficulty> optionalDifficulty = Arrays.stream(Challenge.Difficulty.values()).filter(difficulty -> title.contains(difficulty.getName()))
+                    .findFirst();
+            if (optionalDifficulty.isEmpty()) throw new IllegalCallerException();
+            final Challenge.Difficulty difficultyPage = optionalDifficulty.get();
+
+            final Optional<? extends Challenge<? extends Event>> optionalChallenge = skyblock.getChallengeManager().getChallengesByDifficulty(difficultyPage).stream().parallel()
+                    .filter(challenges -> challenges.getSlot() == event.getSlot()).findFirst();
+            if (optionalChallenge.isEmpty()) throw new IllegalCallerException();
+            final Challenge<? extends Event> challenge = optionalChallenge.get();
 
             final PlayerChallengeProgress playerChallengeProgress = challenge.getChallengeProgress().getPlayerChallengeProgress(player);
             final ChallengeStatus challengeStatus = playerChallengeProgress.getStatus();
@@ -211,7 +218,6 @@ public class InventoryClickListener implements Listener {
                     player.openInventory(ChallengeInventory.getChallengeInventory(skyblock.getChallengeManager(), player, difficultyPage));
                 }
             }
-            return;
 
         }
 

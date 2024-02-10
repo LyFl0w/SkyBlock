@@ -6,22 +6,23 @@ import net.lyflow.skyblock.manager.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 public class SkyBlock extends JavaPlugin {
 
-    private static SkyBlock INSTANCE;
+    private static SkyBlock instance;
 
     private Database database;
 
     private ChallengeManager challengeManager;
 
     public static SkyBlock getInstance() {
-        return INSTANCE;
+        return instance;
     }
 
     @Override
     public void onEnable() {
-        INSTANCE = this;
+        instance = this;
 
         this.database = new Database(this, "skyblock.db");
 
@@ -35,7 +36,7 @@ public class SkyBlock extends JavaPlugin {
         try {
             database.closeConnection();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
     }
 

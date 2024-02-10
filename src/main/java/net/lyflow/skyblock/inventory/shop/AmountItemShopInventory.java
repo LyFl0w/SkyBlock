@@ -16,6 +16,10 @@ import java.util.UUID;
 
 public class AmountItemShopInventory {
 
+    private AmountItemShopInventory() {
+        throw new IllegalStateException("Inventory class");
+    }
+
     public static Inventory getAmountItemShopInventory(SkyBlock skyblock, UUID playerUUID, ItemShop itemShop, int amount, int page, boolean isBuyInventory) throws SQLException {
         final ArrayList<String> lore = new ArrayList<>(List.of("§rtotals : " + amount));
         if (amount > 0) {

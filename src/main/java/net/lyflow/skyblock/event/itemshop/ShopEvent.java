@@ -16,7 +16,7 @@ public abstract class ShopEvent extends Event implements Cancellable {
 
     protected boolean isCancelled = false;
 
-    public ShopEvent(SkyBlock skyblock, Player player, ItemShop itemShop, int amount) {
+    protected ShopEvent(SkyBlock skyblock, Player player, ItemShop itemShop, int amount) {
         this.skyblock = skyblock;
         this.player = player;
         this.itemShop = itemShop;
