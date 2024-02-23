@@ -27,7 +27,7 @@ commands:
     aliases: s
 
   money:
-    usage: §c/money or /money <send> <player>
+    usage: §c/money (<value>) or /money <send> <player>
     description: command to see your money or send money to any player
     aliases: m
 

@@ -2,17 +2,23 @@ package net.lyflow.skyblock.command;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.database.request.account.AccountRequest;
+import net.lyflow.skyblock.utils.CommandUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 
-public class MoneyCommand implements CommandExecutor {
+public class MoneyCommand implements CommandExecutor, TabCompleter {
+
+    private static final String[] fArgsCompletion = new String[]{"send", "value"};
 
     private final SkyBlock skyblock;
 
@@ -23,7 +29,7 @@ public class MoneyCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (commandSender instanceof final Player player) {
-            if (args.length == 0) {
+            if (args.length == 0 || args[0].equalsIgnoreCase("value")) {
                 try {
                     player.sendMessage("§aVous avez " + new AccountRequest(skyblock.getDatabase(), true).getMoney(player.getUniqueId()) + "$");
                 } catch (SQLException e) {
@@ -75,6 +81,16 @@ public class MoneyCommand implements CommandExecutor {
             }
         }
         return false;
+    }
+
+    @Override
+    public List<String> onTabComplete(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String label, String[] args) {
+        if (commandSender instanceof Player) {
+            if (args.length == 1) {
+                return CommandUtils.completionTable(args[0], fArgsCompletion);
+            }
+        }
+        return null;
     }
 
 }
