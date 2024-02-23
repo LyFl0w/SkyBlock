@@ -42,9 +42,8 @@ public class PlaceBlockChallenge extends MaterialChallenge<BlockPlaceEvent> {
 
         @EventHandler(ignoreCancelled = true)
         public void onBlockPlace(BlockPlaceEvent event) {
-            challenges.stream().parallel().forEach(placeBlockChallenge -> placeBlockChallenge.onEventTriggered(event.getPlayer(), event));
+            challenges.forEach(placeBlockChallenge -> placeBlockChallenge.onEventTriggered(event.getPlayer(), event));
         }
-
     }
 
 }

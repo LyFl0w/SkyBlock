@@ -45,7 +45,7 @@ public class CraftItemChallenge extends MaterialChallenge<CraftItemEvent> {
 
         @EventHandler(ignoreCancelled = true)
         public void onCraftItem(CraftItemEvent event) {
-            challenges.stream().parallel().forEach(placeBlockChallenge -> placeBlockChallenge.onEventTriggered((Player) event.getWhoClicked(), event));
+            challenges.forEach(placeBlockChallenge -> placeBlockChallenge.onEventTriggered((Player) event.getWhoClicked(), event));
         }
 
     }

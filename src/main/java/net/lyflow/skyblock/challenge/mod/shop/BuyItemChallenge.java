@@ -43,7 +43,7 @@ public class BuyItemChallenge extends ShopChallenge<PlayerBuyItemEvent> {
 
         @EventHandler(ignoreCancelled = true)
         public void onPlayerBuyItem(PlayerBuyItemEvent event) {
-            challenges.stream().parallel().forEach(buyItemChallenge -> buyItemChallenge.onEventTriggered(event.getPlayer(), event));
+            challenges.forEach(buyItemChallenge -> buyItemChallenge.onEventTriggered(event.getPlayer(), event));
         }
 
     }
