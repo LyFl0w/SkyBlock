@@ -70,7 +70,7 @@ public abstract class Challenge<T extends Event> {
 
     public final ItemStack getRepresentation(Player player) {
         final ChallengeStatus status = challengeProgress.getPlayerChallengeProgress(player).getStatus();
-        final ItemBuilder itemBuilder = new ItemBuilder(material);
+        ItemBuilder itemBuilder = new ItemBuilder(material);
 
         if (status == ChallengeStatus.LOCKED) {
             itemBuilder.setName(getCensoredName());
@@ -82,6 +82,8 @@ public abstract class Challenge<T extends Event> {
             if (status == ChallengeStatus.SUCCESSFUL) {
                 itemBuilder.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 itemBuilder.addEnchant(Enchantment.DAMAGE_ALL, 1);
+            } else if (status == ChallengeStatus.REWARD_RECOVERED) {
+                itemBuilder = new ItemBuilder(Material.PURPLE_STAINED_GLASS_PANE);
             }
             final List<String> lore = new ArrayList<>(Arrays.stream(StringUtils.prefixWords("§7", description)).toList());
             lore.addAll(type.getDefaultDescription(reward, challengeProgress, player));
