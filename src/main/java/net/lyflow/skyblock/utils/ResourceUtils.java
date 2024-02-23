@@ -56,16 +56,17 @@ public class ResourceUtils {
 
         try {
             // decode the compiled jar for iteration
-            final JarFile jar = new JarFile(URLDecoder.decode(jarPath, StandardCharsets.UTF_8));
-            final Enumeration<JarEntry> entries = jar.entries();
+            try (JarFile jar = new JarFile(URLDecoder.decode(jarPath, StandardCharsets.UTF_8))) {
+                final Enumeration<JarEntry> entries = jar.entries();
 
-            while (entries.hasMoreElements()) {
-                final String name = entries.nextElement().getName().replace('\\', '/');
-                if (name.startsWith(resourcePath)) {
-                    final String entry = name.substring(resourcePath.length() + 1);
-                    final String last = name.substring(name.length() - 1);
-                    if (!last.equals("/") && entry.matches(".*[a-zA-Z0-9].*"))
-                        saveResourceFileFromFolder(resourcePath, entry, destFile, javaPlugin, replace);
+                while (entries.hasMoreElements()) {
+                    final String name = entries.nextElement().getName().replace('\\', '/');
+                    if (name.startsWith(resourcePath)) {
+                        final String entry = name.substring(resourcePath.length() + 1);
+                        final String last = name.substring(name.length() - 1);
+                        if (!last.equals("/") && entry.matches(".*[a-zA-Z0-9].*"))
+                            saveResourceFileFromFolder(resourcePath, entry, destFile, javaPlugin, replace);
+                    }
                 }
             }
         } catch (IOException e) {
