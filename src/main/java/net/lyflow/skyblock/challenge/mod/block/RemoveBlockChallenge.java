@@ -41,8 +41,8 @@ public class RemoveBlockChallenge extends MaterialChallenge<BlockBreakEvent> {
         }
 
         @EventHandler(ignoreCancelled = true)
-        public void onBlockPlace(BlockBreakEvent event) {
-            challenges.stream().parallel().forEach(removeBlockChallenge -> removeBlockChallenge.onEventTriggered(event.getPlayer(), event));
+        public void onBlockRemove(BlockBreakEvent event) {
+            challenges.forEach(removeBlockChallenge -> removeBlockChallenge.onEventTriggered(event.getPlayer(), event));
         }
 
     }

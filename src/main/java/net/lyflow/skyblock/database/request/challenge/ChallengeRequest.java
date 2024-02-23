@@ -21,7 +21,7 @@ public class ChallengeRequest extends DefaultRequest {
     public Map<Integer, String> getChallengesDataSerialized(UUID uuid) throws SQLException {
         final HashMap<Integer, String> challengesData = new HashMap<>();
         final Connection connection = database.getConnection();
-        final ResultSet resultSet;
+
         try (final PreparedStatement preparedStatement = connection.prepareStatement("""
                 SELECT challenge_id, progress FROM Challenge
                 WHERE player_id = (
@@ -30,11 +30,11 @@ public class ChallengeRequest extends DefaultRequest {
                 """)) {
 
             preparedStatement.setString(1, uuid.toString());
-            resultSet = preparedStatement.executeQuery();
-        }
+            final ResultSet resultSet = preparedStatement.executeQuery();
 
-        while (resultSet.next())
-            challengesData.put(resultSet.getInt(1), resultSet.getString(2));
+            while (resultSet.next())
+                challengesData.put(resultSet.getInt(1), resultSet.getString(2));
+        }
 
         autoClose();
 

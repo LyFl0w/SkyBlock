@@ -66,7 +66,13 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                         }
 
                         player.sendMessage("§bTéléportation vers votre île");
-                        player.teleport(islandRequest.getSpawnLocation(islandRequest.getIslandID(player.getUniqueId())));
+                        final Location location = islandRequest.getSpawnLocation(islandRequest.getIslandID(player.getUniqueId()));
+                        if(location == null) {
+                            player.sendMessage("LOCATION NULL !! :(");
+                        } else {
+                            player.teleport(location);
+
+                        }
 
                     } catch (SQLException e) {
                         skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
@@ -132,6 +138,8 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                         }
 
                         // TELEPORT THE PLAYER TO THE LOBBY IF HE IS ON THE ISLAND WORLD
+                        System.out.println("world : " + player.getWorld().getName());
+                        System.out.println("islandID : " + islandRequest.getIslandID(player.getUniqueId()));
                         if (player.getWorld().getName().equals("skyblock-map/" + islandRequest.getIslandID(player.getUniqueId())))
                             player.teleport(LobbyCommand.spawn);
 

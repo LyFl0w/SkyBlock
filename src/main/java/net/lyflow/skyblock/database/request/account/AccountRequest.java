@@ -22,12 +22,12 @@ public class AccountRequest extends DefaultRequest {
     @Nullable
     public UUID getPlayerUUIDByName(String name) throws SQLException {
         final Connection connection = database.getConnection();
-        final ResultSet resultSet;
+        final UUID uuid;
         try (final PreparedStatement preparedStatement = connection.prepareStatement("SELECT UUID FROM Player WHERE name = ?")) {
             preparedStatement.setString(1, name);
-            resultSet = preparedStatement.executeQuery();
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            uuid = (resultSet.next()) ? UUID.fromString(resultSet.getString(1)) : null;
         }
-        final UUID uuid = (resultSet.next()) ? UUID.fromString(resultSet.getString(1)) : null;
 
         autoClose();
 
@@ -42,12 +42,13 @@ public class AccountRequest extends DefaultRequest {
 
     public int getPlayerID(OfflinePlayer offlinePlayer) throws SQLException {
         final Connection connection = database.getConnection();
-        final ResultSet resultSet;
+
+        final int playerID;
         try (final PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM Player WHERE UUID = ?")) {
             preparedStatement.setString(1, offlinePlayer.getUniqueId().toString());
-            resultSet = preparedStatement.executeQuery();
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            playerID = (resultSet.next()) ? resultSet.getInt(1) : -1;
         }
-        final int playerID = (resultSet.next()) ? resultSet.getInt(1) : -1;
 
         autoClose();
 
@@ -95,13 +96,14 @@ public class AccountRequest extends DefaultRequest {
 
     public float getMoney(UUID uuid) throws SQLException {
         final Connection connection = database.getConnection();
-        final ResultSet resultSet;
+
+        final float result;
         try (final PreparedStatement preparedStatement = connection.prepareStatement("SELECT money FROM Player WHERE uuid = ?")) {
             preparedStatement.setString(1, uuid.toString());
 
-            resultSet = preparedStatement.executeQuery();
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            result = (resultSet.next()) ? resultSet.getFloat(1) : -1.0f;
         }
-        final float result = (resultSet.next()) ? resultSet.getFloat(1) : -1.0f;
 
         autoClose();
 
