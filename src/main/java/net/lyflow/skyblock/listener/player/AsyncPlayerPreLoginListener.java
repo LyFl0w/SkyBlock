@@ -51,7 +51,7 @@ public class AsyncPlayerPreLoginListener implements Listener {
 
                     if (skyblock.getServer().getWorld(worldName) == null) {
                         final UpgradeIslandRequest upgradeIslandRequest = new UpgradeIslandRequest(skyblock.getDatabase(), false);
-                        final HashMap<Integer, IslandUpgradeStatus> alreadyUpgrades = upgradeIslandRequest.getIslandUpgrades(islandID);
+                        final Map<Integer, IslandUpgradeStatus> alreadyUpgrades = upgradeIslandRequest.getIslandUpgrades(islandID);
                         final IslandUpgradeManager islandUpgradeManager = skyblock.getIslandUpgradeManager();
 
                         // LOAD CURRENT UPGRADE
