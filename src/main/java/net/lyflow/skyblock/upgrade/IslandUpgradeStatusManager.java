@@ -1,5 +1,7 @@
 package net.lyflow.skyblock.upgrade;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 
 public class IslandUpgradeStatusManager {
@@ -12,13 +14,10 @@ public class IslandUpgradeStatusManager {
         this.islandsUpgradeStatus = new HashMap<>();
     }
 
-    public void initIslandUpgrade(int islandID, IslandUpgradeStatus islandUpgradeStatus) {
+    public void loadIslandUpgrade(int islandID, @NotNull IslandUpgradeStatus islandUpgradeStatus) {
         if(islandsUpgradeStatus.containsKey(islandID))
             throw new RuntimeException("The island id "+islandID+" already has a status for "+islandUpgrade.getName()+" upgrade");
-        islandsUpgradeStatus.put(islandID, islandUpgradeStatus);
-    }
 
-    public void loadIslandUpgrade(int islandID, IslandUpgradeStatus islandUpgradeStatus) {
         islandsUpgradeStatus.put(islandID, islandUpgradeStatus);
     }
 

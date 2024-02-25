@@ -46,27 +46,26 @@ public class CreateIslandEvent extends Event implements Cancellable {
                 final float yaw = 90;
                 final float pitch = 0;
 
-                final int id = islandRequest.createIsland(player.getUniqueId(), islandDifficulty, startPath, x, y, z, yaw, pitch);
+                final int islandID = islandRequest.createIsland(player.getUniqueId(), islandDifficulty, startPath, x, y, z, yaw, pitch);
 
                 // Make a copy of  Island World
 
                 // create island in DB
-                final String defaultPath = startPath+id;
+                final String defaultPath = startPath+islandID;
                 final File islandWorld = new File(skyblock.getDataFolder(), "../../"+defaultPath);
                 ResourceUtils.saveResourceFolder("maps/skyblock-"+islandDifficulty.name().toLowerCase(), islandWorld, skyblock, false);
 
                 final UpgradeIslandRequest upgradeIslandRequest = new UpgradeIslandRequest(skyblock.getDatabase(), false);
-                final List<IslandUpgrade> islandUpgradeList = skyblock.getIslandUpgradeManager().getIslandUpgradesBySave(true);
+                final List<IslandUpgrade> islandUpgradeList = skyblock.getIslandUpgradeManager().getIslandUpgrades();
 
                 final HashMap<Integer, IslandUpgradeStatus> dataToSave = new HashMap<>();
-                final IslandUpgradeStatus islandUpgradeStatus = new IslandUpgradeStatus();
                 islandUpgradeList.stream().parallel().forEach(islandUpgrade -> {
-                    final int upgradeID = islandUpgrade.getID();
-                    islandUpgrade.getIslandUpgradeStatusManager().initIslandUpgrade(upgradeID, islandUpgradeStatus);
-                    dataToSave.put(upgradeID, islandUpgradeStatus);
-                });
+                    final IslandUpgradeStatus islandUpgradeStatus = new IslandUpgradeStatus();
 
-                upgradeIslandRequest.addNewIslandUpgrade(id, dataToSave);
+                    islandUpgrade.getIslandUpgradeStatusManager().loadIslandUpgrade(islandID, islandUpgradeStatus);
+                    dataToSave.put(islandUpgrade.getID(), islandUpgradeStatus);
+                });
+                upgradeIslandRequest.addNewIslandUpgrade(islandID, dataToSave);
 
                 // Load World
                 skyblock.getServer().createWorld(new WorldCreator(defaultPath));

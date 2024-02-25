@@ -47,7 +47,6 @@ public class KillEntityChallenge extends EntityChallenge<EntityDeathEvent> {
             if(player == null) return;
             challenges.stream().parallel().forEach(killEntityChallenge -> killEntityChallenge.onEventTriggered(player, event));
         }
-
     }
 
 }

@@ -56,7 +56,7 @@ public class AsyncPlayerPreLoginListener implements Listener {
                         islandUpgradeManager.getIslandUpgrades().stream().parallel().filter(islandUpgrade -> alreadyUpgrades.containsKey(islandUpgrade.getID()))
                                 .forEach(islandUpgrade -> islandUpgrade.getIslandUpgradeStatusManager().loadIslandUpgrade(islandID, alreadyUpgrades.get(islandUpgrade.getID())));
 
-                        final List<IslandUpgrade> islandUpgrades = islandUpgradeManager.getIslandUpgradesBySave(true).stream().parallel()
+                        final List<IslandUpgrade> islandUpgrades = islandUpgradeManager.getIslandUpgrades().stream().parallel()
                                 .filter(islandUpgrade -> !alreadyUpgrades.containsKey(islandUpgrade.getID())).toList();
 
                         // INIT NEW UPGRADE AVAILABLE
@@ -65,7 +65,7 @@ public class AsyncPlayerPreLoginListener implements Listener {
                             final HashMap<Integer, IslandUpgradeStatus> toSave = new HashMap<>();
                             final IslandUpgradeStatus islandUpgradeStatus = new IslandUpgradeStatus();
 
-                            islandUpgrades.forEach(islandUpgrade -> islandUpgrade.getIslandUpgradeStatusManager().initIslandUpgrade(islandID, islandUpgradeStatus));
+                            islandUpgrades.forEach(islandUpgrade -> islandUpgrade.getIslandUpgradeStatusManager().loadIslandUpgrade(islandID, islandUpgradeStatus));
                             islandUpgrades.stream().parallel().forEach(islandUpgrade -> toSave.put(islandUpgrade.getID(), islandUpgradeStatus));
 
                             upgradeIslandRequest.addNewIslandUpgrade(islandID, toSave);

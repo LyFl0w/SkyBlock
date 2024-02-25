@@ -93,8 +93,6 @@ public class PlayerJoinListener implements Listener {
                                 PlayerChallengeProgress.deserialize(currentChallengesSerialized.get(challenge.getID()))));
 
 
-
-
                 skyblock.getDatabase().closeConnection();
 
             } catch(SQLException e) {

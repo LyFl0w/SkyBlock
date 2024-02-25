@@ -12,7 +12,6 @@ public class IslandUpgrade {
     protected final IslandUpgradeStatusManager islandUpgradeStatusManager;
 
     protected final int id;
-    protected final boolean save;
 
     protected final int slot;
     protected final Material material;
@@ -23,12 +22,11 @@ public class IslandUpgrade {
 
     protected final Type type;
 
-    public IslandUpgrade(SkyBlock skyBlock, int id, Type type, boolean save, float price, int slot, Material material, String name, String... description) {
+    public IslandUpgrade(SkyBlock skyBlock, int id, Type type, float price, int slot, Material material, String name, String... description) {
         this.skyBlock = skyBlock;
 
         this.id = id;
         this.type = type;
-        this.save = save;
 
         this.slot = slot;
         this.material = material;
@@ -46,10 +44,6 @@ public class IslandUpgrade {
 
     public int getID() {
         return id;
-    }
-
-    public boolean isSave() {
-        return save;
     }
 
     public ItemStack getRepresentation(int islandID) {

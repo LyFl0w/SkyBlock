@@ -36,7 +36,6 @@ public class ChallengeManager {
         registeredChallenges.stream().parallel().forEach(challenge -> challenge.getChallengeProgress().updateDefaultChallengeStatus());
     }
 
-
     private void createChallenges(SkyBlock skyblock) {
         addNewChallenges(
                 new RemoveBlockChallenge(skyblock, 0, Challenge.Difficulty.EASY, List.of(5), List.of(List.of(Material.OAK_LOG)),
@@ -52,8 +51,11 @@ public class ChallengeManager {
                         new Reward(List.of(new ItemStack(Material.COW_SPAWN_EGG, 2)), 2, 0), 4, Material.SALMON, "Still at the bottom n°1"),
 
                 new SellItemChallenge(skyblock, 4, Challenge.Difficulty.EASY, List.of(64), List.of(List.of(ItemShop.OAK_LOG)),
-                        new Reward(List.of(new ItemStack(Material.SHEEP_SPAWN_EGG, 2)), 2, 0), 5, Material.COOKED_COD, "Still at the bottom n°2")
-                );
+                        new Reward(List.of(new ItemStack(Material.SHEEP_SPAWN_EGG, 2)), 2, 0), 5, Material.COOKED_COD, "Still at the bottom n°2"),
+
+                new ReproduceAnimalChallenge(skyblock, 5, Challenge.Difficulty.EASY, List.of(3), List.of(List.of(EntityType.COW, EntityType.SHEEP)),
+                        new Reward(List.of(new ItemStack(Material.SHEEP_SPAWN_EGG, 64)), 128, 55), 6, Material.COOKED_COD, "Animalien !")
+        );
     }
 
     private void registerChallengesEvent(SkyBlock skyblock, PluginManager pluginManager) {
