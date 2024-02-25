@@ -2,7 +2,6 @@ package net.lyflow.skyblock.manager;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.command.*;
-import net.lyflow.skyblock.listener.block.BlockSpreadListener;
 import net.lyflow.skyblock.listener.inventory.InventoryClickListener;
 import net.lyflow.skyblock.listener.player.*;
 import org.bukkit.command.PluginCommand;
@@ -26,7 +25,6 @@ public class PluginManager {
         pluginManager.registerEvents(new PlayerToggleSneakListener(), skyblock);
 
         // BLOCK EVENT
-        pluginManager.registerEvents(new BlockSpreadListener(), skyblock);
 
         // INVENTORY EVENT
         pluginManager.registerEvents(new InventoryClickListener(skyblock), skyblock);

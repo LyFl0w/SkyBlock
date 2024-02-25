@@ -80,21 +80,22 @@ public class PlayerJoinListener implements Listener {
 
                     preparedStatement.executeBatch();
                     connection.commit();
+                    connection.close();
 
                     player.sendMessage((hasAccount) ? "§6De nouveaux challenges sont disponibles !" : "§6Pour accéder à vos challenge utiliser la commande §e/challenge");
                 }
-
-                skyblock.getDatabase().closeConnection();
 
                 // LOAD THE CHALLENGE DATA IF IT ISN'T ALREADY AVAILABLE
                 actualChallenges.stream().parallel().filter(challenge -> !challenge.getChallengeProgress().getPlayersCounter().containsKey(uuid))
                         .forEach(challenge -> challenge.getChallengeProgress().loadPlayerChallenge(uuid,
                                 PlayerChallengeProgress.deserialize(currentChallengesSerialized.get(challenge.getID()))));
 
+
+                skyblock.getDatabase().closeConnection();
+
             } catch (SQLException e) {
                 throw new IllegalCallerException(e);
             }
         }));
     }
-
 }

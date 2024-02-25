@@ -2,6 +2,7 @@ package net.lyflow.skyblock;
 
 import net.lyflow.skyblock.database.Database;
 import net.lyflow.skyblock.manager.ChallengeManager;
+import net.lyflow.skyblock.manager.IslandUpgradeManager;
 import net.lyflow.skyblock.manager.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,6 +15,7 @@ public class SkyBlock extends JavaPlugin {
 
     private Database database;
 
+    private IslandUpgradeManager islandUpgradeManager;
     private ChallengeManager challengeManager;
 
     public static SkyBlock getInstance() {
@@ -26,9 +28,13 @@ public class SkyBlock extends JavaPlugin {
 
         this.database = new Database(this, "skyblock.db");
 
+        // INIT MANAGER
         new PluginManager(this);
-        challengeManager = new ChallengeManager(this);
-        challengeManager.init();
+
+        this.islandUpgradeManager = new IslandUpgradeManager(this);
+
+        this.challengeManager = new ChallengeManager(this);
+        this.challengeManager.init();
     }
 
     @Override
@@ -38,6 +44,10 @@ public class SkyBlock extends JavaPlugin {
         } catch (SQLException e) {
             getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
+    }
+
+    public IslandUpgradeManager getIslandUpgradeManager() {
+        return islandUpgradeManager;
     }
 
     public ChallengeManager getChallengeManager() {

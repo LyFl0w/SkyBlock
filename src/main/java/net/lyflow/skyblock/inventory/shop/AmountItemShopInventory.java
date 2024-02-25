@@ -2,12 +2,19 @@ package net.lyflow.skyblock.inventory.shop;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.database.request.account.AccountRequest;
+import net.lyflow.skyblock.event.itemshop.PlayerBuyItemEvent;
+import net.lyflow.skyblock.event.itemshop.PlayerSellItemEvent;
 import net.lyflow.skyblock.shop.ItemShop;
+import net.lyflow.skyblock.shop.ShopCategory;
+import net.lyflow.skyblock.utils.InventoryUtils;
 import net.lyflow.skyblock.utils.builder.InventoryBuilder;
 import net.lyflow.skyblock.utils.builder.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -50,4 +57,51 @@ public class AmountItemShopInventory {
         return inventoryBuilder.toInventory();
     }
 
+
+    public static void inventoryEvent(SkyBlock skyBlock, String title, Inventory inventory, InventoryClickEvent event, Player player, ItemStack item) {
+        event.setCancelled(true);
+
+        final int page = Integer.parseInt(title.substring(title.length()-1));
+        final boolean isBuyInventory = title.contains("Buy");
+        if(item.getType() == Material.PAPER && item.getItemMeta().getDisplayName().equals("§9Back")) {
+            final ShopCategory shopCategory = ShopCategory.getShopCategoryByInventoryName(title);
+            player.openInventory(ShopInventory.getShopServerInventory(page, shopCategory, isBuyInventory));
+            return;
+        }
+
+        final ItemStack selectedItem = inventory.getItem(4);
+        final ItemShop itemShop = ItemShop.getItemShopByMaterial(selectedItem.getType());
+        switch(item.getType()) {
+            case LIME_STAINED_GLASS_PANE, RED_STAINED_GLASS_PANE -> {
+                try {
+                    final String lore = selectedItem.getItemMeta().getLore().get(0);
+                    player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(
+                            skyBlock, player.getUniqueId(), itemShop, Math.min(Math.max(Integer.parseInt(lore.substring(lore.lastIndexOf(":")+2)) + Integer.parseInt(
+                                    ChatColor.stripColor(item.getItemMeta().getDisplayName())), 0), 2304), page, isBuyInventory));
+                } catch(SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            case LIGHT_BLUE_STAINED_GLASS_PANE -> {
+                try {
+                    final int count = (isBuyInventory)
+                            ? (int) Math.floor(new AccountRequest(skyBlock.getDatabase(), true).getMoney(player.getUniqueId()) / itemShop.getBuyPrice())
+                            : InventoryUtils.countItemInventory(player.getInventory(), selectedItem.getType());
+                    player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(
+                            skyBlock, player.getUniqueId(), itemShop, count , page, isBuyInventory));
+                } catch(SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            default -> {
+                final String lore = selectedItem.getItemMeta().getLore().get(0);
+                final int count = Integer.parseInt(lore.substring(lore.lastIndexOf(":")+2));
+                skyBlock.getServer().getPluginManager().callEvent((isBuyInventory)
+                        ? new PlayerBuyItemEvent(skyBlock, player, itemShop, count)
+                        : new PlayerSellItemEvent(skyBlock, player, itemShop, count));
+            }
+        }
+    }
 }

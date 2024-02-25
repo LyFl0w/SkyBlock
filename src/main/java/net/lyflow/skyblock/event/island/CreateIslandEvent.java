@@ -1,8 +1,11 @@
 package net.lyflow.skyblock.event.island;
 
 import net.lyflow.skyblock.SkyBlock;
-import net.lyflow.skyblock.database.request.island.IslandRequest;
+import net.lyflow.skyblock.database.request.island.UpgradeIslandRequest;
 import net.lyflow.skyblock.island.IslandDifficulty;
+import net.lyflow.skyblock.database.request.island.IslandRequest;
+import net.lyflow.skyblock.upgrade.IslandUpgrade;
+import net.lyflow.skyblock.upgrade.IslandUpgradeStatus;
 import net.lyflow.skyblock.utils.ResourceUtils;
 import org.bukkit.Location;
 import org.bukkit.WorldCreator;
@@ -10,10 +13,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
 
+import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 
 public class CreateIslandEvent extends Event implements Cancellable {
@@ -41,14 +46,26 @@ public class CreateIslandEvent extends Event implements Cancellable {
                 final float yaw = 90;
                 final float pitch = 0;
 
-                final int id = islandRequest.createIsland(player.getUniqueId(), islandDifficulty, startPath, x, y, z, yaw, pitch);
+                final int islandID = islandRequest.createIsland(player.getUniqueId(), islandDifficulty, startPath, x, y, z, yaw, pitch);
 
                 // Make a copy of  Island World
 
                 // create island in DB
-                final String defaultPath = startPath + id;
-                final File islandWorld = new File(skyblock.getDataFolder(), "../../" + defaultPath);
-                ResourceUtils.saveResourceFolder("maps/skyblock-" + islandDifficulty.name().toLowerCase(), islandWorld, skyblock, false);
+                final String defaultPath = startPath+islandID;
+                final File islandWorld = new File(skyblock.getDataFolder(), "../../"+defaultPath);
+                ResourceUtils.saveResourceFolder("maps/skyblock-"+islandDifficulty.name().toLowerCase(), islandWorld, skyblock, false);
+
+                final UpgradeIslandRequest upgradeIslandRequest = new UpgradeIslandRequest(skyblock.getDatabase(), false);
+                final List<IslandUpgrade> islandUpgradeList = skyblock.getIslandUpgradeManager().getIslandUpgrades();
+
+                final HashMap<Integer, IslandUpgradeStatus> dataToSave = new HashMap<>();
+                islandUpgradeList.stream().parallel().forEach(islandUpgrade -> {
+                    final IslandUpgradeStatus islandUpgradeStatus = new IslandUpgradeStatus();
+
+                    islandUpgrade.getIslandUpgradeStatusManager().loadIslandUpgrade(islandID, islandUpgradeStatus);
+                    dataToSave.put(islandUpgrade.getID(), islandUpgradeStatus);
+                });
+                upgradeIslandRequest.addNewIslandUpgrade(islandID, dataToSave);
 
                 // Load World
                 skyblock.getServer().createWorld(new WorldCreator(defaultPath));

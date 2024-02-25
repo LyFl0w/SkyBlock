@@ -29,4 +29,9 @@ public class LocationUtils {
                 .append(y).append(z).append(yaw).append(pitch).toString();
     }
 
+    public static int getIslandID(String worldName) {
+        final String prefix = "skyblock-map";
+        if(!worldName.startsWith(prefix)) throw new IllegalArgumentException("The world need to be an island");
+        return Integer.parseInt(worldName.substring(prefix.length()+1));
+    }
 }

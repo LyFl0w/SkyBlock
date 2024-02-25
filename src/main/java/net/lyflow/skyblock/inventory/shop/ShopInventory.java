@@ -1,13 +1,17 @@
 package net.lyflow.skyblock.inventory.shop;
 
+import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.shop.ItemShop;
 import net.lyflow.skyblock.shop.ShopCategory;
 import net.lyflow.skyblock.utils.builder.InventoryBuilder;
 import net.lyflow.skyblock.utils.builder.ItemBuilder;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,4 +60,39 @@ public class ShopInventory {
         return inventoryBuilder.toInventory();
     }
 
+    public static void inventoryEvent(InventoryClickEvent event, Player player, ItemStack item) {
+        event.setCancelled(true);
+
+        switch(item.getType()) {
+            case PAPER -> player.openInventory(ShopInventory.getShopMenuInventory());
+            case AMETHYST_SHARD -> player.openInventory(ShopCategoryInventory.getShopCategoryInventory(false));
+            case ECHO_SHARD -> player.openInventory(ShopCategoryInventory.getShopCategoryInventory(true));
+        }
+    }
+
+    public static void inventorySwitchPageEvent(SkyBlock skyBlock, InventoryClickEvent event, String title, Player player, ItemStack item) {
+        event.setCancelled(true);
+
+        final int page = Integer.parseInt(title.substring(title.length()-1));
+        final boolean isBuyInventory = title.contains("Buy");
+        if(item.getType() == Material.PAPER) {
+            final boolean isPrevious = item.getItemMeta().getDisplayName().equals("Previous");
+            if(isPrevious || item.getItemMeta().getDisplayName().equals("Next")) {
+                final ShopCategory shopCategory = ShopCategory.getShopCategoryByInventoryName(title);
+                if(isPrevious) {
+                    player.openInventory((page == 0) ? ShopCategoryInventory.getShopCategoryInventory(isBuyInventory) :
+                            ShopInventory.getShopServerInventory(page-1, shopCategory, isBuyInventory));
+                    return;
+                }
+                player.openInventory(ShopInventory.getShopServerInventory(page+1, shopCategory, isBuyInventory));
+                return;
+            }
+        }
+        if(item.getType() == Material.GRAY_STAINED_GLASS_PANE) return;
+        try {
+            player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(skyBlock, player.getUniqueId(), ItemShop.getItemShopByMaterial(item.getType()), 0, page, isBuyInventory));
+        } catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

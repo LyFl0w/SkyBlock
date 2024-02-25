@@ -1,13 +1,13 @@
-name: SkyBlock
-description: Plugin for SkyBlock Server
+name: ${name}
+description: ${description}
 author: LyFlow
-main: net.lyflow.skyblock.SkyBlock
-api-version: 1.19
-version: 1.0.0-beta
+main: ${groupId}.skyblock.${artifactId}
+api-version: ${spigot.version.main}
+version: ${version}
 
 commands:
   island:
-    usage: §c/island <create/sell/tp/list/config> or /island <invite/accept/kick/leave> <player> or /island <set> <owner> <player> or /island <set> <spawn>
+    usage: §c/island <create/sell/tp/list/config/upgrade> or /island <invite/accept/kick/leave> <player> or /island <set> <owner> <player> or /island <set> <spawn>
     description: command to manipulate your island
     aliases: is
 

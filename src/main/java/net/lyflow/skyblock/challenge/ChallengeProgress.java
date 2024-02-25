@@ -27,6 +27,7 @@ public class ChallengeProgress {
 
     public ChallengeProgress(Challenge<? extends Event> challenge, List<Integer> counterList, List<List<String>> elementsCounter) {
         this.challenge = challenge;
+        // create hashmap [ElementsCounter : CounterList], Exemple -> [WALK, SPRINT : 0 KM]
         this.counter = new HashMap<>(IntStream.range(0, counterList.size()).boxed().collect(Collectors.toUnmodifiableMap(elementsCounter::get, counterList::get)));
         this.playersCounter = new HashMap<>();
     }

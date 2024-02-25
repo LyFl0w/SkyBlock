@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class PlayerChallengeProgress {
 
-    private static final Gson gson = new GsonBuilder().enableComplexMapKeySerialization().serializeNulls().create();
+    private static final Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
 
     private final Map<List<String>, Integer> playerCounter;
     private ChallengeStatus challengeStatus;
