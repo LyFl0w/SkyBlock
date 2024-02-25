@@ -29,4 +29,11 @@ public class IslandUpgradeStatus {
         isEnable = enable;
     }
 
+    @Override
+    public String toString() {
+        return "IslandUpgradeStatus{" +
+                "isBuy=" + isBuy +
+                ", isEnable=" + isEnable +
+                '}';
+    }
 }

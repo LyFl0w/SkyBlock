@@ -7,6 +7,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class LocationUtils {
 
+    private LocationUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static Location getLocationFromString(String locationString) {
         final String[] pars = locationString.split(":");
         return new Location(Bukkit.getWorld(pars[0]), Double.parseDouble(pars[1]), Double.parseDouble(pars[2]), Double.parseDouble(pars[3]),
@@ -15,7 +19,7 @@ public class LocationUtils {
 
     @Nullable
     public static String getStringFromLocation(Location location) {
-        if(location.getWorld() == null) throw new RuntimeException("The world of location doesn't exist");
+        if (location.getWorld() == null) throw new RuntimeException("The world of location doesn't exist");
         return new StringBuilderSeparated(new StringBuilder(location.getWorld().getName()), ":").append(location.getX())
                 .append(location.getY()).append(location.getZ()).append(location.getYaw()).append(location.getPitch()).toString();
     }

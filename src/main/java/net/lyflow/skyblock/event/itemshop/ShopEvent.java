@@ -2,7 +2,6 @@ package net.lyflow.skyblock.event.itemshop;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.shop.ItemShop;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -17,7 +16,7 @@ public abstract class ShopEvent extends Event implements Cancellable {
 
     protected boolean isCancelled = false;
 
-    public ShopEvent(SkyBlock skyblock, Player player, ItemShop itemShop, int amount) {
+    protected ShopEvent(SkyBlock skyblock, Player player, ItemShop itemShop, int amount) {
         this.skyblock = skyblock;
         this.player = player;
         this.itemShop = itemShop;

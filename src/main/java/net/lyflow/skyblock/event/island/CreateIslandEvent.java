@@ -7,19 +7,19 @@ import net.lyflow.skyblock.database.request.island.IslandRequest;
 import net.lyflow.skyblock.upgrade.IslandUpgrade;
 import net.lyflow.skyblock.upgrade.IslandUpgradeStatus;
 import net.lyflow.skyblock.utils.ResourceUtils;
-
 import org.bukkit.Location;
 import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
 
+import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 public class CreateIslandEvent extends Event implements Cancellable {
 
@@ -30,13 +30,13 @@ public class CreateIslandEvent extends Event implements Cancellable {
     public CreateIslandEvent(SkyBlock skyblock, Player player, IslandDifficulty islandDifficulty) {
         final IslandRequest islandRequest = new IslandRequest(skyblock.getDatabase(), false);
         try {
-            if(islandRequest.hasIsland(player.getUniqueId())) {
+            if (islandRequest.hasIsland(player.getUniqueId())) {
                 player.sendMessage("§cTu ne peux pas avoir plusieurs îles en même temps !");
                 setCancelled(true);
                 return;
             }
 
-            player.sendMessage("§bCréation de votre île en cours §6§o(difficulté : "+islandDifficulty.getName()+")");
+            player.sendMessage("§bCréation de votre île en cours §6§o(difficulté : " + islandDifficulty.getName() + ")");
 
             try {
                 final String startPath = "skyblock-map/";
@@ -76,21 +76,22 @@ public class CreateIslandEvent extends Event implements Cancellable {
                 // Teleport to the world
                 player.sendMessage("§bTéléportation en cours");
                 player.teleport(spawn);
-            } catch(SQLException e) {
-                throw new RuntimeException(e);
+            } catch (SQLException e) {
+                skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
             }
-        } catch(SQLException e) {
-            throw new RuntimeException("Erreur lors de la récupération de la base lors de la création d'une île", e);
+        } catch (SQLException e) {
+            skyblock.getLogger().log(Level.SEVERE, "Erreur lors de la récupération de la base lors de la création d'une île", e);
         }
-    }
-
-    @Override @NotNull
-    public HandlerList getHandlers() {
-        return HANDLERS;
     }
 
     public static HandlerList getHandlerList() {
         return HANDLERS;
+    }
+
+    @Override
+    @NotNull
+    public HandlerList getHandlers() {
+        return getHandlerList();
     }
 
     @Override

@@ -1,11 +1,11 @@
 package net.lyflow.skyblock.shop;
 
 import net.lyflow.skyblock.utils.builder.ItemBuilder;
-
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public enum ItemShop {
 
@@ -30,15 +30,23 @@ public enum ItemShop {
     SOUL_SAND(Material.SOUL_SAND, 25, 5, ShopCategory.BLOCK),
     GRAVEL(Material.GRAVEL, 4, 2, ShopCategory.BLOCK),
     CLAY(Material.CLAY, 5, 2, ShopCategory.BLOCK),
+    ICE(Material.ICE, 10, 1, ShopCategory.BLOCK),
+    PACKED_ICE(Material.PACKED_ICE, 50, 5, ShopCategory.BLOCK),
+    BLUE_ICE(Material.BLUE_ICE, 100, 10, ShopCategory.BLOCK),
 
     END_STONE(Material.END_STONE, 50, 25, ShopCategory.BLOCK),
     GLOWSTONE(Material.GLOWSTONE, 10, 1, ShopCategory.BLOCK),
+    OCHRE_FROGLIGHT(Material.OCHRE_FROGLIGHT, 50, 5, ShopCategory.BLOCK),
+    VERDANT_FROGLIGHT(Material.VERDANT_FROGLIGHT, 50, 5, ShopCategory.BLOCK),
+    PEARLESCENT_FROGLIGHT(Material.PEARLESCENT_FROGLIGHT, 50, 5, ShopCategory.BLOCK),
+    RED_MUSHROOM_BLOCK(Material.RED_MUSHROOM_BLOCK, 10, 1, ShopCategory.BLOCK),
+    BROWN_MUSHROOM_BLOCK(Material.BROWN_MUSHROOM_BLOCK, 10, 1, ShopCategory.BLOCK),
 
     BUDDING_AMETHYST(Material.BUDDING_AMETHYST, 30, -1, ShopCategory.BLOCK),
 
     COBWEB(Material.COBWEB, 20, -1, ShopCategory.BLOCK),
     SCULK_SENSOR(Material.SCULK_SENSOR, 50, -1, ShopCategory.BLOCK),
-    DEAD_HORN_CORAL_FAN(Material.DEAD_HORN_CORAL_FAN,  10_000, 1_000, ShopCategory.BLOCK),
+    DEAD_HORN_CORAL_FAN(Material.DEAD_HORN_CORAL_FAN, 10_000, 1_000, ShopCategory.BLOCK),
 
 
     // ITEM
@@ -84,6 +92,9 @@ public enum ItemShop {
     HONEY_BOTTLE(Material.HONEY_BOTTLE, 20, 5, ShopCategory.ITEM),
 
     WHEAT_SEEDS(Material.WHEAT_SEEDS, 3, 0.5f, ShopCategory.ITEM),
+    WHEAT(Material.WHEAT, 2, 2, ShopCategory.ITEM),
+    CARROT(Material.CARROT, 3, 2, ShopCategory.ITEM),
+    POTATO(Material.POTATO, 3, 2, ShopCategory.ITEM),
     COCOA_BEANS(Material.COCOA_BEANS, 3, 1, ShopCategory.ITEM),
     BEETROOT_SEEDS(Material.BEETROOT_SEEDS, 3, 0.5f, ShopCategory.ITEM),
     BEETROOT(Material.BEETROOT, -1, 1, ShopCategory.ITEM),
@@ -154,71 +165,71 @@ public enum ItemShop {
 
     // SPAWN EGG
 
-    SPAWNER(Material.SPAWNER, 100_000_000, 10_000, ShopCategory.SPAWN_EGG),
-    ALLAY_SPAWN_EGG(Material.ALLAY_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    AXOLOTL_SPAWN_EGG(Material.AXOLOTL_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    BEE_SPAWN_EGG(Material.BEE_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    BLAZE_SPAWN_EGG(Material.BLAZE_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    CAT_SPAWN_EGG(Material.CAT_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    CAVE_SPIDER_SPAWN_EGG(Material.CAVE_SPIDER_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    CHICKEN_SPAWN_EGG(Material.CHICKEN_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    SPAWNER(Material.SPAWNER, 10_000_000, 10_000, ShopCategory.SPAWN_EGG),
+    ALLAY_SPAWN_EGG(Material.ALLAY_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    AXOLOTL_SPAWN_EGG(Material.AXOLOTL_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    BEE_SPAWN_EGG(Material.BEE_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    BLAZE_SPAWN_EGG(Material.BLAZE_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    CAT_SPAWN_EGG(Material.CAT_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    CAVE_SPIDER_SPAWN_EGG(Material.CAVE_SPIDER_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    CHICKEN_SPAWN_EGG(Material.CHICKEN_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
 
-    COD_SPAWN_EGG(Material.COD_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    COW_SPAWN_EGG(Material.COW_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    CREEPER_SPAWN_EGG(Material.CREEPER_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    DOLPHIN_SPAWN_EGG(Material.DOLPHIN_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    DONKEY_SPAWN_EGG(Material.DONKEY_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    DROWNED_SPAWN_EGG(Material.DROWNED_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    ENDERMAN_SPAWN_EGG(Material.ENDERMAN_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    ENDERMITE_SPAWN_EGG(Material.ENDERMITE_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    COD_SPAWN_EGG(Material.COD_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    COW_SPAWN_EGG(Material.COW_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    CREEPER_SPAWN_EGG(Material.CREEPER_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    DOLPHIN_SPAWN_EGG(Material.DOLPHIN_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    DONKEY_SPAWN_EGG(Material.DONKEY_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    DROWNED_SPAWN_EGG(Material.DROWNED_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    ENDERMAN_SPAWN_EGG(Material.ENDERMAN_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    ENDERMITE_SPAWN_EGG(Material.ENDERMITE_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
 
     EVOKER_SPAWN_EGG(Material.EVOKER_SPAWN_EGG, 100_000_000, 10_000, ShopCategory.SPAWN_EGG),
-    FOX_SPAWN_EGG(Material.FOX_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    FROG_SPAWN_EGG(Material.FROG_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    GHAST_SPAWN_EGG(Material.GHAST_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    GLOW_SQUID_SPAWN_EGG(Material.GLOW_SQUID_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    GOAT_SPAWN_EGG(Material.GOAT_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    GUARDIAN_SPAWN_EGG(Material.GUARDIAN_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    HORSE_SPAWN_EGG(Material.HORSE_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    FOX_SPAWN_EGG(Material.FOX_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    FROG_SPAWN_EGG(Material.FROG_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    GHAST_SPAWN_EGG(Material.GHAST_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    GLOW_SQUID_SPAWN_EGG(Material.GLOW_SQUID_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    GOAT_SPAWN_EGG(Material.GOAT_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    GUARDIAN_SPAWN_EGG(Material.GUARDIAN_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    HORSE_SPAWN_EGG(Material.HORSE_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
 
-    HUSK_SPAWN_EGG(Material.HUSK_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    HUSK_SPAWN_EGG(Material.HUSK_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
     IRON_GOLEM_SPAWN_EGG(Material.IRON_GOLEM_SPAWN_EGG, 100_000_000, 10_000, ShopCategory.SPAWN_EGG),
-    LLAMA_SPAWN_EGG(Material.LLAMA_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    MAGMA_CUBE_SPAWN_EGG(Material.MAGMA_CUBE_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    MULE_SPAWN_EGG(Material.MULE_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    MOOSHROOM_SPAWN_EGG(Material.MOOSHROOM_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    OCELOT_SPAWN_EGG(Material.OCELOT_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    PANDA_SPAWN_EGG(Material.PANDA_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    PARROT_SPAWN_EGG(Material.PARROT_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    LLAMA_SPAWN_EGG(Material.LLAMA_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    MAGMA_CUBE_SPAWN_EGG(Material.MAGMA_CUBE_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    MULE_SPAWN_EGG(Material.MULE_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    MOOSHROOM_SPAWN_EGG(Material.MOOSHROOM_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    OCELOT_SPAWN_EGG(Material.OCELOT_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    PANDA_SPAWN_EGG(Material.PANDA_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    PARROT_SPAWN_EGG(Material.PARROT_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
 
-    PIG_SPAWN_EGG(Material.PIG_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    PIG_SPAWN_EGG(Material.PIG_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
     PIGLIN_SPAWN_EGG(Material.PIGLIN_SPAWN_EGG, 15_000_000, 1_500, ShopCategory.SPAWN_EGG),
     PILLAGER_SPAWN_EGG(Material.PILLAGER_SPAWN_EGG, 15_000_000, 1_500, ShopCategory.SPAWN_EGG),
-    POLAR_BEAR_SPAWN_EGG(Material.POLAR_BEAR_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    RABBIT_SPAWN_EGG(Material.RABBIT_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    POLAR_BEAR_SPAWN_EGG(Material.POLAR_BEAR_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    RABBIT_SPAWN_EGG(Material.RABBIT_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
     RAVAGER_SPAWN_EGG(Material.RAVAGER_SPAWN_EGG, 15_000_000, 1_500, ShopCategory.SPAWN_EGG),
 
-    SHEEP_SPAWN_EGG(Material.SHEEP_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    SHEEP_SPAWN_EGG(Material.SHEEP_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
     SHULKER_SPAWN_EGG(Material.SHULKER_SPAWN_EGG, 15_000_000, 1_500, ShopCategory.SPAWN_EGG),
-    SILVERFISH_SPAWN_EGG(Material.SILVERFISH_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    SKELETON_SPAWN_EGG(Material.SKELETON_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    SKELETON_HORSE_SPAWN_EGG(Material.SKELETON_HORSE_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    SLIME_SPAWN_EGG(Material.SLIME_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    SNOW_GOLEM_SPAWN_EGG(Material.SNOW_GOLEM_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    SPIDER_SPAWN_EGG(Material.SPIDER_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    SILVERFISH_SPAWN_EGG(Material.SILVERFISH_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    SKELETON_SPAWN_EGG(Material.SKELETON_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    SKELETON_HORSE_SPAWN_EGG(Material.SKELETON_HORSE_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    SLIME_SPAWN_EGG(Material.SLIME_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    SNOW_GOLEM_SPAWN_EGG(Material.SNOW_GOLEM_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    SPIDER_SPAWN_EGG(Material.SPIDER_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
 
-    SQUID_SPAWN_EGG(Material.SQUID_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    STRAY_SPAWN_EGG(Material.STRAY_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    TRADER_LLAMA_SPAWN_EGG(Material.TRADER_LLAMA_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    TURTLE_SPAWN_EGG(Material.TURTLE_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    VILLAGER_SPAWN_EGG(Material.VILLAGER_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    SQUID_SPAWN_EGG(Material.SQUID_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    STRAY_SPAWN_EGG(Material.STRAY_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    TRADER_LLAMA_SPAWN_EGG(Material.TRADER_LLAMA_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    TURTLE_SPAWN_EGG(Material.TURTLE_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    VILLAGER_SPAWN_EGG(Material.VILLAGER_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
 
-    WANDERING_TRADER_SPAWN_EGG(Material.WANDERING_TRADER_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    WITCH_SPAWN_EGG(Material.WITCH_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    WITHER_SKELETON_SPAWN_EGG(Material.WITHER_SKELETON_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    WOLF_SPAWN_EGG(Material.WOLF_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    ZOMBIE_SPAWN_EGG(Material.ZOMBIE_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
-    ZOMBIE_HORSE_SPAWN_EGG(Material.ZOMBIE_HORSE_SPAWN_EGG, 10_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    WANDERING_TRADER_SPAWN_EGG(Material.WANDERING_TRADER_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    WITCH_SPAWN_EGG(Material.WITCH_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    WITHER_SKELETON_SPAWN_EGG(Material.WITHER_SKELETON_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    WOLF_SPAWN_EGG(Material.WOLF_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    ZOMBIE_SPAWN_EGG(Material.ZOMBIE_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
+    ZOMBIE_HORSE_SPAWN_EGG(Material.ZOMBIE_HORSE_SPAWN_EGG, 1_000_000, 1_000, ShopCategory.SPAWN_EGG),
 
 
     // ORE
@@ -239,7 +250,8 @@ public enum ItemShop {
     EMERALD(Material.EMERALD, 50, 40, ShopCategory.ORE);
 
 
-    private final float buyPrice, sellPrice;
+    private final float buyPrice;
+    private final float sellPrice;
     private final Material material;
     private final ShopCategory shopCategory;
 
@@ -251,7 +263,10 @@ public enum ItemShop {
     }
 
     public static ItemShop getItemShopByMaterial(Material material) {
-        return Arrays.stream(values()).parallel().filter(itemShop -> itemShop.getMaterial() == material).findFirst().get();
+        final Optional<ItemShop> optionalItemShop = Arrays.stream(values()).parallel().filter(itemShop -> itemShop.getMaterial() == material).findFirst();
+        if (optionalItemShop.isEmpty())
+            throw new IllegalArgumentException("Aucun item dans le shop fait référence à " + material.name());
+        return optionalItemShop.get();
     }
 
     public ItemBuilder getItemBuilder(int number) {
@@ -259,11 +274,11 @@ public enum ItemShop {
     }
 
     public ItemStack getBuyItemStack(int number) {
-        return getItemBuilder(number).setLore("§a"+buyPrice*number+"$").toItemStack();
+        return getItemBuilder(number).setLore("§a" + buyPrice * number + "$").toItemStack();
     }
 
     public ItemStack getSellItemStack(int number) {
-        return getItemBuilder(number).setLore("§a"+sellPrice*number+"$").toItemStack();
+        return getItemBuilder(number).setLore("§a" + sellPrice * number + "$").toItemStack();
     }
 
     public Material getMaterial() {

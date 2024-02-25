@@ -16,7 +16,9 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class AsyncPlayerPreLoginListener implements Listener {
 
@@ -33,11 +35,11 @@ public class AsyncPlayerPreLoginListener implements Listener {
             final IslandRequest islandRequest = new IslandRequest(skyblock.getDatabase(), false);
             try {
                 // LOAD ISLAND WORLD IF IT'S NOT LOADED
-                if(islandRequest.hasIsland(playerUUID)) {
+                if (islandRequest.hasIsland(playerUUID)) {
                     final int islandID = islandRequest.getIslandID(playerUUID);
                     final String worldName = islandRequest.getIslandWorldName(islandID);
-                    final HashMap<String, Integer> unloadWorlds = PlayerQuitListener.getUnloadWorlds();
-                    if(unloadWorlds.containsKey(worldName)) {
+                    final Map<String, Integer> unloadWorlds = PlayerQuitListener.getUnloadWorlds();
+                    if (unloadWorlds.containsKey(worldName)) {
                         // REMOVE TASK WHO UNLOAD ISLAND WORLD
                         skyblock.getServer().getScheduler().cancelTask(unloadWorlds.get(worldName));
                         // REMOVE ISLAND WORLD OF UNLOAD WORLDS LIST
@@ -47,7 +49,7 @@ public class AsyncPlayerPreLoginListener implements Listener {
                         return;
                     }
 
-                    if(skyblock.getServer().getWorld(worldName) == null){
+                    if (skyblock.getServer().getWorld(worldName) == null) {
                         final UpgradeIslandRequest upgradeIslandRequest = new UpgradeIslandRequest(skyblock.getDatabase(), false);
                         final HashMap<Integer, IslandUpgradeStatus> alreadyUpgrades = upgradeIslandRequest.getIslandUpgrades(islandID);
                         final IslandUpgradeManager islandUpgradeManager = skyblock.getIslandUpgradeManager();
@@ -60,8 +62,8 @@ public class AsyncPlayerPreLoginListener implements Listener {
                                 .filter(islandUpgrade -> !alreadyUpgrades.containsKey(islandUpgrade.getID())).toList();
 
                         // INIT NEW UPGRADE AVAILABLE
-                        final boolean newUpgradeAvailable = islandUpgrades.size() > 0;
-                        if(newUpgradeAvailable) {
+                        final boolean newUpgradeAvailable = !islandUpgrades.isEmpty();
+                        if (newUpgradeAvailable) {
                             final HashMap<Integer, IslandUpgradeStatus> toSave = new HashMap<>();
                             final IslandUpgradeStatus islandUpgradeStatus = new IslandUpgradeStatus();
 
@@ -75,22 +77,21 @@ public class AsyncPlayerPreLoginListener implements Listener {
 
                         skyblock.getServer().createWorld(new WorldCreator(worldName));
 
-                        if(newUpgradeAvailable) {
+                        if (newUpgradeAvailable) {
                             skyblock.getServer().getScheduler().runTaskLater(skyblock, () -> {
                                 final OfflinePlayer offlinePlayer = skyblock.getServer().getOfflinePlayer(playerUUID);
-                                if(!offlinePlayer.isOnline()) return;
-                                offlinePlayer.getPlayer().sendMessage("§aDe nouveaux amélioration d'îles sont disponibles");
-                            }, 20L*5);
+                                if (!offlinePlayer.isOnline()) return;
+                                offlinePlayer.getPlayer().sendMessage("§aDe nouveaux améliorations d'îles sont disponibles");
+                            }, 20L * 5);
                         }
 
                         return;
                     }
                 }
                 skyblock.getDatabase().closeConnection();
-            } catch(SQLException e) {
-                throw new RuntimeException(e);
+            } catch (SQLException e) {
+                skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
             }
         });
     }
-
 }

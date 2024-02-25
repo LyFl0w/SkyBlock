@@ -48,7 +48,7 @@ public class UpgradeIslandRequest extends DefaultRequest {
 
         final ResultSet resultSet = preparedStatement.executeQuery();
         while(resultSet.next())
-            upgrades.put(resultSet.getInt(1), new IslandUpgradeStatus((resultSet.getInt(1) != 0), (resultSet.getInt(2) != 0)));
+            upgrades.put(resultSet.getInt(1), new IslandUpgradeStatus((resultSet.getInt(2) != 0), (resultSet.getInt(3) != 0)));
 
         autoClose();
 
@@ -91,6 +91,17 @@ public class UpgradeIslandRequest extends DefaultRequest {
 
         preparedStatement.executeBatch();
         connection.commit();
+
+        autoClose();
+    }
+
+    public void deleteIsland(int id) throws SQLException {
+        final Connection connection = database.getConnection();
+        try (final PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Island_Upgrade WHERE island_id = ?")) {
+            preparedStatement.setInt(1, id);
+
+            preparedStatement.execute();
+        }
 
         autoClose();
     }

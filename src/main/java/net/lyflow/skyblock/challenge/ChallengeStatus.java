@@ -4,7 +4,8 @@ public enum ChallengeStatus {
 
     LOCKED, IN_PROGRESS, SUCCESSFUL, REWARD_RECOVERED;
 
-    ChallengeStatus() {}
+    ChallengeStatus() {
+    }
 
     public boolean isFinish() {
         return this == SUCCESSFUL || this == REWARD_RECOVERED;

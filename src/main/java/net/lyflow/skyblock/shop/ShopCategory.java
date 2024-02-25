@@ -1,11 +1,11 @@
 package net.lyflow.skyblock.shop;
 
 import net.lyflow.skyblock.utils.builder.ItemBuilder;
-
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public enum ShopCategory {
 
@@ -24,6 +24,20 @@ public enum ShopCategory {
         this.pos = pos;
     }
 
+    public static ShopCategory getShopCategory(int slot) {
+        final Optional<ShopCategory> optionalShopCategory = Arrays.stream(values()).filter(shopCategory -> shopCategory.getPos() == slot).findFirst();
+        if (optionalShopCategory.isEmpty())
+            throw new IllegalArgumentException("Le slot " + slot + " ne fait référence à aucune catégorie du shop");
+        return optionalShopCategory.get();
+    }
+
+    public static ShopCategory getShopCategoryByInventoryName(String inventoryName) {
+        final Optional<ShopCategory> optionalShopCategory = Arrays.stream(values()).filter(shopCategory -> inventoryName.contains(shopCategory.getName())).findFirst();
+        if (optionalShopCategory.isEmpty())
+            throw new IllegalArgumentException("Le nom d'inventaire " + inventoryName + " ne fait référence à aucune catégorie du shop");
+        return optionalShopCategory.get();
+    }
+
     public ItemStack getItemStack() {
         return itemBuilder.setName(name).toItemStack();
     }
@@ -34,13 +48,5 @@ public enum ShopCategory {
 
     public String getName() {
         return name;
-    }
-
-    public static ShopCategory getShopCategory(int slot) {
-        return Arrays.stream(values()).filter(shopCategory -> shopCategory.getPos() == slot).findFirst().get();
-    }
-
-    public static ShopCategory getShopCategoryByInventoryName(String inventoryName) {
-        return Arrays.stream(values()).filter(shopCategory -> inventoryName.contains(shopCategory.getName())).findFirst().get();
     }
 }

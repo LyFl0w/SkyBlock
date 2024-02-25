@@ -7,15 +7,15 @@ import java.sql.SQLException;
 public class DefaultRequest {
 
     protected final Database database;
-    protected final boolean autoClose;
+    protected final boolean isAutoClose;
 
-    public DefaultRequest(Database database, boolean autoClose) {
+    public DefaultRequest(Database database, boolean isAutoClose) {
         this.database = database;
-        this.autoClose = autoClose;
+        this.isAutoClose = isAutoClose;
     }
 
     protected void autoClose() throws SQLException {
-        if (autoClose) database.closeConnection();
+        if (isAutoClose) database.closeConnection();
     }
 
 }

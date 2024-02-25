@@ -6,10 +6,9 @@ import net.lyflow.skyblock.challenge.Reward;
 import net.lyflow.skyblock.challenge.mod.CraftItemChallenge;
 import net.lyflow.skyblock.challenge.mod.block.PlaceBlockChallenge;
 import net.lyflow.skyblock.challenge.mod.block.RemoveBlockChallenge;
-import net.lyflow.skyblock.challenge.mod.shop.BuyItemChallenge;
 import net.lyflow.skyblock.challenge.mod.entity.KillEntityChallenge;
 import net.lyflow.skyblock.challenge.mod.entity.ReproduceAnimalChallenge;
-
+import net.lyflow.skyblock.challenge.mod.shop.BuyItemChallenge;
 import net.lyflow.skyblock.challenge.mod.shop.SellItemChallenge;
 import net.lyflow.skyblock.shop.ItemShop;
 import org.bukkit.Material;
@@ -105,16 +104,16 @@ public class ChallengeManager {
 
     @SafeVarargs
     public final void addNewChallenges(Challenge<? extends Event>... challenges) {
-        Arrays.stream(challenges).forEach(challenge ->  {
+        Arrays.stream(challenges).forEach(challenge -> {
             final String name = challenge.getName();
             final int id = challenge.getID();
 
-            if(challengeExist(id)) {
+            if (challengeExist(id)) {
                 final Challenge<?> otherChallenge = getChallengeByID(id);
-                throw new RuntimeException((challenge.equals(otherChallenge)) ? "Their is a duplication of Challenge with id "+id : "The Challenge "+challenge.getName()+" can't be initialized because his id is already use by the Challenge "+otherChallenge.getName());
-            } else if(challengeExist(name)) {
+                throw new IllegalArgumentException((challenge.equals(otherChallenge)) ? "Their is a duplication of Challenge with id " + id : "The Challenge " + challenge.getName() + " can't be initialized because his id is already use by the Challenge " + otherChallenge.getName());
+            } else if (challengeExist(name)) {
                 final Challenge<?> otherChallenge = getChallengeByName(name);
-                throw new RuntimeException((challenge.equals(otherChallenge)) ? "Their is a duplication of Challenge with name "+name : "The Challenge "+challenge.getName()+" can't be initialized because his name is already use by this Challenge ID "+otherChallenge.getID());
+                throw new IllegalArgumentException((challenge.equals(otherChallenge)) ? "Their is a duplication of Challenge with name " + name : "The Challenge " + challenge.getName() + " can't be initialized because his name is already use by this Challenge ID " + otherChallenge.getID());
             }
 
             getRegisteredChallenges().add(challenge);

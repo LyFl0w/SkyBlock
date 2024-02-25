@@ -6,7 +6,6 @@ import net.lyflow.skyblock.inventory.island.IslandDifficultyInventory;
 import net.lyflow.skyblock.inventory.shop.AmountItemShopInventory;
 import net.lyflow.skyblock.inventory.shop.ShopCategoryInventory;
 import net.lyflow.skyblock.inventory.shop.ShopInventory;
-
 import net.lyflow.skyblock.inventory.upgrade.UpgradeInventory;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -15,7 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
 
 public class InventoryClickListener implements Listener {
 
@@ -30,7 +28,8 @@ public class InventoryClickListener implements Listener {
         final Inventory inventory = event.getClickedInventory();
         final ItemStack item = event.getCurrentItem();
 
-        if(inventory == null || inventory == player.getInventory() || item == null || item.getType() == Material.AIR) return;
+        if (inventory == null || inventory == player.getInventory() || item == null || item.getType() == Material.AIR)
+            return;
 
         final String title = event.getView().getTitle();
 

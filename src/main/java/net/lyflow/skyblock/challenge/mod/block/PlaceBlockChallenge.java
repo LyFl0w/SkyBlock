@@ -5,7 +5,6 @@ import net.lyflow.skyblock.challenge.PlayerChallengeProgress;
 import net.lyflow.skyblock.challenge.Reward;
 import net.lyflow.skyblock.challenge.type.MaterialChallenge;
 import net.lyflow.skyblock.manager.ChallengeManager;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,22 +28,22 @@ public class PlaceBlockChallenge extends MaterialChallenge<BlockPlaceEvent> {
     @Override
     protected void onEvent(BlockPlaceEvent event, Player player, PlayerChallengeProgress playerChallengeProgress) throws SQLException {
         final Material material = event.getBlockPlaced().getType();
-        if(!challengeProgress.isValidElement(material)) return;
+        if (challengeProgress.isNotValidElement(material)) return;
         challengeProgress.incrementCounter(player, 1, material);
     }
 
     public static class ListenerEvent implements Listener {
 
         private final List<PlaceBlockChallenge> challenges;
+
         public ListenerEvent(ChallengeManager challengeManager) {
             this.challenges = Collections.unmodifiableList((List<PlaceBlockChallenge>) challengeManager.getChallengesByType(Type.PLACE_BLOCK));
         }
 
         @EventHandler(ignoreCancelled = true)
         public void onBlockPlace(BlockPlaceEvent event) {
-            challenges.stream().parallel().forEach(placeBlockChallenge -> placeBlockChallenge.onEventTriggered(event.getPlayer(), event));
+            challenges.forEach(placeBlockChallenge -> placeBlockChallenge.onEventTriggered(event.getPlayer(), event));
         }
-
     }
 
 }

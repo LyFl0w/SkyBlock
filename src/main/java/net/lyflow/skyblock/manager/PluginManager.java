@@ -4,7 +4,6 @@ import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.command.*;
 import net.lyflow.skyblock.listener.inventory.InventoryClickListener;
 import net.lyflow.skyblock.listener.player.*;
-
 import org.bukkit.command.PluginCommand;
 
 public class PluginManager {
@@ -20,6 +19,7 @@ public class PluginManager {
         pluginManager.registerEvents(new PlayerJoinListener(skyblock), skyblock);
         pluginManager.registerEvents(new PlayerDeathListener(skyblock), skyblock);
         pluginManager.registerEvents(new PlayerRespawnListener(skyblock), skyblock);
+        pluginManager.registerEvents(new PlayerInteractListener(), skyblock);
 
         pluginManager.registerEvents(new AsyncPlayerPreLoginListener(skyblock), skyblock);
         pluginManager.registerEvents(new PlayerToggleSneakListener(), skyblock);
@@ -37,7 +37,9 @@ public class PluginManager {
         islandPluginCommand.setExecutor(islandCommand);
         islandPluginCommand.setTabCompleter(islandCommand);
 
-        skyblock.getCommand("money").setExecutor(new MoneyCommand(skyblock));
+        final MoneyCommand moneyCommand = new MoneyCommand(skyblock);
+        skyblock.getCommand("money").setExecutor(moneyCommand);
+        skyblock.getCommand("money").setTabCompleter(moneyCommand);
 
         skyblock.getCommand("lobby").setExecutor(new LobbyCommand(skyblock));
         skyblock.getCommand("shop").setExecutor(new ShopCommand());

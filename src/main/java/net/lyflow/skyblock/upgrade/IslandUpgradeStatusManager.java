@@ -19,6 +19,7 @@ public class IslandUpgradeStatusManager {
             throw new RuntimeException("The island id "+islandID+" already has a status for "+islandUpgrade.getName()+" upgrade");
 
         islandsUpgradeStatus.put(islandID, islandUpgradeStatus);
+        System.out.println("put (" + islandUpgrade.getName() + ") : " + islandID + " / " + islandUpgradeStatus);
     }
 
     public IslandUpgradeStatus getIslandUpgradeStatus(int id) {

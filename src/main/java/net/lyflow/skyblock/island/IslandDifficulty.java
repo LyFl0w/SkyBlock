@@ -3,6 +3,7 @@ package net.lyflow.skyblock.island;
 import org.bukkit.Material;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public enum IslandDifficulty {
 
@@ -20,6 +21,13 @@ public enum IslandDifficulty {
         this.itemName = itemName;
     }
 
+    public static IslandDifficulty getIslandDifficultyByMaterial(Material material) {
+        final Optional<IslandDifficulty> optionalIslandDifficulty = Arrays.stream(values()).filter(islandDifficulty -> islandDifficulty.getMaterial() == material).findFirst();
+        if (optionalIslandDifficulty.isEmpty())
+            throw new IllegalArgumentException("Aucune difficulté n'est associé à l'item " + material.name());
+        return optionalIslandDifficulty.get();
+    }
+
     public int getDifficulty() {
         return difficulty;
     }
@@ -30,9 +38,5 @@ public enum IslandDifficulty {
 
     public String getName() {
         return itemName;
-    }
-
-    public static IslandDifficulty getIslandDifficultyByMaterial(Material material) {
-        return Arrays.stream(values()).filter(islandDifficulty -> islandDifficulty.getMaterial() == material).findFirst().get();
     }
 }

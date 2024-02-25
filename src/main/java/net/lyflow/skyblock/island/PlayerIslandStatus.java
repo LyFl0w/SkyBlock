@@ -1,6 +1,7 @@
 package net.lyflow.skyblock.island;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public enum PlayerIslandStatus {
 
@@ -12,11 +13,14 @@ public enum PlayerIslandStatus {
         this.id = id;
     }
 
-    public int getID() {
-        return id;
+    public static PlayerIslandStatus getMateStatusByID(int id) {
+        final Optional<PlayerIslandStatus> optionalPlayerIslandStatus = Arrays.stream(values()).filter(playerIslandStatus -> playerIslandStatus.getID() == id).findFirst();
+        if (optionalPlayerIslandStatus.isEmpty())
+            throw new IllegalArgumentException("Le status d'id " + id + " n'existe pas !");
+        return optionalPlayerIslandStatus.get();
     }
 
-    public static PlayerIslandStatus getMateStatusByID(int id) {
-        return Arrays.stream(values()).filter(playerIslandStatus -> playerIslandStatus.getID() == id).findFirst().get();
+    public int getID() {
+        return id;
     }
 }
