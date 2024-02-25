@@ -12,6 +12,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public class ChallengeInventory {
 
@@ -54,10 +55,15 @@ public class ChallengeInventory {
     public static void inventoryDifficultyChallengeEvent(SkyBlock skyBlock, InventoryClickEvent event, String title, Player player) {
         event.setCancelled(true);
 
-        final Challenge.Difficulty difficultyPage = Arrays.stream(Challenge.Difficulty.values()).filter(difficulty -> title.contains(difficulty.getName()))
-                .findFirst().get();
-        final Challenge<? extends Event> challenge = skyBlock.getChallengeManager().getChallengesByDifficulty(difficultyPage).stream().parallel()
-                .filter(challenges -> challenges.getSlot() == event.getSlot()).findFirst().get();
+        final Optional<Challenge.Difficulty> optionalDifficulty = Arrays.stream(Challenge.Difficulty.values())
+                .filter(difficulty -> title.contains(difficulty.getName())).findFirst();
+        if(optionalDifficulty.isEmpty()) throw new IllegalCallerException("Difficulty not found");
+        final Challenge.Difficulty difficultyPage = optionalDifficulty.get();
+
+        final Optional<? extends Challenge<? extends Event>> optionalChallenge = skyBlock.getChallengeManager().getChallengesByDifficulty(difficultyPage).stream().parallel()
+                .filter(challenges -> challenges.getSlot() == event.getSlot()).findFirst();
+        if(optionalChallenge.isEmpty()) throw new IllegalCallerException("Challenge not found for slot " + event.getSlot());
+        final Challenge<? extends Event> challenge = optionalChallenge.get();
 
         final PlayerChallengeProgress playerChallengeProgress = challenge.getChallengeProgress().getPlayerChallengeProgress(player);
         final ChallengeStatus challengeStatus = playerChallengeProgress.getStatus();
