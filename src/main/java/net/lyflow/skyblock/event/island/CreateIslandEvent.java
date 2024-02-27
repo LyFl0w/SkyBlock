@@ -4,8 +4,8 @@ import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.database.request.island.UpgradeIslandRequest;
 import net.lyflow.skyblock.island.IslandDifficulty;
 import net.lyflow.skyblock.database.request.island.IslandRequest;
-import net.lyflow.skyblock.upgrade.IslandUpgrade;
-import net.lyflow.skyblock.upgrade.IslandUpgradeStatus;
+import net.lyflow.skyblock.island.upgrade.IslandUpgrade;
+import net.lyflow.skyblock.island.upgrade.IslandUpgradeStatus;
 import net.lyflow.skyblock.utils.ResourceUtils;
 import org.bukkit.Location;
 import org.bukkit.WorldCreator;
@@ -27,12 +27,14 @@ public class CreateIslandEvent extends Event implements Cancellable {
 
     private boolean isCancelled = false;
 
-    public CreateIslandEvent(SkyBlock skyblock, Player player, IslandDifficulty islandDifficulty) {
-        final IslandRequest islandRequest = new IslandRequest(skyblock.getDatabase(), false);
+    public CreateIslandEvent(SkyBlock skyBlock, Player player, IslandDifficulty islandDifficulty) {
+        final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
         try {
             if (islandRequest.hasIsland(player.getUniqueId())) {
                 player.sendMessage("§cTu ne peux pas avoir plusieurs îles en même temps !");
                 setCancelled(true);
+
+                skyBlock.getDatabase().closeConnection();
                 return;
             }
 
@@ -52,11 +54,11 @@ public class CreateIslandEvent extends Event implements Cancellable {
 
                 // create island in DB
                 final String defaultPath = startPath+islandID;
-                final File islandWorld = new File(skyblock.getDataFolder(), "../../"+defaultPath);
-                ResourceUtils.saveResourceFolder("maps/skyblock-"+islandDifficulty.name().toLowerCase(), islandWorld, skyblock, false);
+                final File islandWorld = new File(skyBlock.getDataFolder(), "../../"+defaultPath);
+                ResourceUtils.saveResourceFolder("maps/skyblock-"+islandDifficulty.name().toLowerCase(), islandWorld, skyBlock, false);
 
-                final UpgradeIslandRequest upgradeIslandRequest = new UpgradeIslandRequest(skyblock.getDatabase(), false);
-                final List<IslandUpgrade> islandUpgradeList = skyblock.getIslandUpgradeManager().getIslandUpgrades();
+                final UpgradeIslandRequest upgradeIslandRequest = new UpgradeIslandRequest(skyBlock.getDatabase(), false);
+                final List<IslandUpgrade> islandUpgradeList = skyBlock.getIslandUpgradeManager().getIslandUpgrades();
 
                 final HashMap<Integer, IslandUpgradeStatus> dataToSave = new HashMap<>();
                 islandUpgradeList.stream().parallel().forEach(islandUpgrade -> {
@@ -68,19 +70,19 @@ public class CreateIslandEvent extends Event implements Cancellable {
                 upgradeIslandRequest.addNewIslandUpgrade(islandID, dataToSave);
 
                 // Load World
-                skyblock.getServer().createWorld(new WorldCreator(defaultPath));
-                final Location spawn = new Location(skyblock.getServer().getWorld(defaultPath), x, y, z, yaw, pitch);
+                skyBlock.getServer().createWorld(new WorldCreator(defaultPath));
+                final Location spawn = new Location(skyBlock.getServer().getWorld(defaultPath), x, y, z, yaw, pitch);
 
-                skyblock.getDatabase().closeConnection();
+                skyBlock.getDatabase().closeConnection();
 
                 // Teleport to the world
                 player.sendMessage("§bTéléportation en cours");
                 player.teleport(spawn);
             } catch (SQLException e) {
-                skyblock.getLogger().log(Level.SEVERE, e.getMessage(), e);
+                skyBlock.getLogger().log(Level.SEVERE, e.getMessage(), e);
             }
         } catch (SQLException e) {
-            skyblock.getLogger().log(Level.SEVERE, "Erreur lors de la récupération de la base lors de la création d'une île", e);
+            skyBlock.getLogger().log(Level.SEVERE, "Erreur lors de la récupération de la base lors de la création d'une île", e);
         }
     }
 

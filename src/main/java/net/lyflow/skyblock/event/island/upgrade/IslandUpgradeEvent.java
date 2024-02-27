@@ -1,40 +1,28 @@
 package net.lyflow.skyblock.event.island.upgrade;
 
-import net.lyflow.skyblock.SkyBlock;
-import net.lyflow.skyblock.shop.ItemShop;
-
+import net.lyflow.skyblock.island.upgrade.IslandUpgrade;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 
-
 public abstract class IslandUpgradeEvent extends Event implements Cancellable {
 
-    protected final SkyBlock skyblock;
-
-    protected final Player player;
-    protected final ItemShop itemShop;
-    protected final int amount;
+    private final Player player;
+    private final IslandUpgrade islandUpgrade;
 
     protected boolean isCancelled = false;
 
-    protected IslandUpgradeEvent(SkyBlock skyblock, Player player, ItemShop itemShop, int amount) {
-        this.skyblock = skyblock;
+    protected IslandUpgradeEvent(Player player, IslandUpgrade islandUpgrade) {
         this.player = player;
-        this.itemShop = itemShop;
-        this.amount = amount;
-    }
-
-    public final int getAmount() {
-        return amount;
-    }
-
-    public final ItemShop getItemShop() {
-        return itemShop;
+        this.islandUpgrade = islandUpgrade;
     }
 
     public final Player getPlayer() {
         return player;
+    }
+
+    public IslandUpgrade getIslandUpgrade() {
+        return islandUpgrade;
     }
 
     @Override

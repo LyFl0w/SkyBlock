@@ -31,7 +31,8 @@ public class SkyBlock extends JavaPlugin {
         // INIT MANAGER
         new PluginManager(this);
 
-        this.islandUpgradeManager = new IslandUpgradeManager(this);
+        this.islandUpgradeManager = new IslandUpgradeManager();
+        this.islandUpgradeManager.init(this);
 
         this.challengeManager = new ChallengeManager(this);
         this.challengeManager.init();

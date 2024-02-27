@@ -1,4 +1,4 @@
-package net.lyflow.skyblock.upgrade.mod;
+package net.lyflow.skyblock.island.upgrade.mod;
 
 import org.bukkit.Material;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ class CobblestoneGeneratorUpgradeTest {
     @Test
     void testUpgradeRandomMaterialProbability() {
         final int iterations = 10_000;
-        final double marginError = 0.05;
+        final double marginError = 0.03;
 
         for (CobblestoneGeneratorUpgrade.Generator.PreGenerator preGenerator : CobblestoneGeneratorUpgrade.Generator.PreGenerator.values()) {
             final CobblestoneGeneratorUpgrade.Generator generator = preGenerator.generator;

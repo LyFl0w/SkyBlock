@@ -1,54 +1,43 @@
 package net.lyflow.skyblock.event.island.upgrade;
 
 import net.lyflow.skyblock.SkyBlock;
-import net.lyflow.skyblock.database.request.account.AccountRequest;
 import net.lyflow.skyblock.database.request.island.IslandRequest;
 import net.lyflow.skyblock.database.request.island.UpgradeIslandRequest;
 import net.lyflow.skyblock.island.upgrade.IslandUpgrade;
 import net.lyflow.skyblock.island.upgrade.IslandUpgradeStatus;
+import net.lyflow.skyblock.island.upgrade.IslandUpgradeStatusManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
-public class BuyIslandUpgradeEvent extends IslandUpgradeEvent {
+public class LevelDownIslandUpgradeEvent extends IslandUpgradeLeveledEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public BuyIslandUpgradeEvent(SkyBlock skyBlock, Player player, IslandUpgrade islandUpgrade) {
-        super(player, islandUpgrade);
+    public LevelDownIslandUpgradeEvent(SkyBlock skyBlock, Player player, IslandUpgrade islandUpgrade, int levelFrom, int levelTo) {
+        super(player, islandUpgrade, levelFrom, levelTo);
 
         final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
         try {
             final int islandID = islandRequest.getIslandID(player.getUniqueId());
-            final IslandUpgradeStatus upgradeStatus = islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID);
+            final IslandUpgradeStatusManager islandUpgradeStatusManager = islandUpgrade.getIslandUpgradeStatusManager();
+            final IslandUpgradeStatus upgradeStatus = islandUpgradeStatusManager.getIslandUpgradeStatus(islandID);
 
-            if (upgradeStatus.isBuy()) {
+            if (!upgradeStatus.isBuy() || levelTo < 1 || levelTo >= upgradeStatus.getCurrentLevel()
+                    || islandUpgrade.getLevelUpgrade().isOneLevel()) {
                 setCancelled(true);
 
                 skyBlock.getDatabase().closeConnection();
                 return;
             }
 
-            final AccountRequest accountRequest = new AccountRequest(skyBlock.getDatabase(), false);
-
-            float playerMoney = accountRequest.getMoney(player.getUniqueId());
-            final float price = islandUpgrade.getLevelUpgrade().getPrices(1);
-            if (price > playerMoney) {
-                player.sendMessage("§cTu n'as pas assez d'argent !");
-                setCancelled(true);
-
-                skyBlock.getDatabase().closeConnection();
-                return;
-            }
-
-            upgradeStatus.setTotalLevel(1);
+            upgradeStatus.setCurrentLevel(levelTo);
 
             new UpgradeIslandRequest(skyBlock.getDatabase(), false).updateIslandUpgrade(islandID, islandUpgrade.getID(), upgradeStatus);
-            accountRequest.setMoney(player.getUniqueId(), playerMoney - price);
 
-            player.sendMessage("§bUpgrade " + islandUpgrade.getName() + " acheté et activé !");
+            player.sendMessage("§bL'Upgrade " + islandUpgrade.getName() + " a été mit au lvl " + upgradeStatus.getCurrentLevel() + " !");
             skyBlock.getDatabase().closeConnection();
         } catch (SQLException e) {
             e.printStackTrace();
