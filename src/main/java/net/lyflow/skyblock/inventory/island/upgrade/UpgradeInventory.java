@@ -2,10 +2,7 @@ package net.lyflow.skyblock.inventory.island.upgrade;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.database.request.island.IslandRequest;
-import net.lyflow.skyblock.event.island.upgrade.BuyIslandUpgradeEvent;
-import net.lyflow.skyblock.event.island.upgrade.LevelDownIslandUpgradeEvent;
-import net.lyflow.skyblock.event.island.upgrade.LevelUpIslandUpgradeEvent;
-import net.lyflow.skyblock.event.island.upgrade.ToggleIslandUpgradeEvent;
+import net.lyflow.skyblock.event.island.upgrade.*;
 import net.lyflow.skyblock.island.upgrade.IslandUpgrade;
 import net.lyflow.skyblock.island.upgrade.IslandUpgradeStatus;
 import net.lyflow.skyblock.island.upgrade.IslandUpgradeStatusManager;
@@ -137,12 +134,6 @@ public class UpgradeInventory {
                 return;
             }
 
-            if (targetLevel > lastBuyLevel + 1) {
-                // DETECTER SI CEST UNE FRAUDE DACHAT
-                player.sendMessage("§cVous devez d'abord acheter les upgrades précédents !");
-                return;
-            }
-
             // DETECTER SI CEST UNE ACTIVATION/DESACTIVATION DE L'UPGRADE
             if (targetLevel == currentLevel) {
                 skyBlock.getServer().getPluginManager().callEvent(new ToggleIslandUpgradeEvent(skyBlock, player, islandUpgrade, currentLevel));
@@ -155,6 +146,17 @@ public class UpgradeInventory {
                         ? new LevelDownIslandUpgradeEvent(skyBlock, player, islandUpgrade, targetLevel)
                         : new ToggleIslandUpgradeEvent(skyBlock, player, islandUpgrade, targetLevel)
                 );
+                return;
+            }
+
+            if (targetLevel == lastBuyLevel + 1) {
+                new BuyIslandLevelUpgradeEvent(skyBlock, player, islandUpgrade, targetLevel);
+                return;
+            }
+
+            if (targetLevel > lastBuyLevel + 1) {
+                // DETECTER SI CEST UNE FRAUDE DACHAT
+                player.sendMessage("§cVous devez d'abord acheter les upgrades précédents !");
                 return;
             }
 

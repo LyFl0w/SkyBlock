@@ -17,6 +17,8 @@ public class ToggleIslandUpgradeEvent extends IslandUpgradeLeveledEvent {
 
     public ToggleIslandUpgradeEvent(SkyBlock skyBlock, Player player, IslandUpgrade islandUpgrade, int level) {
         super(player, islandUpgrade, level);
+        System.out.println("toggle");
+
         final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
 
         try {

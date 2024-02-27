@@ -26,10 +26,6 @@ public class IslandUpgradeStatus {
         return currentLevel;
     }
 
-    private void addLevel() {
-        currentLevel += 1;
-    }
-
     public void setCurrentLevel(int currentLevel) {
         this.currentLevel = currentLevel;
     }
@@ -38,13 +34,13 @@ public class IslandUpgradeStatus {
         return lastBuyLevel;
     }
 
-    private void addLastBuyLevel() {
-        lastBuyLevel += 1;
+    public void setLastBuyLevel(int level) {
+        lastBuyLevel = level;
     }
 
-    public void addTotalLevel() {
-        addLevel();
-        addLastBuyLevel();
+    public void setTotalLevel(int currentLevel) {
+        setCurrentLevel(currentLevel);
+        setLastBuyLevel(currentLevel);
     }
 
 }

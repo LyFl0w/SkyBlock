@@ -43,7 +43,7 @@ public class BuyIslandUpgradeEvent extends IslandUpgradeEvent {
                 return;
             }
 
-            upgradeStatus.addTotalLevel();
+            upgradeStatus.setTotalLevel(1);
 
             new UpgradeIslandRequest(skyBlock.getDatabase(), false).updateIslandUpgrade(islandID, islandUpgrade.getID(), upgradeStatus);
             accountRequest.setMoney(player.getUniqueId(), playerMoney - price);
