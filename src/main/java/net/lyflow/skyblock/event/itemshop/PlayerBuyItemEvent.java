@@ -24,6 +24,7 @@ public class PlayerBuyItemEvent extends ShopEvent {
 
         if (amount <= 0) {
             player.sendMessage("Le nombre d'item sélectionné doit être suppérieur à 0");
+            setCancelled(true);
             return;
         }
         final AccountRequest accountRequest = new AccountRequest(skyblock.getDatabase(), false);
@@ -38,6 +39,8 @@ public class PlayerBuyItemEvent extends ShopEvent {
                 skyblock.getDatabase().closeConnection();
                 player.sendMessage("§cVous n'avez pas assez de money pour acheter " + amount + " " + formatedItemStackName);
                 setCancelled(true);
+
+                skyblock.getDatabase().closeConnection();
                 return;
             }
             accountRequest.setMoney(player.getUniqueId(), playerMoney - price);
@@ -72,7 +75,7 @@ public class PlayerBuyItemEvent extends ShopEvent {
     @Override
     @NotNull
     public HandlerList getHandlers() {
-        return HANDLERS;
+        return getHandlerList();
     }
 
 }

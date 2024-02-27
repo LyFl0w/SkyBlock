@@ -98,6 +98,10 @@ public class ItemBuilder implements Cloneable {
         return this;
     }
 
+    public ItemBuilder addVisualEnchant() {
+        return this.addEnchant(Enchantment.VANISHING_CURSE, 1).addItemFlags(ItemFlag.HIDE_ENCHANTS);
+    }
+
     public ItemBuilder setLore(List<String> lore) {
         final ItemMeta im = getItemMeta();
         im.setLore(lore);

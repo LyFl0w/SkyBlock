@@ -4,8 +4,8 @@ import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.database.request.island.IslandRequest;
 import net.lyflow.skyblock.database.request.island.UpgradeIslandRequest;
 import net.lyflow.skyblock.manager.IslandUpgradeManager;
-import net.lyflow.skyblock.upgrade.IslandUpgrade;
-import net.lyflow.skyblock.upgrade.IslandUpgradeStatus;
+import net.lyflow.skyblock.island.upgrade.IslandUpgrade;
+import net.lyflow.skyblock.island.upgrade.IslandUpgradeStatus;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.WorldCreator;

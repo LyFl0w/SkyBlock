@@ -2,9 +2,7 @@ package net.lyflow.skyblock.database.request.island;
 
 import net.lyflow.skyblock.database.Database;
 import net.lyflow.skyblock.database.request.DefaultRequest;
-import net.lyflow.skyblock.upgrade.IslandUpgradeStatus;
-
-import org.jetbrains.annotations.Nullable;
+import net.lyflow.skyblock.island.upgrade.IslandUpgradeStatus;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,42 +17,18 @@ public class UpgradeIslandRequest extends DefaultRequest {
         super(database, autoClose);
     }
 
-    @Nullable
-    public IslandUpgradeStatus getIslandUpgradeStatus(int islandID, int upgradeID) throws SQLException {
-        final IslandUpgradeStatus islandUpgradeStatus;
-        try (final PreparedStatement preparedStatement = database.getConnection().prepareStatement("""
-                SELECT buy, status FROM Island_Upgrade
-                WHERE island_id = ? AND upgrade_id = ?
-                """)) {
-
-
-            preparedStatement.setInt(1, islandID);
-            preparedStatement.setInt(2, upgradeID);
-
-            final ResultSet resultSet = preparedStatement.executeQuery();
-
-            islandUpgradeStatus = (resultSet.next()
-                    ? new IslandUpgradeStatus((resultSet.getInt(1) != 0), (resultSet.getInt(2) != 0))
-                    : null);
-        }
-
-        autoClose();
-
-        return islandUpgradeStatus;
-    }
-
     public Map<Integer, IslandUpgradeStatus> getIslandUpgrades(int islandID) throws SQLException {
         final HashMap<Integer, IslandUpgradeStatus> upgrades = new HashMap<>();
 
         try (final PreparedStatement preparedStatement = database.getConnection().prepareStatement("""
-                SELECT upgrade_id, buy, status FROM Island_Upgrade
+                SELECT upgrade_id, level, last_buy_level FROM Island_Upgrade
                 WHERE island_id = ?
                 """)) {
             preparedStatement.setInt(1, islandID);
 
             final ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next())
-                upgrades.put(resultSet.getInt(1), new IslandUpgradeStatus((resultSet.getInt(2) != 0), (resultSet.getInt(3) != 0)));
+                upgrades.put(resultSet.getInt(1), new IslandUpgradeStatus(resultSet.getInt(2), resultSet.getInt(3)));
         }
 
         autoClose();
@@ -64,12 +38,12 @@ public class UpgradeIslandRequest extends DefaultRequest {
 
     public void updateIslandUpgrade(int islandID, int upgradeID, IslandUpgradeStatus upgradeStatus) throws SQLException {
         try (final PreparedStatement preparedStatement = database.getConnection().prepareStatement("""
-                UPDATE Island_Upgrade SET buy = ?, status = ?
+                UPDATE Island_Upgrade SET level = ?, last_buy_level = ?
                 WHERE island_id = ? AND upgrade_id = ?
                 """)) {
 
-            preparedStatement.setInt(1, (upgradeStatus.isBuy() ? 1 : 0));
-            preparedStatement.setInt(2, (upgradeStatus.isEnable() ? 1 : 0));
+            preparedStatement.setInt(1, upgradeStatus.getCurrentLevel());
+            preparedStatement.setInt(2, upgradeStatus.getLastBuyLevel());
             preparedStatement.setInt(3, islandID);
             preparedStatement.setInt(4, upgradeID);
 
@@ -88,8 +62,8 @@ public class UpgradeIslandRequest extends DefaultRequest {
                 try {
                     preparedStatement.setInt(1, islandID);
                     preparedStatement.setInt(2, key);
-                    preparedStatement.setInt(3, (value.isBuy() ? 1 : 0));
-                    preparedStatement.setInt(4, (value.isEnable() ? 1 : 0));
+                    preparedStatement.setInt(3, value.getCurrentLevel());
+                    preparedStatement.setInt(4, value.getLastBuyLevel());
 
                     preparedStatement.addBatch();
                 } catch (SQLException e) {

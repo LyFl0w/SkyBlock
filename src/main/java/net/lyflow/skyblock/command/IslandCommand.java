@@ -1,11 +1,11 @@
 package net.lyflow.skyblock.command;
 
 import net.lyflow.skyblock.SkyBlock;
-import net.lyflow.skyblock.database.request.island.UpgradeIslandRequest;
-import net.lyflow.skyblock.inventory.island.IslandDifficultyInventory;
-import net.lyflow.skyblock.inventory.upgrade.UpgradeInventory;
 import net.lyflow.skyblock.database.request.account.AccountRequest;
 import net.lyflow.skyblock.database.request.island.IslandRequest;
+import net.lyflow.skyblock.database.request.island.UpgradeIslandRequest;
+import net.lyflow.skyblock.inventory.island.IslandDifficultyInventory;
+import net.lyflow.skyblock.inventory.island.upgrade.UpgradeInventory;
 import net.lyflow.skyblock.island.IslandMate;
 import net.lyflow.skyblock.island.PlayerIslandStatus;
 import net.lyflow.skyblock.utils.CommandUtils;
@@ -69,7 +69,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
 
                         player.sendMessage("§bTéléportation vers votre île");
                         final Location location = islandRequest.getSpawnLocation(islandRequest.getIslandID(player.getUniqueId()));
-                        if(location == null) {
+                        if (location == null) {
                             player.sendMessage("LOCATION NULL !! :(");
                         } else {
                             player.teleport(location);
@@ -89,11 +89,11 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                 }
 
                 // UPGRADE
-                if(sub.equalsIgnoreCase("upgrade")) {
+                if (sub.equalsIgnoreCase("upgrade")) {
                     final IslandRequest islandRequest = new IslandRequest(skyblock.getDatabase(), false);
 
                     try {
-                        if(!islandRequest.hasIsland(player.getUniqueId())) {
+                        if (!islandRequest.hasIsland(player.getUniqueId())) {
                             player.sendMessage("§cVous n'avez pas d'île, créez-vous en une avec la commande §6/island create");
                             skyblock.getDatabase().closeConnection();
                             return true;
@@ -101,8 +101,8 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                         final int islandID = islandRequest.getIslandID(player.getUniqueId());
                         skyblock.getDatabase().closeConnection();
 
-                        player.openInventory(UpgradeInventory.getUpgradeInventory(skyblock.getIslandUpgradeManager(), islandID));
-                    } catch(SQLException e) {
+                        player.openInventory(UpgradeInventory.getTypeUpgradeInventory(skyblock.getIslandUpgradeManager(), islandID));
+                    } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
                     return true;
@@ -500,5 +500,6 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
         return optionalIslandInvitation.get();
     }
 
-    private record IslandInvitation(UUID playerUUID, int islandID, String targetPlayerName) {}
+    private record IslandInvitation(UUID playerUUID, int islandID, String targetPlayerName) {
+    }
 }

@@ -110,14 +110,17 @@ public class ChallengeManager {
 
             if (challengeExist(id)) {
                 final Challenge<?> otherChallenge = getChallengeByID(id);
-                throw new IllegalArgumentException((challenge.equals(otherChallenge)) ? "Their is a duplication of Challenge with id " + id : "The Challenge " + challenge.getName() + " can't be initialized because his id is already use by the Challenge " + otherChallenge.getName());
+                throw new IllegalArgumentException((challenge.equals(otherChallenge))
+                        ? "Their is a duplication of Challenge with id " + id
+                        : "The Challenge " + challenge.getName() + " can't be initialized because his id is already use by the Challenge " + otherChallenge.getName());
             } else if (challengeExist(name)) {
                 final Challenge<?> otherChallenge = getChallengeByName(name);
-                throw new IllegalArgumentException((challenge.equals(otherChallenge)) ? "Their is a duplication of Challenge with name " + name : "The Challenge " + challenge.getName() + " can't be initialized because his name is already use by this Challenge ID " + otherChallenge.getID());
+                throw new IllegalArgumentException((challenge.equals(otherChallenge))
+                        ? "Their is a duplication of Challenge with name " + name
+                        : "The Challenge " + challenge.getName() + " can't be initialized because his name is already use by this Challenge ID " + otherChallenge.getID());
             }
 
             getRegisteredChallenges().add(challenge);
         });
     }
-
 }
