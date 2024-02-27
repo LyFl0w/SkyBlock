@@ -18,8 +18,8 @@ public class BuyIslandUpgradeEvent extends IslandUpgradeEvent {
 
     public BuyIslandUpgradeEvent(SkyBlock skyBlock, Player player, IslandUpgrade islandUpgrade) {
         super(player, islandUpgrade);
-        final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
 
+        final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
         try {
             final int islandID = islandRequest.getIslandID(player.getUniqueId());
             final IslandUpgradeStatus upgradeStatus = islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID);

@@ -5,14 +5,20 @@ import org.bukkit.entity.Player;
 
 public abstract class IslandUpgradeLeveledEvent extends IslandUpgradeEvent {
 
-    protected int level;
+    protected int levelTo;
+    protected int levelFrom;
 
-    protected IslandUpgradeLeveledEvent(Player player, IslandUpgrade islandUpgrade, int level) {
+    protected IslandUpgradeLeveledEvent(Player player, IslandUpgrade islandUpgrade, int levelFrom, int levelTo) {
         super(player, islandUpgrade);
-        this.level = level;
+        this.levelTo = levelTo;
+        this.levelFrom = levelFrom;
     }
 
-    public int getLevel() {
-        return level;
+    public int getLevelTo() {
+        return levelTo;
+    }
+
+    public int getLevelFrom() {
+        return levelFrom;
     }
 }

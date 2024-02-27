@@ -17,9 +17,8 @@ public class LevelUpIslandUpgradeEvent extends IslandUpgradeLeveledEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public LevelUpIslandUpgradeEvent(SkyBlock skyBlock, Player player, IslandUpgrade islandUpgrade, int level) {
-        super(player, islandUpgrade, level);
-        System.out.println("upgrade");
+    public LevelUpIslandUpgradeEvent(SkyBlock skyBlock, Player player, IslandUpgrade islandUpgrade, int levelFrom, int levelTo) {
+        super(player, islandUpgrade, levelFrom, levelTo);
         final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
 
         try {
@@ -28,15 +27,15 @@ public class LevelUpIslandUpgradeEvent extends IslandUpgradeLeveledEvent {
             final IslandUpgradeStatus upgradeStatus = islandUpgradeStatusManager.getIslandUpgradeStatus(islandID);
             final LevelUpgrade levelUpgrade = islandUpgrade.getLevelUpgrade();
 
-            if (!upgradeStatus.isBuy() || levelUpgrade.isOneLevel() || level > levelUpgrade.getMaxLevel()
-                    || level < upgradeStatus.getCurrentLevel()) {
+            if (!upgradeStatus.isBuy() || levelUpgrade.isOneLevel() || levelTo > levelUpgrade.getMaxLevel()
+                    || levelTo < upgradeStatus.getCurrentLevel()) {
                 setCancelled(true);
 
                 skyBlock.getDatabase().closeConnection();
                 return;
             }
 
-            upgradeStatus.setCurrentLevel(level);
+            upgradeStatus.setCurrentLevel(levelTo);
 
             new UpgradeIslandRequest(skyBlock.getDatabase(), false).updateIslandUpgrade(islandID, islandUpgrade.getID(), upgradeStatus);
 

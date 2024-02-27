@@ -78,11 +78,12 @@ public class UpgradeInventory {
                 final LevelUpgrade levelUpgrade = islandUpgrade.getLevelUpgrade();
 
                 if (levelUpgrade.isOneLevel()) {
+                    final IslandUpgradeStatus islandUpgradeStatus = islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID);
                     skyBlock.getServer().getPluginManager().callEvent(
-                            (!islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID).isBuy())
+                            (!islandUpgradeStatus.isBuy())
                                     ? new BuyIslandUpgradeEvent(skyBlock, player, islandUpgrade)
                                     : new ToggleIslandUpgradeEvent(skyBlock, player, islandUpgrade,
-                                    islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID).getLastBuyLevel())
+                                    islandUpgradeStatus.getCurrentLevel(), islandUpgradeStatus.getLastBuyLevel())
                     );
                     return;
                 }
@@ -136,21 +137,21 @@ public class UpgradeInventory {
 
             // DETECTER SI CEST UNE ACTIVATION/DESACTIVATION DE L'UPGRADE
             if (targetLevel == currentLevel) {
-                skyBlock.getServer().getPluginManager().callEvent(new ToggleIslandUpgradeEvent(skyBlock, player, islandUpgrade, currentLevel));
+                skyBlock.getServer().getPluginManager().callEvent(new ToggleIslandUpgradeEvent(skyBlock, player, islandUpgrade, currentLevel, targetLevel));
                 return;
             }
 
             // DETECTER SI CEST UN DOWNGRADE DE LA SELECTION
             if (targetLevel < currentLevel) {
                 skyBlock.getServer().getPluginManager().callEvent(islandUpgradeStatus.isEnable()
-                        ? new LevelDownIslandUpgradeEvent(skyBlock, player, islandUpgrade, targetLevel)
-                        : new ToggleIslandUpgradeEvent(skyBlock, player, islandUpgrade, targetLevel)
+                        ? new LevelDownIslandUpgradeEvent(skyBlock, player, islandUpgrade, currentLevel, targetLevel)
+                        : new ToggleIslandUpgradeEvent(skyBlock, player, islandUpgrade, currentLevel, targetLevel)
                 );
                 return;
             }
 
             if (targetLevel == lastBuyLevel + 1) {
-                new BuyIslandLevelUpgradeEvent(skyBlock, player, islandUpgrade, targetLevel);
+                new BuyIslandLevelUpgradeEvent(skyBlock, player, islandUpgrade, currentLevel, targetLevel);
                 return;
             }
 
@@ -162,8 +163,8 @@ public class UpgradeInventory {
 
             // CEST UN UPGRADE
             skyBlock.getServer().getPluginManager().callEvent(islandUpgradeStatus.isEnable()
-                    ? new LevelUpIslandUpgradeEvent(skyBlock, player, islandUpgrade, targetLevel)
-                    : new ToggleIslandUpgradeEvent(skyBlock, player, islandUpgrade, targetLevel)
+                    ? new LevelUpIslandUpgradeEvent(skyBlock, player, islandUpgrade, currentLevel, targetLevel)
+                    : new ToggleIslandUpgradeEvent(skyBlock, player, islandUpgrade, currentLevel, targetLevel)
             );
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -186,11 +187,12 @@ public class UpgradeInventory {
             final IslandUpgrade islandUpgrade = islandUpgradeManager.getIslandUpgradesBySlot(type, event.getSlot());
 
             if (islandUpgrade.getLevelUpgrade().isOneLevel()) {
+                final IslandUpgradeStatus islandUpgradeStatus = islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID);
                 skyBlock.getServer().getPluginManager().callEvent(
-                        (!islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID).isBuy())
+                        (!islandUpgradeStatus.isBuy())
                                 ? new BuyIslandUpgradeEvent(skyBlock, player, islandUpgrade)
                                 : new ToggleIslandUpgradeEvent(skyBlock, player, islandUpgrade,
-                                islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID).getLastBuyLevel())
+                                islandUpgradeStatus.getCurrentLevel(), islandUpgradeStatus.getLastBuyLevel())
                 );
                 return;
             }

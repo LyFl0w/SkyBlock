@@ -15,27 +15,25 @@ public class ToggleIslandUpgradeEvent extends IslandUpgradeLeveledEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public ToggleIslandUpgradeEvent(SkyBlock skyBlock, Player player, IslandUpgrade islandUpgrade, int level) {
-        super(player, islandUpgrade, level);
-        System.out.println("toggle");
+    public ToggleIslandUpgradeEvent(SkyBlock skyBlock, Player player, IslandUpgrade islandUpgrade, int levelFrom, int levelTo) {
+        super(player, islandUpgrade, levelFrom, levelTo);
 
         final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
-
         try {
             final int islandID = islandRequest.getIslandID(player.getUniqueId());
             final IslandUpgradeStatus upgradeStatus = islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID);
 
             final boolean isEnableBeforeChange = upgradeStatus.isEnable();
-            this.level = (isEnableBeforeChange) ? 0 : level;
+            this.levelTo = (isEnableBeforeChange) ? 0 : levelTo;
 
-            if (!upgradeStatus.isBuy() || upgradeStatus.getLastBuyLevel() < level || level < 1) {
+            if (!upgradeStatus.isBuy() || upgradeStatus.getLastBuyLevel() < levelTo || levelTo < 1) {
                 setCancelled(true);
 
                 skyBlock.getDatabase().closeConnection();
                 return;
             }
 
-            upgradeStatus.setCurrentLevel(this.level);
+            upgradeStatus.setCurrentLevel(this.levelTo);
 
             new UpgradeIslandRequest(skyBlock.getDatabase(), false).updateIslandUpgrade(islandID, islandUpgrade.getID(), upgradeStatus);
 

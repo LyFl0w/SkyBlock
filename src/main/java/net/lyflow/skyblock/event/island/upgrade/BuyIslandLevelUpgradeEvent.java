@@ -18,19 +18,18 @@ public class BuyIslandLevelUpgradeEvent extends IslandUpgradeLeveledEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public BuyIslandLevelUpgradeEvent(SkyBlock skyBlock, Player player, IslandUpgrade islandUpgrade, int level) {
-        super(player, islandUpgrade, level);
-        System.out.println("buy upgrade");
-        final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
+    public BuyIslandLevelUpgradeEvent(SkyBlock skyBlock, Player player, IslandUpgrade islandUpgrade, int levelFrom, int levelTo) {
+        super(player, islandUpgrade, levelFrom, levelTo);
 
+        final IslandRequest islandRequest = new IslandRequest(skyBlock.getDatabase(), false);
         try {
             final int islandID = islandRequest.getIslandID(player.getUniqueId());
             final IslandUpgradeStatusManager islandUpgradeStatusManager = islandUpgrade.getIslandUpgradeStatusManager();
             final IslandUpgradeStatus upgradeStatus = islandUpgradeStatusManager.getIslandUpgradeStatus(islandID);
             final LevelUpgrade levelUpgrade = islandUpgrade.getLevelUpgrade();
 
-            if (!upgradeStatus.isBuy() || levelUpgrade.isOneLevel() || level > levelUpgrade.getMaxLevel()
-                    || level != upgradeStatus.getLastBuyLevel() + 1) {
+            if (!upgradeStatus.isBuy() || levelUpgrade.isOneLevel() || levelTo > levelUpgrade.getMaxLevel()
+                    || levelTo != upgradeStatus.getLastBuyLevel() + 1) {
                 setCancelled(true);
 
                 skyBlock.getDatabase().closeConnection();
@@ -50,7 +49,7 @@ public class BuyIslandLevelUpgradeEvent extends IslandUpgradeLeveledEvent {
                 return;
             }
 
-            upgradeStatus.setTotalLevel(level);
+            upgradeStatus.setTotalLevel(levelTo);
             accountRequest.setMoney(player.getUniqueId(), playerMoney - price);
 
             new UpgradeIslandRequest(skyBlock.getDatabase(), false).updateIslandUpgrade(islandID, islandUpgrade.getID(), upgradeStatus);
