@@ -1,13 +1,10 @@
 package net.lyflow.skyblock.challenge.mod.shop;
 
-import net.lyflow.skyblock.SkyBlock;
-import net.lyflow.skyblock.challenge.PlayerChallengeProgress;
-import net.lyflow.skyblock.challenge.Reward;
+import net.lyflow.skyblock.challenge.PlayerChallenge;
 import net.lyflow.skyblock.challenge.type.ShopChallenge;
 import net.lyflow.skyblock.event.itemshop.PlayerSellItemEvent;
 import net.lyflow.skyblock.manager.ChallengeManager;
 import net.lyflow.skyblock.shop.ItemShop;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,19 +15,15 @@ import java.util.List;
 
 public class SellItemChallenge extends ShopChallenge<PlayerSellItemEvent> {
 
-    public SellItemChallenge(SkyBlock skyblock, int id, Difficulty difficulty, List<Integer> lockedChallengeID, List<Integer> counterList, List<List<ItemShop>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
-        super(skyblock, id, difficulty, Type.SELL_ITEM, lockedChallengeID, counterList, elementsCounter, reward, slot, material, name, description);
-    }
-
-    public SellItemChallenge(SkyBlock skyblock, int id, Difficulty difficulty, List<Integer> counterList, List<List<ItemShop>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
-        this(skyblock, id, difficulty, Collections.emptyList(), counterList, elementsCounter, reward, slot, material, name, description);
+    public SellItemChallenge(List<Integer> counterList, List<List<ItemShop>> elementsCounter) {
+        super(Type.SELL_ITEM, counterList, elementsCounter);
     }
 
     @Override
-    protected void onEvent(PlayerSellItemEvent event, Player player, PlayerChallengeProgress playerChallengeProgress) throws SQLException {
+    protected void onEvent(PlayerSellItemEvent event, Player player, PlayerChallenge playerChallengeProgress) throws SQLException {
         final ItemShop itemShop = event.getItemShop();
-        if (challengeProgress.isNotValidElement(itemShop)) return;
-        challengeProgress.incrementCounter(player, event.getAmount(), itemShop);
+        if (!isValidElement(itemShop)) return;
+        incrementCounter(player, event.getAmount(), itemShop);
     }
 
     public static class ListenerEvent implements Listener {
@@ -38,7 +31,7 @@ public class SellItemChallenge extends ShopChallenge<PlayerSellItemEvent> {
         private final List<SellItemChallenge> challenges;
 
         public ListenerEvent(ChallengeManager challengeManager) {
-            this.challenges = Collections.unmodifiableList((List<SellItemChallenge>) challengeManager.getChallengesByType(Type.SELL_ITEM));
+            this.challenges = Collections.unmodifiableList((List<SellItemChallenge>) challengeManager.getSubChallengesByType(Type.SELL_ITEM));
         }
 
         @EventHandler(ignoreCancelled = true)

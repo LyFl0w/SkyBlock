@@ -1,6 +1,6 @@
 package net.lyflow.skyblock.database.request.challenge;
 
-import net.lyflow.skyblock.challenge.PlayerChallengeProgress;
+import net.lyflow.skyblock.challenge.PlayerChallenge;
 import net.lyflow.skyblock.database.Database;
 import net.lyflow.skyblock.database.request.DefaultRequest;
 
@@ -19,7 +19,7 @@ public class ChallengeRequest extends DefaultRequest {
     }
 
     public Map<Integer, String> getChallengesDataSerialized(UUID uuid) throws SQLException {
-        final HashMap<Integer, String> challengesData = new HashMap<>();
+        final Map<Integer, String> challengesData = new HashMap<>();
         final Connection connection = database.getConnection();
 
         try (final PreparedStatement preparedStatement = connection.prepareStatement("""
@@ -41,7 +41,7 @@ public class ChallengeRequest extends DefaultRequest {
         return challengesData;
     }
 
-    public void updateChallenge(int challengeID, UUID playerUUID, PlayerChallengeProgress playerChallengeProgress) throws SQLException {
+    public void updateChallenge(int challengeID, UUID playerUUID, PlayerChallenge playerChallengeProgress) throws SQLException {
         final Connection connection = database.getConnection();
         try (final PreparedStatement preparedStatement = connection.prepareStatement("""
                 UPDATE Challenge SET progress = ?

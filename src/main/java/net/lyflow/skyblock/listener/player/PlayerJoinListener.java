@@ -2,13 +2,12 @@ package net.lyflow.skyblock.listener.player;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.challenge.Challenge;
-import net.lyflow.skyblock.challenge.PlayerChallengeProgress;
+import net.lyflow.skyblock.challenge.PlayerChallenge;
 import net.lyflow.skyblock.command.LobbyCommand;
 import net.lyflow.skyblock.database.request.account.AccountRequest;
 import net.lyflow.skyblock.database.request.challenge.ChallengeRequest;
 import net.lyflow.skyblock.database.request.island.IslandRequest;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -51,13 +50,13 @@ public class PlayerJoinListener implements Listener {
                 final ChallengeRequest challengeRequest = new ChallengeRequest(skyblock.getDatabase(), false);
                 final Map<Integer, String> currentChallengesSerialized = challengeRequest.getChallengesDataSerialized(uuid);
                 final ArrayList<Integer> currentChallengesID = new ArrayList<>(currentChallengesSerialized.keySet());
-                final List<Challenge<? extends Event>> actualChallenges = skyblock.getChallengeManager().getRegisteredChallenges();
+                final List<Challenge> actualChallenges = skyblock.getChallengeManager().getRegisteredChallenges();
 
                 // ADD NEW CHALLENGES IN HASHMAP TO INIT THEM
-                final HashMap<Integer, PlayerChallengeProgress> dataToSave = new HashMap<>();
+                final HashMap<Integer, PlayerChallenge> dataToSave = new HashMap<>();
 
                 actualChallenges.stream().parallel().filter(challenge -> !currentChallengesID.contains(challenge.getID())).forEach(challenge ->
-                        dataToSave.put(challenge.getID(), challenge.getChallengeProgress().initPlayerChallenge(player)));
+                        dataToSave.put(challenge.getID(), challenge.getChallengeProgressManager().initPlayerChallenge(player)));
 
                 // INIT NEW CHALLENGES
                 if (!dataToSave.isEmpty()) {
@@ -86,10 +85,9 @@ public class PlayerJoinListener implements Listener {
                 }
 
                 // LOAD THE CHALLENGE DATA IF IT ISN'T ALREADY AVAILABLE
-                actualChallenges.stream().parallel().filter(challenge -> !challenge.getChallengeProgress().getPlayersCounter().containsKey(uuid))
-                        .forEach(challenge -> challenge.getChallengeProgress().loadPlayerChallenge(uuid,
-                                PlayerChallengeProgress.deserialize(currentChallengesSerialized.get(challenge.getID()))));
-
+                actualChallenges.stream().parallel().filter(challenge -> !challenge.getChallengeProgressManager().getPlayersCounters().containsKey(uuid))
+                        .forEach(challenge -> challenge.getChallengeProgressManager().loadPlayerChallenge(uuid,
+                                PlayerChallenge.deserialize(currentChallengesSerialized.get(challenge.getID()))));
 
                 skyblock.getDatabase().closeConnection();
 

@@ -1,8 +1,6 @@
 package net.lyflow.skyblock.challenge.mod.block;
 
-import net.lyflow.skyblock.SkyBlock;
-import net.lyflow.skyblock.challenge.PlayerChallengeProgress;
-import net.lyflow.skyblock.challenge.Reward;
+import net.lyflow.skyblock.challenge.PlayerChallenge;
 import net.lyflow.skyblock.challenge.type.MaterialChallenge;
 import net.lyflow.skyblock.manager.ChallengeManager;
 import org.bukkit.Material;
@@ -17,19 +15,15 @@ import java.util.List;
 
 public class PlaceBlockChallenge extends MaterialChallenge<BlockPlaceEvent> {
 
-    public PlaceBlockChallenge(SkyBlock skyblock, int id, Difficulty difficulty, List<Integer> linkedChallengeID, List<Integer> counterList, List<List<Material>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
-        super(skyblock, id, difficulty, Type.PLACE_BLOCK, linkedChallengeID, counterList, elementsCounter, reward, slot, material, name, description);
-    }
-
-    public PlaceBlockChallenge(SkyBlock skyblock, int id, Difficulty difficulty, Type type, List<Integer> counterList, List<List<Material>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
-        this(skyblock, id, difficulty, Collections.emptyList(), counterList, elementsCounter, reward, slot, material, name, description);
+    public PlaceBlockChallenge(List<Integer> counterList, List<List<Material>> elementsCounter) {
+        super(Type.PLACE_BLOCK, counterList, elementsCounter);
     }
 
     @Override
-    protected void onEvent(BlockPlaceEvent event, Player player, PlayerChallengeProgress playerChallengeProgress) throws SQLException {
+    protected void onEvent(BlockPlaceEvent event, Player player, PlayerChallenge playerChallengeProgress) throws SQLException {
         final Material material = event.getBlockPlaced().getType();
-        if (challengeProgress.isNotValidElement(material)) return;
-        challengeProgress.incrementCounter(player, 1, material);
+        if (!isValidElement(material)) return;
+        incrementCounter(player, 1, material);
     }
 
     public static class ListenerEvent implements Listener {
@@ -37,7 +31,7 @@ public class PlaceBlockChallenge extends MaterialChallenge<BlockPlaceEvent> {
         private final List<PlaceBlockChallenge> challenges;
 
         public ListenerEvent(ChallengeManager challengeManager) {
-            this.challenges = Collections.unmodifiableList((List<PlaceBlockChallenge>) challengeManager.getChallengesByType(Type.PLACE_BLOCK));
+            this.challenges = Collections.unmodifiableList((List<PlaceBlockChallenge>) challengeManager.getSubChallengesByType(Type.PLACE_BLOCK));
         }
 
         @EventHandler(ignoreCancelled = true)

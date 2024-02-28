@@ -19,7 +19,7 @@ public class LocationUtils {
 
     @Nullable
     public static String getStringFromLocation(Location location) {
-        if (location.getWorld() == null) throw new RuntimeException("The world of location doesn't exist");
+        if (location.getWorld() == null) throw new IllegalCallerException("The world of location doesn't exist");
         return new StringBuilderSeparated(new StringBuilder(location.getWorld().getName()), ":").append(location.getX())
                 .append(location.getY()).append(location.getZ()).append(location.getYaw()).append(location.getPitch()).toString();
     }
@@ -31,7 +31,7 @@ public class LocationUtils {
 
     public static int getIslandID(String worldName) {
         final String prefix = "skyblock-map";
-        if(!worldName.startsWith(prefix)) throw new IllegalArgumentException("The world need to be an island");
-        return Integer.parseInt(worldName.substring(prefix.length()+1));
+        if (!worldName.startsWith(prefix)) throw new IllegalArgumentException("The world need to be an island");
+        return Integer.parseInt(worldName.substring(prefix.length() + 1));
     }
 }
