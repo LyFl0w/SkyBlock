@@ -49,7 +49,7 @@ public class PlayerQuitListener implements Listener {
 
             skyblock.getDatabase().closeConnection();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalCallerException(e);
         }
 
     }

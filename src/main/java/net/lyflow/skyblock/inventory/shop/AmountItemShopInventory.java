@@ -61,9 +61,9 @@ public class AmountItemShopInventory {
     public static void inventoryEvent(SkyBlock skyBlock, String title, Inventory inventory, InventoryClickEvent event, Player player, ItemStack item) {
         event.setCancelled(true);
 
-        final int page = Integer.parseInt(title.substring(title.length()-1));
+        final int page = Integer.parseInt(title.substring(title.length() - 1));
         final boolean isBuyInventory = title.contains("Buy");
-        if(item.getType() == Material.PAPER && item.getItemMeta().getDisplayName().equals("§9Back")) {
+        if (item.getType() == Material.PAPER && item.getItemMeta().getDisplayName().equals("§9Back")) {
             final ShopCategory shopCategory = ShopCategory.getShopCategoryByInventoryName(title);
             player.openInventory(ShopInventory.getShopServerInventory(page, shopCategory, isBuyInventory));
             return;
@@ -71,15 +71,15 @@ public class AmountItemShopInventory {
 
         final ItemStack selectedItem = inventory.getItem(4);
         final ItemShop itemShop = ItemShop.getItemShopByMaterial(selectedItem.getType());
-        switch(item.getType()) {
+        switch (item.getType()) {
             case LIME_STAINED_GLASS_PANE, RED_STAINED_GLASS_PANE -> {
                 try {
                     final String lore = selectedItem.getItemMeta().getLore().get(0);
                     player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(
-                            skyBlock, player.getUniqueId(), itemShop, Math.min(Math.max(Integer.parseInt(lore.substring(lore.lastIndexOf(":")+2)) + Integer.parseInt(
+                            skyBlock, player.getUniqueId(), itemShop, Math.min(Math.max(Integer.parseInt(lore.substring(lore.lastIndexOf(":") + 2)) + Integer.parseInt(
                                     ChatColor.stripColor(item.getItemMeta().getDisplayName())), 0), 2304), page, isBuyInventory));
-                } catch(SQLException e) {
-                    throw new RuntimeException(e);
+                } catch (SQLException e) {
+                    throw new IllegalCallerException(e);
                 }
             }
 
@@ -89,15 +89,15 @@ public class AmountItemShopInventory {
                             ? (int) Math.floor(new AccountRequest(skyBlock.getDatabase(), true).getMoney(player.getUniqueId()) / itemShop.getBuyPrice())
                             : InventoryUtils.countItemInventory(player.getInventory(), selectedItem.getType());
                     player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(
-                            skyBlock, player.getUniqueId(), itemShop, count , page, isBuyInventory));
-                } catch(SQLException e) {
-                    throw new RuntimeException(e);
+                            skyBlock, player.getUniqueId(), itemShop, count, page, isBuyInventory));
+                } catch (SQLException e) {
+                    throw new IllegalCallerException(e);
                 }
             }
 
             default -> {
                 final String lore = selectedItem.getItemMeta().getLore().get(0);
-                final int count = Integer.parseInt(lore.substring(lore.lastIndexOf(":")+2));
+                final int count = Integer.parseInt(lore.substring(lore.lastIndexOf(":") + 2));
                 skyBlock.getServer().getPluginManager().callEvent((isBuyInventory)
                         ? new PlayerBuyItemEvent(skyBlock, player, itemShop, count)
                         : new PlayerSellItemEvent(skyBlock, player, itemShop, count));

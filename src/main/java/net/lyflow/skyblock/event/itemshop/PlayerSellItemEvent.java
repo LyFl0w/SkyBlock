@@ -10,6 +10,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.SQLException;
+
 public class PlayerSellItemEvent extends ShopEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
@@ -40,8 +42,8 @@ public class PlayerSellItemEvent extends ShopEvent {
 
             InventoryUtils.removeItems(player, itemShop.getMaterial(), amount);
             player.sendMessage("§aVous avez vendu " + amount + " " + formatedItemStackName);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new IllegalCallerException(e);
         }
     }
 

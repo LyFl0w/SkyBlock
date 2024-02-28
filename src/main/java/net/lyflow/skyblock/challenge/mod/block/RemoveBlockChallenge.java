@@ -1,8 +1,6 @@
 package net.lyflow.skyblock.challenge.mod.block;
 
-import net.lyflow.skyblock.SkyBlock;
-import net.lyflow.skyblock.challenge.PlayerChallengeProgress;
-import net.lyflow.skyblock.challenge.Reward;
+import net.lyflow.skyblock.challenge.PlayerChallenge;
 import net.lyflow.skyblock.challenge.type.MaterialChallenge;
 import net.lyflow.skyblock.manager.ChallengeManager;
 import org.bukkit.Material;
@@ -17,32 +15,28 @@ import java.util.List;
 
 public class RemoveBlockChallenge extends MaterialChallenge<BlockBreakEvent> {
 
-    public RemoveBlockChallenge(SkyBlock skyblock, int id, Difficulty difficulty, List<Integer> linkedChallengeID, List<Integer> counterList, List<List<Material>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
-        super(skyblock, id, difficulty, Type.REMOVE_BLOCK, linkedChallengeID, counterList, elementsCounter, reward, slot, material, name, description);
-    }
-
-    public RemoveBlockChallenge(SkyBlock skyblock, int id, Difficulty difficulty, List<Integer> counterList, List<List<Material>> elementsCounter, Reward reward, int slot, Material material, String name, String... description) {
-        this(skyblock, id, difficulty, Collections.emptyList(), counterList, elementsCounter, reward, slot, material, name, description);
+    public RemoveBlockChallenge(List<Integer> counterList, List<List<Material>> elementsCounter) {
+        super(Type.REMOVE_BLOCK, counterList, elementsCounter);
     }
 
     @Override
-    protected void onEvent(BlockBreakEvent event, Player player, PlayerChallengeProgress playerChallengeProgress) throws SQLException {
+    protected void onEvent(BlockBreakEvent event, Player player, PlayerChallenge playerChallengeProgress) throws SQLException {
         final Material material = event.getBlock().getType();
-        if (challengeProgress.isNotValidElement(material)) return;
-        challengeProgress.incrementCounter(player, 1, material);
+        if (!isValidElement(material)) return;
+        incrementCounter(player, 1, material);
     }
 
     public static class ListenerEvent implements Listener {
 
-        private final List<RemoveBlockChallenge> challenges;
+        private final List<RemoveBlockChallenge> subChallenges;
 
         public ListenerEvent(ChallengeManager challengeManager) {
-            this.challenges = Collections.unmodifiableList((List<RemoveBlockChallenge>) challengeManager.getChallengesByType(Type.REMOVE_BLOCK));
+            this.subChallenges = Collections.unmodifiableList((List<RemoveBlockChallenge>) challengeManager.getSubChallengesByType(Type.REMOVE_BLOCK));
         }
 
         @EventHandler(ignoreCancelled = true)
         public void onBlockRemove(BlockBreakEvent event) {
-            challenges.forEach(removeBlockChallenge -> removeBlockChallenge.onEventTriggered(event.getPlayer(), event));
+            subChallenges.forEach(subChallenge -> subChallenge.onEventTriggered(event.getPlayer(), event));
         }
 
     }

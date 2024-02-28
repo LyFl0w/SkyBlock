@@ -11,27 +11,30 @@ public class BlockUtils {
 
     public static Block getSourceOfBlock(Block block) {
         final Material material = block.getType();
-        if(!(material == Material.LAVA || material == Material.WATER)) throw new RuntimeException("The block "+block.getType()+" is not a liquid");
+        if (!(material == Material.LAVA || material == Material.WATER))
+            throw new IllegalCallerException("The block " + block.getType() + " is not a liquid");
 
-        final int level = ((Levelled)block.getBlockData()).getLevel();
+        final int level = ((Levelled) block.getBlockData()).getLevel();
         return (level == 0) ? block : recurrenceFluid(material, block.getLocation(), level);
     }
 
     @Nullable
     public static Block blockIsNextTo(Block block, Material nextTo) {
-        for(Way way : Way.values()) {
+        for (Way way : Way.values()) {
             final Block nextToBlock = block.getLocation().clone().add(way.getVector()).getBlock();
-            if(nextToBlock.getType() == nextTo) return nextToBlock;
+            if (nextToBlock.getType() == nextTo) return nextToBlock;
         }
         return null;
     }
 
     @Nullable
     public static Block isNextToLiquidSource(Location location, Material nextTo) {
-        if(!(nextTo == Material.LAVA || nextTo == Material.WATER)) throw new RuntimeException("The block "+nextTo+" is not a liquid");
-        for(Way way : Way.values()) {
+        if (!(nextTo == Material.LAVA || nextTo == Material.WATER))
+            throw new IllegalCallerException("The block " + nextTo + " is not a liquid");
+        for (Way way : Way.values()) {
             final Block nextToBlock = location.clone().add(way.getVector()).getBlock();
-            if(nextToBlock.getType() == nextTo && ((Levelled)nextToBlock.getBlockData()).getLevel() == 0) return nextToBlock;
+            if (nextToBlock.getType() == nextTo && ((Levelled) nextToBlock.getBlockData()).getLevel() == 0)
+                return nextToBlock;
         }
         return null;
     }
@@ -39,19 +42,19 @@ public class BlockUtils {
     @Nullable
     private static Block recurrenceFluid(Material needToBe, Location location, int levelBefore) {
         Location saveLoc = null;
-        for(Way way : Way.values()) {
+        for (Way way : Way.values()) {
             final Location newLoc = location.clone().add(way.getVector());
             final Block block = newLoc.getBlock();
-            if(block.getType() == needToBe) {
+            if (block.getType() == needToBe) {
                 final int level = ((Levelled) block.getBlockData()).getLevel();
-                if(level == 0) return block;
-                if(way == Way.UP || levelBefore < level) {
+                if (level == 0) return block;
+                if (way == Way.UP || levelBefore < level) {
                     saveLoc = newLoc;
                     levelBefore = level;
                 }
             }
         }
-        if(saveLoc == null) return null;
+        if (saveLoc == null) return null;
         return recurrenceFluid(needToBe, saveLoc, levelBefore);
     }
 

@@ -12,6 +12,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 public class LevelUpIslandUpgradeEvent extends IslandUpgradeLeveledEvent {
 
@@ -42,7 +43,7 @@ public class LevelUpIslandUpgradeEvent extends IslandUpgradeLeveledEvent {
             player.sendMessage("§bL'Upgrade " + islandUpgrade.getName() + " a été mit au lvl " + upgradeStatus.getCurrentLevel() + " !");
             skyBlock.getDatabase().closeConnection();
         } catch (SQLException e) {
-            e.printStackTrace();
+            skyBlock.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
     }
 

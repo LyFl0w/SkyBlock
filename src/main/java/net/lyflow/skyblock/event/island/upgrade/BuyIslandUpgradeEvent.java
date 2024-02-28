@@ -11,6 +11,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 public class BuyIslandUpgradeEvent extends IslandUpgradeEvent {
 
@@ -51,7 +52,7 @@ public class BuyIslandUpgradeEvent extends IslandUpgradeEvent {
             player.sendMessage("§bUpgrade " + islandUpgrade.getName() + " acheté et activé !");
             skyBlock.getDatabase().closeConnection();
         } catch (SQLException e) {
-            e.printStackTrace();
+            skyBlock.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
     }
 

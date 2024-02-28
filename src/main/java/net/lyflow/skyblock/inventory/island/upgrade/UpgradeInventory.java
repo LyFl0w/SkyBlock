@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.logging.Level;
 
 public class UpgradeInventory {
 
@@ -94,7 +95,7 @@ public class UpgradeInventory {
 
             player.openInventory(getDeclinationUpgradeInventory(islandUpgradeManager, type, islandID));
         } catch (SQLException e) {
-            e.printStackTrace();
+            skyBlock.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
     }
 

@@ -3,11 +3,10 @@ package net.lyflow.skyblock.inventory.challenge;
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.challenge.Challenge;
 import net.lyflow.skyblock.challenge.ChallengeStatus;
-import net.lyflow.skyblock.challenge.PlayerChallengeProgress;
+import net.lyflow.skyblock.challenge.PlayerChallenge;
 import net.lyflow.skyblock.manager.ChallengeManager;
 import net.lyflow.skyblock.utils.builder.InventoryBuilder;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
@@ -37,15 +36,15 @@ public class ChallengeInventory {
         event.setCancelled(true);
 
         final Challenge.Difficulty difficulty = Challenge.Difficulty.getChallengeBySlot(event.getSlot());
-        if(skyBlock.getChallengeManager().getChallengesByDifficulty(difficulty).isEmpty()) {
+        if (skyBlock.getChallengeManager().getChallengesByDifficulty(difficulty).isEmpty()) {
             player.sendMessage("§cIl n'y a pas de défis encore dans cette section");
             return;
         }
-        if(!difficulty.playerHasAccess(skyBlock.getChallengeManager(), player)) {
+        if (!difficulty.playerHasAccess(skyBlock.getChallengeManager(), player)) {
             try {
-                player.sendMessage("§cVeuillez terminer la moitié des challenges "+difficulty.getBefore().getName());
-            } catch(Exception e) {
-                throw new RuntimeException(e);
+                player.sendMessage("§cVeuillez terminer la moitié des challenges " + difficulty.getBefore().getName());
+            } catch (Exception e) {
+                throw new IllegalCallerException(e);
             }
             return;
         }
@@ -57,24 +56,27 @@ public class ChallengeInventory {
 
         final Optional<Challenge.Difficulty> optionalDifficulty = Arrays.stream(Challenge.Difficulty.values())
                 .filter(difficulty -> title.contains(difficulty.getName())).findFirst();
-        if(optionalDifficulty.isEmpty()) throw new IllegalCallerException("Difficulty not found");
+        if (optionalDifficulty.isEmpty()) throw new IllegalCallerException("Difficulty not found");
         final Challenge.Difficulty difficultyPage = optionalDifficulty.get();
 
-        final Optional<? extends Challenge<? extends Event>> optionalChallenge = skyBlock.getChallengeManager().getChallengesByDifficulty(difficultyPage).stream().parallel()
+        final Optional<? extends Challenge> optionalChallenge = skyBlock.getChallengeManager().getChallengesByDifficulty(difficultyPage).stream().parallel()
                 .filter(challenges -> challenges.getSlot() == event.getSlot()).findFirst();
-        if(optionalChallenge.isEmpty()) throw new IllegalCallerException("Challenge not found for slot " + event.getSlot());
-        final Challenge<? extends Event> challenge = optionalChallenge.get();
+        if (optionalChallenge.isEmpty())
+            throw new IllegalCallerException("Challenge not found for slot " + event.getSlot());
+        final Challenge challenge = optionalChallenge.get();
 
-        final PlayerChallengeProgress playerChallengeProgress = challenge.getChallengeProgress().getPlayerChallengeProgress(player);
+        final PlayerChallenge playerChallengeProgress = challenge.getChallengeProgressManager().getPlayerChallengeProgress(player);
         final ChallengeStatus challengeStatus = playerChallengeProgress.getStatus();
 
-        switch(challengeStatus) {
-            case LOCKED -> player.sendMessage("§cPour débloquer ce défi, il vous faudra faire les défis suivants : ...");
-            case IN_PROGRESS -> player.sendMessage("§cVeuillez terminer le défi avant de vouloir récupérer les récompenses");
+        switch (challengeStatus) {
+            case LOCKED ->
+                    player.sendMessage("§cPour débloquer ce défi, il vous faudra faire les défis suivants : ...");
+            case IN_PROGRESS ->
+                    player.sendMessage("§cVeuillez terminer le défi avant de vouloir récupérer les récompenses");
             case REWARD_RECOVERED -> player.sendMessage("§cVous avez déjà validé ce défi");
             case SUCCESSFUL -> {
-                player.sendMessage("§aVous avez validé le défi §b"+challenge.getName());
-                challenge.getChallengeProgress().accessReward(player);
+                player.sendMessage("§aVous avez validé le défi §b" + challenge.getName());
+                challenge.getChallengeProgressManager().accessReward(player);
                 player.openInventory(ChallengeInventory.getChallengeInventory(skyBlock.getChallengeManager(), player, difficultyPage));
             }
         }

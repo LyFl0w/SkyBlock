@@ -19,7 +19,7 @@ public class ResourceUtils {
     }
 
     public static void saveResourceFile(@NotNull String resourcePath, @NotNull File destFile, @NotNull JavaPlugin javaPlugin, boolean replace) {
-        if (resourcePath.isBlank()) throw new IllegalArgumentException("ResourcePath cannot be null or empty");
+        isBlank(resourcePath);
         if (!resourcePath.contains(".")) throw new IllegalArgumentException("ResourcePath cannot be a folder");
 
         resourcePath = resourcePath.replace('\\', '/');
@@ -33,7 +33,7 @@ public class ResourceUtils {
 
         try {
             if (outFile.exists() && !replace) {
-                javaPlugin.getLogger().warning("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
+                javaPlugin.getLogger().warning(() -> "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
                 in.close();
                 return;
             }
@@ -47,7 +47,7 @@ public class ResourceUtils {
     }
 
     public static void saveResourceFolder(@NotNull String resourcePath, @NotNull File destFile, @NotNull JavaPlugin javaPlugin, boolean replace) {
-        if (resourcePath.isBlank()) throw new IllegalArgumentException("ResourcePath cannot be null or empty");
+        isBlank(resourcePath);
 
         resourcePath = resourcePath.replace('\\', '/');
 
@@ -70,12 +70,12 @@ public class ResourceUtils {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalCallerException(e);
         }
     }
 
     private static void saveResourceFileFromFolder(@NotNull String resourcePath, @NotNull String entry, @NotNull File destFile, @NotNull JavaPlugin javaPlugin, boolean replace) {
-        if (resourcePath.isBlank()) throw new IllegalArgumentException("ResourcePath cannot be null or empty");
+        isBlank(resourcePath);
 
         resourcePath = resourcePath.replace('\\', '/');
         final InputStream in = javaPlugin.getResource(resourcePath + "/" + entry);
@@ -87,7 +87,7 @@ public class ResourceUtils {
 
         try {
             if (outFile.exists() && !replace) {
-                javaPlugin.getLogger().warning("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
+                javaPlugin.getLogger().warning(() -> "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
                 in.close();
                 return;
             }
@@ -98,6 +98,10 @@ public class ResourceUtils {
         } catch (IOException exception) {
             javaPlugin.getLogger().log(Level.SEVERE, "Could not save " + outFile.getName() + " to " + outFile, exception);
         }
+    }
+
+    private static void isBlank(String resourcePath) {
+        if (resourcePath.isBlank()) throw new IllegalArgumentException("ResourcePath cannot be null or empty");
     }
 
 }
