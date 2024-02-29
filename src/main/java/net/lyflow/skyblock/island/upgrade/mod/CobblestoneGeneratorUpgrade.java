@@ -4,6 +4,7 @@ import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.island.upgrade.IslandUpgrade;
 import net.lyflow.skyblock.island.upgrade.IslandUpgradeStatus;
 import net.lyflow.skyblock.island.upgrade.LevelUpgrade;
+import net.lyflow.skyblock.island.upgrade.LevelUpgradeKey;
 import net.lyflow.skyblock.manager.IslandUpgradeManager;
 import net.lyflow.skyblock.utils.BlockUtils;
 import net.lyflow.skyblock.utils.LocationUtils;
@@ -16,16 +17,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFormEvent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class CobblestoneGeneratorUpgrade extends IslandUpgrade {
 
-    public CobblestoneGeneratorUpgrade(SkyBlock skyBlock, int id, CobblestoneGeneratorLevelUpgrade levelUpgrade, ItemInfo itemInfo) {
-        super(skyBlock, id, Type.COBBLESTONE_GENERATOR, levelUpgrade, itemInfo);
-    }
-
-    public CobblestoneGeneratorUpgrade(SkyBlock skyBlock, int id, Generator generator, float price, ItemInfo itemInfo) {
-        this(skyBlock, id, new CobblestoneGeneratorLevelUpgrade(price, generator), itemInfo);
+    public CobblestoneGeneratorUpgrade(SkyBlock skyBlock, int id, List<LevelUpgrade> upgrades, ItemInfo itemInfo) {
+        super(skyBlock, id, Type.COBBLESTONE_GENERATOR, upgrades, itemInfo);
     }
 
     public static class Generator {
@@ -168,8 +168,8 @@ public class CobblestoneGeneratorUpgrade extends IslandUpgrade {
                 for (IslandUpgrade islandUpgrade : islandUpgradeManager.getIslandUpgradesByType(Type.COBBLESTONE_GENERATOR)) {
                     final IslandUpgradeStatus status = islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID);
                     if (status.isEnable()) {
-                        final CobblestoneGeneratorLevelUpgrade levelUpgrade = (CobblestoneGeneratorLevelUpgrade) islandUpgrade.getLevelUpgrade();
-                        final Generator generator = levelUpgrade.getGenerators(status.getCurrentLevel());
+                        final LevelUpgrade levelUpgrade = islandUpgrade.getLevelUpgradeManager().getLevel(status.getCurrentLevel());
+                        final Generator generator = levelUpgrade.getData(LevelUpgradeKey.GENERATOR);
                         if (generator.materialActivation == upgradeBlockType) {
                             cobbleState.setType(generator.getRandomMaterial());
                             break;
@@ -177,25 +177,6 @@ public class CobblestoneGeneratorUpgrade extends IslandUpgrade {
                     }
                 }
             }
-        }
-    }
-
-    public static class CobblestoneGeneratorLevelUpgrade extends LevelUpgrade {
-
-        private final Generator[] generators;
-
-        public CobblestoneGeneratorLevelUpgrade(float price, Generator generator, String... descriptions) {
-            super(price, descriptions);
-            this.generators = new Generator[]{generator};
-        }
-
-        public CobblestoneGeneratorLevelUpgrade(List<Float> prices, Set<Integer> slots, List<Generator> generators, List<List<String>> descriptions) {
-            super(prices, slots, descriptions);
-            this.generators = generators.toArray(new Generator[0]);
-        }
-
-        public Generator getGenerators(int level) {
-            return generators[level - 1];
         }
     }
 }

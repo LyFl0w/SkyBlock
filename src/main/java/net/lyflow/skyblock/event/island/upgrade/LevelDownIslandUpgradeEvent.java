@@ -27,7 +27,7 @@ public class LevelDownIslandUpgradeEvent extends IslandUpgradeLeveledEvent {
             final IslandUpgradeStatus upgradeStatus = islandUpgradeStatusManager.getIslandUpgradeStatus(islandID);
 
             if (!upgradeStatus.isBuy() || levelTo < 1 || levelTo >= upgradeStatus.getCurrentLevel()
-                    || islandUpgrade.getLevelUpgrade().isOneLevel()) {
+                    || islandUpgrade.getLevelUpgradeManager().isOneLevel()) {
                 setCancelled(true);
 
                 skyBlock.getDatabase().closeConnection();

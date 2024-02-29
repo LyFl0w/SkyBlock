@@ -1,6 +1,8 @@
 package net.lyflow.skyblock.island.upgrade;
 
 import net.lyflow.skyblock.SkyBlock;
+import net.lyflow.skyblock.island.upgrade.mod.CobblestoneGeneratorUpgrade;
+import net.lyflow.skyblock.island.upgrade.mod.TntDropRateUpgrade;
 import net.lyflow.skyblock.manager.IslandUpgradeManager;
 import net.lyflow.skyblock.utils.builder.ItemBuilder;
 import net.lyflow.skyblock.utils.iteminfo.ItemInfo;
@@ -9,24 +11,23 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
-public abstract class IslandUpgrade {
+public class IslandUpgrade {
 
-    protected final SkyBlock skyBlock;
+    public final SkyBlock skyBlock;
+    public final LevelUpgradeManager levelUpgradeManager;
+    public final IslandUpgradeStatusManager islandUpgradeStatusManager;
 
-    protected final IslandUpgradeStatusManager islandUpgradeStatusManager;
+    public final int id;
+    public final Type type;
+    public final ItemInfo itemInfo;
 
-    protected final int id;
-    protected final Type type;
-    protected final LevelUpgrade levelUpgrade;
-    protected final ItemInfo itemInfo;
-
-    protected IslandUpgrade(SkyBlock skyBlock, int id, Type type, LevelUpgrade levelUpgrade, ItemInfo itemInfo) {
+    public IslandUpgrade(SkyBlock skyBlock, int id, Type type, List<? extends LevelUpgrade> levelUpgrades, ItemInfo itemInfo) {
         if (type.isUniqueEvent && !skyBlock.getIslandUpgradeManager().getIslandUpgradesByType(type).isEmpty())
             throw new IllegalCallerException("The upgrade " + type.name() + " can't be instanced more than once !");
 
@@ -34,16 +35,16 @@ public abstract class IslandUpgrade {
 
         this.id = id;
         this.type = type;
-        this.levelUpgrade = levelUpgrade;
         this.itemInfo = itemInfo;
 
+        this.levelUpgradeManager = new LevelUpgradeManager(levelUpgrades);
         this.islandUpgradeStatusManager = new IslandUpgradeStatusManager(this);
     }
 
-    protected IslandUpgrade(SkyBlock skyBlock, int id, Type type, LevelUpgrade levelUpgrade, UniqueItemInfo itemInfo) {
-        this(skyBlock, id, type, levelUpgrade, itemInfo.toItemInfo());
+    public IslandUpgrade(SkyBlock skyBlock, int id, Type type, List<? extends LevelUpgrade> levelUpgrades, UniqueItemInfo itemInfo) {
+        this(skyBlock, id, type, levelUpgrades, itemInfo.toItemInfo());
         if (!type.isUniqueEvent)
-            throw new IllegalCallerException("The upgrade " + type.name() + " need to be instanced with UniqueItemInfo !");
+            throw new IllegalCallerException("The upgrade " + type.name() + " need to be instanced with ItemInfo and not with UniqueItemInfo !");
     }
 
     public int getID() {
@@ -54,8 +55,8 @@ public abstract class IslandUpgrade {
         return type;
     }
 
-    public LevelUpgrade getLevelUpgrade() {
-        return levelUpgrade;
+    public LevelUpgradeManager getLevelUpgradeManager() {
+        return levelUpgradeManager;
     }
 
     public IslandUpgradeStatusManager getIslandUpgradeStatusManager() {
@@ -65,19 +66,18 @@ public abstract class IslandUpgrade {
     public ItemStack getRepresentation(IslandUpgradeStatus upgradeStatus, int level) {
         final ItemBuilder itemBuilder = itemInfo.getItemBuildRepresentation();
 
-        if (!levelUpgrade.isOneLevel()) {
+        if (!levelUpgradeManager.isOneLevel()) {
             if (level == 0) {
                 itemBuilder.setLore(getDescription());
 
                 if (upgradeStatus.isEnable())
                     itemBuilder.addVisualEnchant();
             } else {
-                itemBuilder.setLore(levelUpgrade.getDescriptions(level));
+                itemBuilder.setLore(levelUpgradeManager.getDescriptions(level));
 
                 if (level == upgradeStatus.getCurrentLevel())
                     itemBuilder.addVisualEnchant();
             }
-
         } else {
             itemBuilder.setLore(getDescription());
 
@@ -105,24 +105,40 @@ public abstract class IslandUpgrade {
     }
 
     public enum Type {
-        COBBLESTONE_GENERATOR(ItemInfo.of(0, Material.COBBLESTONE, "Cobblestone Generator Upgrade", ""), false),
-        TNT_DROP_RATE(ItemInfo.of(1, Material.TNT, "Tnt Drop Rate Upgrade", ""), true);
+        COBBLESTONE_GENERATOR(
+                ItemInfo.of(0, Material.COBBLESTONE, "Cobblestone Generator Upgrade", ""),
+                false, CobblestoneGeneratorUpgrade.class
+        ),
+
+        TNT_DROP_RATE(
+                ItemInfo.of(1, Material.TNT, "Tnt Drop Rate Upgrade", ""),
+                true, TntDropRateUpgrade.class
+        );
 
         private final ItemInfo itemInfo;
         private final boolean isUniqueEvent;
+        private final Class<? extends IslandUpgrade> islandUpgradeClass;
 
-        Type(ItemInfo itemInfo, boolean isUniqueEvent) {
+        Type(ItemInfo itemInfo, boolean isUniqueEvent, Class<? extends IslandUpgrade> islandUpgradeClass) {
             this.itemInfo = itemInfo;
             this.isUniqueEvent = isUniqueEvent;
+            this.islandUpgradeClass = islandUpgradeClass;
         }
 
-        @Nullable
         public static Type getTypeBySlot(int slot) {
             for (Type type : values()) {
                 if (type.getSlot() == slot)
                     return type;
             }
-            return null;
+            throw new IllegalArgumentException("the type in slot " + slot + " doesn't exist !");
+        }
+
+        public static Type getTypeByName(String name) {
+            for (Type type : values()) {
+                if (name.equals(type.name().toLowerCase()))
+                    return type;
+            }
+            throw new IllegalArgumentException("the type " + name + " doesn't exist !");
         }
 
         public int getSlot() {
@@ -131,6 +147,10 @@ public abstract class IslandUpgrade {
 
         public boolean isUniqueEvent() {
             return isUniqueEvent;
+        }
+
+        public Class<? extends IslandUpgrade> getIslandUpgradeClass() {
+            return islandUpgradeClass;
         }
 
         public ItemStack getRepresentation(IslandUpgradeManager islandUpgradeManager, int islandID) {

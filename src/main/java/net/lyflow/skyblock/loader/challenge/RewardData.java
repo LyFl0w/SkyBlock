@@ -1,7 +1,7 @@
-package net.lyflow.skyblock.loader;
+package net.lyflow.skyblock.loader.challenge;
 
 import net.lyflow.skyblock.challenge.Reward;
-import net.lyflow.skyblock.loader.item.ItemStackData;
+import net.lyflow.skyblock.loader.minecraft.ItemStackData;
 
 import java.util.Collections;
 import java.util.List;

@@ -6,7 +6,7 @@ import net.lyflow.skyblock.database.request.island.UpgradeIslandRequest;
 import net.lyflow.skyblock.island.upgrade.IslandUpgrade;
 import net.lyflow.skyblock.island.upgrade.IslandUpgradeStatus;
 import net.lyflow.skyblock.island.upgrade.IslandUpgradeStatusManager;
-import net.lyflow.skyblock.island.upgrade.LevelUpgrade;
+import net.lyflow.skyblock.island.upgrade.LevelUpgradeManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -26,9 +26,9 @@ public class LevelUpIslandUpgradeEvent extends IslandUpgradeLeveledEvent {
             final int islandID = islandRequest.getIslandID(player.getUniqueId());
             final IslandUpgradeStatusManager islandUpgradeStatusManager = islandUpgrade.getIslandUpgradeStatusManager();
             final IslandUpgradeStatus upgradeStatus = islandUpgradeStatusManager.getIslandUpgradeStatus(islandID);
-            final LevelUpgrade levelUpgrade = islandUpgrade.getLevelUpgrade();
+            final LevelUpgradeManager levelUpgradeManager = islandUpgrade.getLevelUpgradeManager();
 
-            if (!upgradeStatus.isBuy() || levelUpgrade.isOneLevel() || levelTo > levelUpgrade.getMaxLevel()
+            if (!upgradeStatus.isBuy() || levelUpgradeManager.isOneLevel() || levelTo > levelUpgradeManager.getMaxLevel()
                     || levelTo < upgradeStatus.getCurrentLevel()) {
                 setCancelled(true);
 

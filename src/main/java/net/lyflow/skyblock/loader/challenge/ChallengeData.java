@@ -1,12 +1,12 @@
-package net.lyflow.skyblock.loader;
+package net.lyflow.skyblock.loader.challenge;
 
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.challenge.Challenge;
 import net.lyflow.skyblock.challenge.SubChallenge;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
-import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,8 +36,7 @@ public class ChallengeData {
         this.subChallenge = subChallenge;
     }
 
-    @Nullable
-    public Challenge toChallenge(SkyBlock skyBlock) throws Exception {
+    public Challenge toChallenge(SkyBlock skyBlock) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         final List<SubChallenge<?>> subChallenges = new ArrayList<>();
         for (SubChallengeData subChallengeData : subChallenge) {
             subChallenges.add(subChallengeData.toSubChallenge());

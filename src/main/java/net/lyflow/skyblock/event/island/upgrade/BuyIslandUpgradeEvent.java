@@ -35,7 +35,7 @@ public class BuyIslandUpgradeEvent extends IslandUpgradeEvent {
             final AccountRequest accountRequest = new AccountRequest(skyBlock.getDatabase(), false);
 
             float playerMoney = accountRequest.getMoney(player.getUniqueId());
-            final float price = islandUpgrade.getLevelUpgrade().getPrices(1);
+            final float price = islandUpgrade.getLevelUpgradeManager().getPrices(1);
             if (price > playerMoney) {
                 player.sendMessage("§cTu n'as pas assez d'argent !");
                 setCancelled(true);

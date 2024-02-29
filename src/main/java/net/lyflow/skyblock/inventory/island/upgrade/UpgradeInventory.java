@@ -6,7 +6,7 @@ import net.lyflow.skyblock.event.island.upgrade.*;
 import net.lyflow.skyblock.island.upgrade.IslandUpgrade;
 import net.lyflow.skyblock.island.upgrade.IslandUpgradeStatus;
 import net.lyflow.skyblock.island.upgrade.IslandUpgradeStatusManager;
-import net.lyflow.skyblock.island.upgrade.LevelUpgrade;
+import net.lyflow.skyblock.island.upgrade.LevelUpgradeManager;
 import net.lyflow.skyblock.manager.IslandUpgradeManager;
 import net.lyflow.skyblock.utils.builder.InventoryBuilder;
 import net.lyflow.skyblock.utils.builder.ItemBuilder;
@@ -35,16 +35,16 @@ public class UpgradeInventory {
 
     public static Inventory getLevelUpgradeInventory(IslandUpgradeManager islandUpgradeManager, int upgradeID, int islandID) {
         final IslandUpgrade islandUpgrade = islandUpgradeManager.getIslandUpgradesByID(upgradeID);
-        final LevelUpgrade levelUpgrade = islandUpgrade.getLevelUpgrade();
+        final LevelUpgradeManager levelUpgradeManager = islandUpgrade.getLevelUpgradeManager();
 
-        if (levelUpgrade.isOneLevel())
+        if (levelUpgradeManager.isOneLevel())
             throw new IllegalArgumentException("There is no inventory for upgrade " + islandUpgrade.getName());
 
         final IslandUpgradeStatus status = islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID);
         final InventoryBuilder inventoryBuilder = new InventoryBuilder(9, "§6Upgrade/Level/" + upgradeID);
 
-        for (int level = 1; level <= levelUpgrade.getMaxLevel(); level++) {
-            inventoryBuilder.setItem(levelUpgrade.getSlot(level), islandUpgrade.getRepresentation(status, level));
+        for (int level = 1; level <= levelUpgradeManager.getMaxLevel(); level++) {
+            inventoryBuilder.setItem(levelUpgradeManager.getSlot(level), islandUpgrade.getRepresentation(status, level));
         }
         inventoryBuilder.setItem(0, new ItemBuilder(Material.PAPER).setName("Back").toItemStack());
 
@@ -76,9 +76,9 @@ public class UpgradeInventory {
 
             if (type.isUniqueEvent()) {
                 final IslandUpgrade islandUpgrade = islandUpgradeManager.getUniqueIslandUpgradesByType(type);
-                final LevelUpgrade levelUpgrade = islandUpgrade.getLevelUpgrade();
+                final LevelUpgradeManager levelUpgradeManager = islandUpgrade.getLevelUpgradeManager();
 
-                if (levelUpgrade.isOneLevel()) {
+                if (levelUpgradeManager.isOneLevel()) {
                     final IslandUpgradeStatus islandUpgradeStatus = islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID);
                     skyBlock.getServer().getPluginManager().callEvent(
                             (!islandUpgradeStatus.isBuy())
@@ -119,9 +119,9 @@ public class UpgradeInventory {
 
             final IslandUpgradeStatusManager islandUpgradeStatusManager = islandUpgrade.getIslandUpgradeStatusManager();
             final IslandUpgradeStatus islandUpgradeStatus = islandUpgradeStatusManager.getIslandUpgradeStatus(islandID);
-            final LevelUpgrade levelUpgrade = islandUpgrade.getLevelUpgrade();
+            final LevelUpgradeManager levelUpgradeManager = islandUpgrade.getLevelUpgradeManager();
 
-            final int targetLevel = levelUpgrade.getLevelForSlot(event.getSlot());
+            final int targetLevel = levelUpgradeManager.getLevelForSlot(event.getSlot());
             final int currentLevel = islandUpgradeStatus.getCurrentLevel();
             final int lastBuyLevel = islandUpgradeStatus.getLastBuyLevel();
 
@@ -187,7 +187,7 @@ public class UpgradeInventory {
             final IslandUpgrade.Type type = IslandUpgrade.Type.getTypeBySlot(index);
             final IslandUpgrade islandUpgrade = islandUpgradeManager.getIslandUpgradesBySlot(type, event.getSlot());
 
-            if (islandUpgrade.getLevelUpgrade().isOneLevel()) {
+            if (islandUpgrade.getLevelUpgradeManager().isOneLevel()) {
                 final IslandUpgradeStatus islandUpgradeStatus = islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID);
                 skyBlock.getServer().getPluginManager().callEvent(
                         (!islandUpgradeStatus.isBuy())

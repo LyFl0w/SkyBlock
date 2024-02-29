@@ -1,4 +1,4 @@
-package net.lyflow.skyblock.loader;
+package net.lyflow.skyblock.loader.challenge;
 
 import net.lyflow.skyblock.challenge.SubChallenge;
 

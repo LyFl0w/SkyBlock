@@ -27,11 +27,11 @@ public class IslandUpgradeStatusManager {
     }
 
     public boolean hasNextIslandCurrentLevelUpgrade(int id) {
-        return getIslandUpgradeStatus(id).getCurrentLevel() < islandUpgrade.levelUpgrade.getMaxLevel();
+        return getIslandUpgradeStatus(id).getCurrentLevel() < islandUpgrade.levelUpgradeManager.getMaxLevel();
     }
 
     public boolean hasNextIslandLevelUpgrade(int id) {
-        return getIslandUpgradeStatus(id).getLastBuyLevel() < islandUpgrade.levelUpgrade.getMaxLevel();
+        return getIslandUpgradeStatus(id).getLastBuyLevel() < islandUpgrade.levelUpgradeManager.getMaxLevel();
     }
 
     public boolean hasBeforeIslandCurrentLevelUpgrade(int id) {

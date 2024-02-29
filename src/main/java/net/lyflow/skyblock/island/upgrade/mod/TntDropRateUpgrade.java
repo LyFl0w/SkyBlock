@@ -4,8 +4,8 @@ import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.island.upgrade.IslandUpgrade;
 import net.lyflow.skyblock.island.upgrade.IslandUpgradeStatus;
 import net.lyflow.skyblock.island.upgrade.LevelUpgrade;
+import net.lyflow.skyblock.island.upgrade.LevelUpgradeKey;
 import net.lyflow.skyblock.manager.IslandUpgradeManager;
-import net.lyflow.skyblock.utils.ArrayUtils;
 import net.lyflow.skyblock.utils.LocationUtils;
 import net.lyflow.skyblock.utils.iteminfo.UniqueItemInfo;
 import org.bukkit.Location;
@@ -15,16 +15,16 @@ import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+
 
 public class TntDropRateUpgrade extends IslandUpgrade {
 
-    private final float defaultRate;
+    private final double defaultRate;
 
-    public TntDropRateUpgrade(SkyBlock skyBlock, int id, float defaultRate, TntDropRateLevelUpgrade levelUpgrade, UniqueItemInfo itemInfo) {
-        super(skyBlock, id, IslandUpgrade.Type.TNT_DROP_RATE, levelUpgrade, itemInfo);
-
-        this.defaultRate = defaultRate;
+    public TntDropRateUpgrade(SkyBlock skyBlock, int id, List<LevelUpgrade> levelUpgrades, Map<String, Object> data, UniqueItemInfo itemInfo) {
+        super(skyBlock, id, IslandUpgrade.Type.TNT_DROP_RATE, levelUpgrades, itemInfo);
+        this.defaultRate = LevelUpgradeKey.DROP_RATE.getData(data);
     }
 
     public static class ListenerEvent implements Listener {
@@ -55,35 +55,14 @@ public class TntDropRateUpgrade extends IslandUpgrade {
 
                 final int islandID = LocationUtils.getIslandID(worldName);
                 final IslandUpgradeStatus upgradeStatus = islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID);
-
+                final LevelUpgrade tntDropRateLevelUpgrade = islandUpgrade.levelUpgradeManager.getLevel(upgradeStatus.getCurrentLevel());
                 return upgradeStatus.isEnable()
-                        ? ((TntDropRateLevelUpgrade) islandUpgrade.levelUpgrade).getDropRates(upgradeStatus.getCurrentLevel())
-                        : islandUpgrade.defaultRate;
+                        ? tntDropRateLevelUpgrade.getData(LevelUpgradeKey.DROP_RATE)
+                        : (float) islandUpgrade.defaultRate;
             }
 
             return defaultYield;
         }
     }
 
-    public static class TntDropRateLevelUpgrade extends LevelUpgrade {
-
-        private final float[] dropRates;
-
-        public TntDropRateLevelUpgrade(List<Float> prices, Set<Integer> slot, List<Float> dropRates, List<List<String>> description) {
-            super(prices, slot, description);
-
-            if (dropRates.size() != prices.size())
-                throw new IllegalArgumentException("There must be as many drop rates as upgrade levels !");
-
-            this.dropRates = ArrayUtils.toFloatArray(dropRates);
-        }
-
-        public float getDropRates(int level) {
-            if (level < 1 || level > dropRates.length)
-                throw new IllegalArgumentException("Drop rate for " + level + " doesn't exist !");
-
-            return dropRates[level - 1];
-        }
-
-    }
 }

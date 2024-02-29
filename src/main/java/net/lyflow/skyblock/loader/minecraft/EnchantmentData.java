@@ -1,4 +1,4 @@
-package net.lyflow.skyblock.loader.item;
+package net.lyflow.skyblock.loader.minecraft;
 
 import net.lyflow.skyblock.utils.builder.ItemBuilder;
 import org.bukkit.NamespacedKey;
