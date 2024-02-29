@@ -43,7 +43,7 @@ public class PlayerSellItemEvent extends ShopEvent {
             InventoryUtils.removeItems(player, itemShop.getMaterial(), amount);
             player.sendMessage("§aVous avez vendu " + amount + " " + formatedItemStackName);
         } catch (SQLException e) {
-            throw new IllegalCallerException(e);
+            throw new IllegalCallerException(e.getMessage(), e.getCause());
         }
     }
 

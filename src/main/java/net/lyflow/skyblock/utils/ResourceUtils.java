@@ -70,7 +70,7 @@ public class ResourceUtils {
                 }
             }
         } catch (IOException e) {
-            throw new IllegalCallerException(e);
+            throw new IllegalCallerException(e.getMessage(), e.getCause());
         }
     }
 

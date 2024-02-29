@@ -63,7 +63,7 @@ public class PlayerBuyItemEvent extends ShopEvent {
 
             player.sendMessage("§aVous avez acheté " + amount + " " + formatedItemStackName);
         } catch (SQLException e) {
-            throw new IllegalCallerException(e);
+            throw new IllegalCallerException(e.getMessage(), e.getCause());
         }
 
     }

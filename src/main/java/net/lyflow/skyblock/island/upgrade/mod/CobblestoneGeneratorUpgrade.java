@@ -7,6 +7,7 @@ import net.lyflow.skyblock.island.upgrade.LevelUpgrade;
 import net.lyflow.skyblock.manager.IslandUpgradeManager;
 import net.lyflow.skyblock.utils.BlockUtils;
 import net.lyflow.skyblock.utils.LocationUtils;
+import net.lyflow.skyblock.utils.iteminfo.ItemInfo;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

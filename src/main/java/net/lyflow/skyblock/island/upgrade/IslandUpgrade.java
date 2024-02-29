@@ -3,6 +3,8 @@ package net.lyflow.skyblock.island.upgrade;
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.manager.IslandUpgradeManager;
 import net.lyflow.skyblock.utils.builder.ItemBuilder;
+import net.lyflow.skyblock.utils.iteminfo.ItemInfo;
+import net.lyflow.skyblock.utils.iteminfo.UniqueItemInfo;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -87,19 +89,19 @@ public abstract class IslandUpgrade {
     }
 
     public int getSlot() {
-        return itemInfo.slot;
+        return itemInfo.getSlot();
     }
 
     public Material getMaterial() {
-        return itemInfo.material;
+        return itemInfo.getMaterial();
     }
 
     public String getName() {
-        return itemInfo.name;
+        return itemInfo.getName();
     }
 
     public String[] getDescription() {
-        return itemInfo.description;
+        return itemInfo.getDescription();
     }
 
     public enum Type {
@@ -147,62 +149,6 @@ public abstract class IslandUpgrade {
             final Optional<Type> optional = Arrays.stream(values()).parallel().max(Comparator.comparingInt(Type::getSlot));
             if (optional.isEmpty()) throw new IllegalCallerException("There is no slot for upgrade !");
             return optional.get().getSlot();
-        }
-    }
-
-    public static class ItemInfo extends UniqueItemInfo {
-
-        protected final String[] description;
-
-        public ItemInfo(int slot, Material material, String name, String... description) {
-            super(slot, material, name);
-            this.description = description;
-        }
-
-        public String[] getDescription() {
-            return description;
-        }
-
-        public static ItemInfo of(int slot, Material material, String name, String... description) {
-            return new ItemInfo(slot, material, name, description);
-        }
-
-    }
-
-    public static class UniqueItemInfo {
-        protected final int slot;
-        protected final Material material;
-        protected final String name;
-
-        public UniqueItemInfo(int slot, Material material, String name) {
-            this.slot = slot;
-            this.material = material;
-            this.name = name;
-        }
-
-        public int getSlot() {
-            return slot;
-        }
-
-        public Material getMaterial() {
-            return material;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public ItemBuilder getItemBuildRepresentation() {
-            return new ItemBuilder(material)
-                    .setName(name);
-        }
-
-        public static UniqueItemInfo of(int slot, Material material, String name) {
-            return new UniqueItemInfo(slot, material, name);
-        }
-
-        private ItemInfo toItemInfo() {
-            return new ItemInfo(slot, material, name);
         }
     }
 

@@ -1,10 +1,9 @@
 package net.lyflow.skyblock.challenge.mod.shop;
 
 import net.lyflow.skyblock.challenge.PlayerChallenge;
-import net.lyflow.skyblock.challenge.type.ShopChallenge;
+import net.lyflow.skyblock.challenge.SubChallenge;
 import net.lyflow.skyblock.event.itemshop.PlayerSellItemEvent;
 import net.lyflow.skyblock.manager.ChallengeManager;
-import net.lyflow.skyblock.shop.ItemShop;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,15 +12,15 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
-public class SellItemChallenge extends ShopChallenge<PlayerSellItemEvent> {
+public class SellItemChallenge extends SubChallenge<PlayerSellItemEvent> {
 
-    public SellItemChallenge(List<Integer> counterList, List<List<ItemShop>> elementsCounter) {
+    public SellItemChallenge(List<Integer> counterList, List<List<String>> elementsCounter) {
         super(Type.SELL_ITEM, counterList, elementsCounter);
     }
 
     @Override
     protected void onEvent(PlayerSellItemEvent event, Player player, PlayerChallenge playerChallengeProgress) throws SQLException {
-        final ItemShop itemShop = event.getItemShop();
+        final String itemShop = event.getItemShop().getMaterial().getKey().toString();
         if (!isValidElement(itemShop)) return;
         incrementCounter(player, event.getAmount(), itemShop);
     }

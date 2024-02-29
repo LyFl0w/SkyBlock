@@ -221,6 +221,13 @@ public class Challenge {
             if (this == EXTREME) throw new IllegalCallerException("There is no challenge after EXTREME");
             return getChallengeBySlot(getSlot() + 1);
         }
+
+        public static Difficulty getDifficultyByName(String name) {
+            for (Difficulty difficulty : values()) {
+                if (name.equals(difficulty.name().toLowerCase())) return difficulty;
+            }
+            throw new IllegalArgumentException("the difficulty " + name + " doesn't exist !");
+        }
     }
 
     public ChallengeProgressManager getChallengeProgressManager() {

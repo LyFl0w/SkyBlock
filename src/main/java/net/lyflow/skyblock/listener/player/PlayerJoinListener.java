@@ -73,7 +73,7 @@ public class PlayerJoinListener implements Listener {
 
                             preparedStatement.addBatch();
                         } catch (SQLException e) {
-                            throw new IllegalCallerException(e);
+                            throw new IllegalCallerException(e.getMessage(), e.getCause());
                         }
                     });
 
@@ -92,7 +92,7 @@ public class PlayerJoinListener implements Listener {
                 skyblock.getDatabase().closeConnection();
 
             } catch (SQLException e) {
-                throw new IllegalCallerException(e);
+                throw new IllegalCallerException(e.getMessage(), e.getCause());
             }
         }));
     }

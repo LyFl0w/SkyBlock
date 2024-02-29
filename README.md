@@ -8,6 +8,8 @@
     - disk : 200$ -> sell
     - mob head : 300 $ -> sell
 
+- add json file for create and configure challenge and island upgrade
+
 - add in challenge
     - challenge of upgrade island (sync for every player of island in the current moment (offline or online))
 

@@ -103,7 +103,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
 
                         player.openInventory(UpgradeInventory.getTypeUpgradeInventory(skyblock.getIslandUpgradeManager(), islandID));
                     } catch (SQLException e) {
-                        throw new IllegalCallerException(e);
+                        throw new IllegalCallerException(e.getMessage(), e.getCause());
                     }
                     return true;
                 }

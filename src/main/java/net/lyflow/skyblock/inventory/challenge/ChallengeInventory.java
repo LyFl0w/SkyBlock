@@ -44,7 +44,7 @@ public class ChallengeInventory {
             try {
                 player.sendMessage("§cVeuillez terminer la moitié des challenges " + difficulty.getBefore().getName());
             } catch (Exception e) {
-                throw new IllegalCallerException(e);
+                throw new IllegalCallerException(e.getMessage(), e.getCause());
             }
             return;
         }

@@ -92,7 +92,7 @@ public class ShopInventory {
         try {
             player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(skyBlock, player.getUniqueId(), ItemShop.getItemShopByMaterial(item.getType()), 0, page, isBuyInventory));
         } catch (SQLException e) {
-            throw new IllegalCallerException(e);
+            throw new IllegalCallerException(e.getMessage(), e.getCause());
         }
     }
 }

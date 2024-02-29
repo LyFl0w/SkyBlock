@@ -100,7 +100,7 @@ public class ChallengeProgressManager {
                 try {
                     new ChallengeRequest(database, false).updateChallenge(challengeToUnlock.getID(), player.getUniqueId(), playerNextChallengeProgress);
                 } catch (SQLException e) {
-                    throw new IllegalCallerException(e);
+                    throw new IllegalCallerException(e.getMessage(), e.getCause());
                 }
             });
 
@@ -120,7 +120,7 @@ public class ChallengeProgressManager {
                     try {
                         new ChallengeRequest(database, false).updateChallenge(newChallenge.getID(), player.getUniqueId(), playerNewChallengeProgress);
                     } catch (SQLException e) {
-                        throw new IllegalCallerException(e);
+                        throw new IllegalCallerException(e.getMessage(), e.getCause());
                     }
                 });
             }
@@ -140,7 +140,7 @@ public class ChallengeProgressManager {
         try {
             new ChallengeRequest(challenge.skyblock.getDatabase(), true).updateChallenge(challenge.getID(), player.getUniqueId(), playerChallengeProgress);
         } catch (SQLException e) {
-            throw new IllegalCallerException(e);
+            throw new IllegalCallerException(e.getMessage(), e.getCause());
         }
 
         challenge.getReward().getAward(player);

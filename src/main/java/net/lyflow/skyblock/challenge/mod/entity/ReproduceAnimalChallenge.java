@@ -1,9 +1,8 @@
 package net.lyflow.skyblock.challenge.mod.entity;
 
 import net.lyflow.skyblock.challenge.PlayerChallenge;
-import net.lyflow.skyblock.challenge.type.EntityChallenge;
+import net.lyflow.skyblock.challenge.SubChallenge;
 import net.lyflow.skyblock.manager.ChallengeManager;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,15 +12,15 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
-public class ReproduceAnimalChallenge extends EntityChallenge<EntityBreedEvent> {
+public class ReproduceAnimalChallenge extends SubChallenge<EntityBreedEvent> {
 
-    public ReproduceAnimalChallenge(List<Integer> counterList, List<List<EntityType>> elementsCounter) {
+    public ReproduceAnimalChallenge(List<Integer> counterList, List<List<String>> elementsCounter) {
         super(Type.REPRODUCE_ANIMAL, counterList, elementsCounter);
     }
 
     @Override
     protected void onEvent(EntityBreedEvent event, Player player, PlayerChallenge playerChallengeProgress) throws SQLException {
-        final EntityType entityType = event.getEntityType();
+        final String entityType = event.getEntityType().getKey().toString();
         if (!isValidElement(entityType)) return;
         incrementCounter(player, 1, entityType);
     }

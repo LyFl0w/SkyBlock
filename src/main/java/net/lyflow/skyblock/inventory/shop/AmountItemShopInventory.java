@@ -79,7 +79,7 @@ public class AmountItemShopInventory {
                             skyBlock, player.getUniqueId(), itemShop, Math.min(Math.max(Integer.parseInt(lore.substring(lore.lastIndexOf(":") + 2)) + Integer.parseInt(
                                     ChatColor.stripColor(item.getItemMeta().getDisplayName())), 0), 2304), page, isBuyInventory));
                 } catch (SQLException e) {
-                    throw new IllegalCallerException(e);
+                    throw new IllegalCallerException(e.getMessage(), e.getCause());
                 }
             }
 
@@ -91,7 +91,7 @@ public class AmountItemShopInventory {
                     player.openInventory(AmountItemShopInventory.getAmountItemShopInventory(
                             skyBlock, player.getUniqueId(), itemShop, count, page, isBuyInventory));
                 } catch (SQLException e) {
-                    throw new IllegalCallerException(e);
+                    throw new IllegalCallerException(e.getMessage(), e.getCause());
                 }
             }
 

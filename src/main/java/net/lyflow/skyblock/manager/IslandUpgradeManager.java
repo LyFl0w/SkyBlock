@@ -4,6 +4,8 @@ import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.island.upgrade.IslandUpgrade;
 import net.lyflow.skyblock.island.upgrade.mod.CobblestoneGeneratorUpgrade;
 import net.lyflow.skyblock.island.upgrade.mod.TntDropRateUpgrade;
+import net.lyflow.skyblock.utils.iteminfo.ItemInfo;
+import net.lyflow.skyblock.utils.iteminfo.UniqueItemInfo;
 import org.bukkit.Material;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.Nullable;
@@ -41,14 +43,14 @@ public class IslandUpgradeManager {
                                         List.of("Gourmand !")
                                 )
                         ),
-                        IslandUpgrade.ItemInfo.of(1, Material.COAL_ORE, "Cobblestone Upgrade n°1",
+                        ItemInfo.of(1, Material.COAL_ORE, "Cobblestone Upgrade n°1",
                                 "Vous en avez marre de casser du bois, d'acheter de la redstone, ou du lapis ?",
                                 "Avec cette amélioration et un block de charbon en dessous de votre lave")
                 ),
 
                 new CobblestoneGeneratorUpgrade(skyblock, 1, CobblestoneGeneratorUpgrade.Generator
                         .PreGenerator.UPGRADE_2.getGenerator(), 1_000,
-                        IslandUpgrade.ItemInfo.of(2, Material.IRON_ORE, "Cobblestone Upgrade n°2",
+                        ItemInfo.of(2, Material.IRON_ORE, "Cobblestone Upgrade n°2",
                                 "Vous en avez marre d'acheter tout vos minerais ?'",
                                 "Avec cette amélioration et un block de fer en dessous de votre lave",
                                 "Vous pourrez obtenir les minerais suivants :")
@@ -56,7 +58,7 @@ public class IslandUpgradeManager {
 
                 new CobblestoneGeneratorUpgrade(skyblock, 2, CobblestoneGeneratorUpgrade.Generator.
                         PreGenerator.UPGRADE_3.getGenerator(), 1_000,
-                        IslandUpgrade.ItemInfo.of(3, Material.NETHER_QUARTZ_ORE, "Cobblestone Upgrade n°3",
+                        ItemInfo.of(3, Material.NETHER_QUARTZ_ORE, "Cobblestone Upgrade n°3",
                                 "Vous en avez marre d'acheter du quartz ?",
                                 "Avec cette amélioration et un block de netherrack en dessous de votre lave",
                                 "Vous pourrez obtenir les minerais suivants :")
@@ -72,7 +74,7 @@ public class IslandUpgradeManager {
                                         List.of("Coquin ! 80% est inssufisant ?", "EN VOILÀ 100% !")
                                 )
                         ),
-                        IslandUpgrade.UniqueItemInfo.of(4, Material.TNT, "Tnt Drop Rate Upgrade")
+                        UniqueItemInfo.of(4, Material.TNT, "Tnt Drop Rate Upgrade")
                 )
         );
     }

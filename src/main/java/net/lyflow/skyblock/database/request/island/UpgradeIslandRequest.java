@@ -67,7 +67,7 @@ public class UpgradeIslandRequest extends DefaultRequest {
 
                     preparedStatement.addBatch();
                 } catch (SQLException e) {
-                    throw new IllegalCallerException(e);
+                    throw new IllegalCallerException(e.getMessage(), e.getCause());
                 }
             });
 
