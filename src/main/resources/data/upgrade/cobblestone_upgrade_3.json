@@ -1,0 +1,38 @@
+{
+  "id": 2,
+  "slot": 3,
+  "type": "cobblestone_generator",
+  "material": "minecraft:nether_quartz_ore",
+  "name": "Cobblestone Upgrade n°3",
+  "description": [
+    "Vous en avez marre d'acheter du quartz ?",
+    "Avec cette amélioration et un block de netherrack en dessous de votre lave",
+    "Vous pourrez obtenir les minerais suivants :"
+  ],
+  "upgrades": [
+    {
+      "price": 1000.0,
+      "slot": 3,
+      "data": {
+        "generator": {
+          "defaultMaterial": "minecraft:netherrack",
+          "materialActivation": "minecraft:quartz_block",
+          "materialProbability": [
+            {
+              "item": "minecraft:nether_quartz_ore",
+              "probability": 0.2
+            },
+            {
+              "item": "minecraft:nether_gold_ore",
+              "probability": 0.3
+            },
+            {
+              "item": "minecraft:soul_sand",
+              "probability": 0.1
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

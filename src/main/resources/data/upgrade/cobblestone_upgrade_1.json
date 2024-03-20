@@ -1,0 +1,94 @@
+{
+  "id": 0,
+  "slot": 1,
+  "type": "cobblestone_generator",
+  "material": "minecraft:coal_ore",
+  "name": "Cobblestone Upgrade n°1",
+  "description": [
+    "Vous en avez marre de casser du bois, d'acheter de la redstone, ou du lapis ?",
+    "Avec cette amélioration et un block de charbon en dessous de votre lave"
+  ],
+  "upgrades": [
+    {
+      "price": 1000.0,
+      "slot": 1,
+      "description": [
+        "Passer au niveau suppérieur"
+      ],
+      "data": {
+        "generator": {
+          "defaultMaterial": "minecraft:cobblestone",
+          "materialActivation": "minecraft:coal_block",
+          "materialProbability": [
+            {
+              "item": "minecraft:coal_ore",
+              "probability": 0.2
+            },
+            {
+              "item": "minecraft:lapis_ore",
+              "probability": 0.2
+            },
+            {
+              "item": "minecraft:redstone_ore",
+              "probability": 0.3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "price": 2000.0,
+      "slot": 2,
+      "description": [
+        "Toujours plus ?!"
+      ],
+      "data": {
+        "generator": {
+          "defaultMaterial": "minecraft:cobblestone",
+          "materialActivation": "minecraft:coal_block",
+          "materialProbability": [
+            {
+              "item": "minecraft:coal_ore",
+              "probability": 0.25
+            },
+            {
+              "item": "minecraft:lapis_ore",
+              "probability": 0.25
+            },
+            {
+              "item": "minecraft:redstone_ore",
+              "probability": 0.32
+            }
+          ]
+        }
+      }
+    },
+    {
+      "price": 3000.0,
+      "slot": 3,
+      "description": [
+        "Gourmand !"
+      ],
+      "data": {
+        "generator": {
+          "defaultMaterial": "minecraft:cobblestone",
+          "materialActivation": "minecraft:coal_block",
+          "materialProbability": [
+            {
+              "item": "minecraft:coal_ore",
+              "probability": 0.3
+            },
+            {
+              "item": "minecraft:lapis_ore",
+              "probability": 0.3
+            },
+            {
+              "item": "minecraft:redstone_ore",
+              "probability": 0.4
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

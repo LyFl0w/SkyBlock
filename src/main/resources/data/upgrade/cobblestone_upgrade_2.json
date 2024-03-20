@@ -1,0 +1,46 @@
+{
+  "id": 1,
+  "slot": 2,
+  "type": "cobblestone_generator",
+  "material": "minecraft:iron_ore",
+  "name": "Cobblestone Upgrade n°2",
+  "description": [
+    "Vous en avez marre d'acheter tout vos minerais ?",
+    "Avec cette amélioration et un block de fer en dessous de votre lave",
+    "Vous pourrez obtenir les minerais suivants :"
+  ],
+  "upgrades": [
+    {
+      "price": 1000.0,
+      "slot": 2,
+      "data": {
+        "generator": {
+          "defaultMaterial": "minecraft:cobblestone",
+          "materialActivation": "minecraft:iron_block",
+          "materialProbability": [
+            {
+              "item": "minecraft:copper_ore",
+              "probability": 0.3
+            },
+            {
+              "item": "minecraft:iron_ore",
+              "probability": 0.2
+            },
+            {
+              "item": "minecraft:gold_ore",
+              "probability": 0.1
+            },
+            {
+              "item": "minecraft:diamond_ore",
+              "probability": 0.1
+            },
+            {
+              "item": "minecraft:emerald_ore",
+              "probability": 0.01
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

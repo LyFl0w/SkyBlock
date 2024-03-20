@@ -121,7 +121,7 @@ public class IslandUpgradeManager {
         );*/
 
         final IslandUpgradeData upgrade = new IslandUpgradeData(0, 1, "cobblestone_generator",
-                "minecraft:coal_ore",  "Cobblestone Upgrade n°1",
+                "minecraft:coal_ore", "Cobblestone Upgrade n°1",
                 List.of(
                         "Vous en avez marre de casser du bois, d'acheter de la redstone, ou du lapis ?",
                         "Avec cette amélioration et un block de charbon en dessous de votre lave"
@@ -163,35 +163,61 @@ public class IslandUpgradeManager {
                 )
         );
 
-        /*final IslandUpgradeData upgrade2 = new IslandUpgradeData(1, 2, "cobblestone_generator",
-                "minecraft:iron_ore",  "Cobblestone Upgrade n°2",
+        final IslandUpgradeData upgrade2 = new IslandUpgradeData(1, 2, "cobblestone_generator",
+                "minecraft:iron_ore", "Cobblestone Upgrade n°2",
                 List.of(
                         "Vous en avez marre d'acheter tout vos minerais ?",
                         "Avec cette amélioration et un block de fer en dessous de votre lave",
                         "Vous pourrez obtenir les minerais suivants :"
                 ),
-                List.of(new LevelUpgrade(1_000, 2, List.of(), Map.of(LevelUpgradeKey.GENERATOR.getKey(), CobblestoneGeneratorUpgrade.Generator.PreGenerator.UPGRADE_2.getGenerator())))
+                List.of(
+                        new LevelUpgrade(1_000, 2, List.of(),
+                                Map.of(LevelUpgradeKey.GENERATOR.getKey(),
+                                        new CobblestoneGeneratorData(
+                                                "minecraft:cobblestone",
+                                                "minecraft:iron_block",
+                                                List.of(
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:copper_ore", 0.3),
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:iron_ore", 0.2),
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:gold_ore", 0.1),
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:diamond_ore", 0.1),
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:emerald_ore", 0.01)
+                                                )
+                                        )))
+                )
         );
 
         final IslandUpgradeData upgrade3 = new IslandUpgradeData(2, 3, "cobblestone_generator",
-                "minecraft:nether_quartz_ore",  "Cobblestone Upgrade n°3",
+                "minecraft:nether_quartz_ore", "Cobblestone Upgrade n°3",
                 List.of(
                         "Vous en avez marre d'acheter du quartz ?",
                         "Avec cette amélioration et un block de netherrack en dessous de votre lave",
                         "Vous pourrez obtenir les minerais suivants :"
                 ),
-                List.of(new LevelUpgrade(1_000, 3, List.of(), Map.of(LevelUpgradeKey.GENERATOR.getKey(), CobblestoneGeneratorUpgrade.Generator.PreGenerator.UPGRADE_3.getGenerator())))
-        );*/
+                List.of(
+                        new LevelUpgrade(1_000, 3, List.of(),
+                                Map.of(LevelUpgradeKey.GENERATOR.getKey(),
+                                        new CobblestoneGeneratorData(
+                                                "minecraft:netherrack",
+                                                "minecraft:quartz_block",
+                                                List.of(
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:nether_quartz_ore", 0.2),
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:nether_gold_ore", 0.3),
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:soul_sand", 0.1)
+                                                )
+                                        )))
+                )
+        );
 
 
         System.out.println(gson.toJson(upgrade));
-        /*System.out.println(gson.toJson(upgrade2));
-        System.out.println(gson.toJson(upgrade3));*/
+        System.out.println(gson.toJson(upgrade2));
+        System.out.println(gson.toJson(upgrade3));
 
         try {
             addIslandUpgrade(upgrade.toUpgrade(skyblock));
-            /*addIslandUpgrade(upgrade2.toUpgrade(skyblock));
-            addIslandUpgrade(upgrade3.toUpgrade(skyblock));*/
+            addIslandUpgrade(upgrade2.toUpgrade(skyblock));
+            addIslandUpgrade(upgrade3.toUpgrade(skyblock));
             addIslandUpgrade(upgrade4.toUpgrade(skyblock));
         } catch (Exception e) {
             throw new IllegalStateException(e);
