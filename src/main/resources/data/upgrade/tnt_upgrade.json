@@ -1,0 +1,45 @@
+{
+  "id": 4,
+  "slot": 4,
+  "type": "tnt_drop_rate",
+  "material": "minecraft:tnt",
+  "name": "Tnt Drop Rate Upgrade",
+  "upgrades": [
+    {
+      "price": 1000.0,
+      "slot": 1,
+      "description": [
+        "Vous en avez marre des 50% ?",
+        "En voilà 60% !"
+      ],
+      "data": {
+        "drop_rate": 0.6
+      }
+    },
+    {
+      "price": 2000.0,
+      "slot": 2,
+      "description": [
+        "Vous en avez marre des 60% ?",
+        "En voilà 80% !"
+      ],
+      "data": {
+        "drop_rate": 0.8
+      }
+    },
+    {
+      "price": 3000.0,
+      "slot": 3,
+      "description": [
+        "Coquin !!!",
+        "En voilà 100% !"
+      ],
+      "data": {
+        "drop_rate": 1.0
+      }
+    }
+  ],
+  "default": {
+    "drop_rate": 0.5
+  }
+}

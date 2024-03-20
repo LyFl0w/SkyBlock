@@ -16,7 +16,7 @@ public class LevelUpgradeManager {
         }
     }
 
-    public LevelUpgrade getLevel(int level) {
+    public LevelUpgrade getLevelUpgrade(int level) {
         if (level < 1 || level > levelUpgrades.size())
             throw new IllegalArgumentException("There is no level " + level);
 
@@ -24,15 +24,15 @@ public class LevelUpgradeManager {
     }
 
     public float getPrices(int level) {
-        return getLevel(level).getPrice();
+        return getLevelUpgrade(level).getPrice();
     }
 
     public List<String> getDescriptions(int level) {
-        return getLevel(level).getDescription();
+        return getLevelUpgrade(level).getDescription();
     }
 
     public int getSlot(int level) {
-        return getLevel(level).getSlot();
+        return getLevelUpgrade(level).getSlot();
     }
 
     public int getMaxLevel() {
@@ -47,8 +47,9 @@ public class LevelUpgradeManager {
         if (slot < 1 || slot > levelUpgrades.size())
             throw new IllegalArgumentException("Level for the slot n°" + slot + " doesn't exist !");
 
-        for (int level = 1; level <= getMaxLevel(); level++) {
-            if (levelUpgrades.get(level).getSlot() == slot) return level;
+        final int maxLevel = getMaxLevel() - 1;
+        for (int level = 0; level <= maxLevel; level++) {
+            if (levelUpgrades.get(level).getSlot() == slot) return level + 1;
         }
 
         throw new IllegalStateException();

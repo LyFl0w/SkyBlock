@@ -168,7 +168,7 @@ public class CobblestoneGeneratorUpgrade extends IslandUpgrade {
                 for (IslandUpgrade islandUpgrade : islandUpgradeManager.getIslandUpgradesByType(Type.COBBLESTONE_GENERATOR)) {
                     final IslandUpgradeStatus status = islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID);
                     if (status.isEnable()) {
-                        final LevelUpgrade levelUpgrade = islandUpgrade.getLevelUpgradeManager().getLevel(status.getCurrentLevel());
+                        final LevelUpgrade levelUpgrade = islandUpgrade.getLevelUpgradeManager().getLevelUpgrade(status.getCurrentLevel());
                         final Generator generator = levelUpgrade.getData(LevelUpgradeKey.GENERATOR);
                         if (generator.materialActivation == upgradeBlockType) {
                             cobbleState.setType(generator.getRandomMaterial());

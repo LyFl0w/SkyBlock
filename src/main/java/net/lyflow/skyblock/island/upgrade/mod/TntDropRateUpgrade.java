@@ -55,10 +55,12 @@ public class TntDropRateUpgrade extends IslandUpgrade {
 
                 final int islandID = LocationUtils.getIslandID(worldName);
                 final IslandUpgradeStatus upgradeStatus = islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID);
-                final LevelUpgrade tntDropRateLevelUpgrade = islandUpgrade.levelUpgradeManager.getLevel(upgradeStatus.getCurrentLevel());
-                return upgradeStatus.isEnable()
-                        ? tntDropRateLevelUpgrade.getData(LevelUpgradeKey.DROP_RATE)
-                        : (float) islandUpgrade.defaultRate;
+
+                double rate = upgradeStatus.isEnable()
+                        ? islandUpgrade.levelUpgradeManager.getLevelUpgrade(upgradeStatus.getCurrentLevel()).getData(LevelUpgradeKey.DROP_RATE)
+                        : islandUpgrade.defaultRate;
+
+                return (float) rate;
             }
 
             return defaultYield;

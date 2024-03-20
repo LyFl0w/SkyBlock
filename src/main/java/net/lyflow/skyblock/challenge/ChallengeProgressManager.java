@@ -179,7 +179,6 @@ public class ChallengeProgressManager {
     }
 
     public PlayerChallenge initPlayerChallenge(Player player) {
-        System.out.println("init player challenge");
         if (playersCounters.containsKey(player.getUniqueId()))
             throw new IllegalArgumentException("The player " + player.getName() + " already has a counter for the Challenge (" + playersCounters.get(player.getUniqueId()) + ") size : " + playersCounters.size());
 
