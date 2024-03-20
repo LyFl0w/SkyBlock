@@ -58,7 +58,7 @@ public class UpgradeInventory {
         final InventoryBuilder inventoryBuilder = new InventoryBuilder(9, "§6Upgrade/" + type.getSlot());
         islandUpgradeManager.getIslandUpgradesByType(type).stream().parallel().forEach(islandUpgrade -> {
             final IslandUpgradeStatus islandUpgradeStatus = islandUpgrade.getIslandUpgradeStatusManager().getIslandUpgradeStatus(islandID);
-            inventoryBuilder.setItem(islandUpgrade.getSlot(), islandUpgrade.getRepresentation(islandUpgradeStatus, islandUpgradeStatus.getCurrentLevel()));
+            inventoryBuilder.setItem(islandUpgrade.getSlot(), islandUpgrade.getRepresentation(islandUpgradeStatus, 0));
         });
         inventoryBuilder.setItem(0, new ItemBuilder(Material.PAPER).setName("Back").toItemStack());
 
