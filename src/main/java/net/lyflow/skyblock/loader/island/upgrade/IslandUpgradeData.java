@@ -13,10 +13,7 @@ import org.bukkit.Registry;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class IslandUpgradeData {
 
@@ -26,7 +23,7 @@ public class IslandUpgradeData {
     private final String material;
     private final String name;
     private final List<String> description;
-    private final List<LevelUpgrade> upgrades;
+    private List<LevelUpgrade> upgrades;
     @SerializedName("default")
     private final Map<String, Object> data;
 
@@ -61,7 +58,7 @@ public class IslandUpgradeData {
         if (!hasData && data != null)
             throw new IllegalArgumentException(name + " island upgrade don't have default parameters !");
 
-        // rewrite upgrade ( Example : Cobblestone Generator -> (Cobblestone Generator Data -> ) )
+        // rewrite upgrade ( Example : Cobblestone Generator -> (Cobblestone Generator Data -> Cobblestone Generator Upgrade) )
         rewriteUpgrade(reelType);
 
         if (isUnique) {
@@ -74,7 +71,7 @@ public class IslandUpgradeData {
             }
         } else {
             final ItemInfo itemInfo = ItemInfo.of(slot, reelMaterial, name, (description == null ? new String[]{} : description.toArray(new String[0])));
-
+            System.out.println("description of " + name + " : " + Arrays.toString(description == null ? new String[]{} : description.toArray(new String[0])));
             if (hasData) {
                 islandUpgrade = (IslandUpgrade) constructor.newInstance(skyBlock, id, upgrades, data, itemInfo);
             } else {
@@ -86,12 +83,24 @@ public class IslandUpgradeData {
     }
 
     private void rewriteUpgrade(IslandUpgrade.Type type) {
+        final List<LevelUpgrade> rewriteUpgrades = new ArrayList<>();
+
         switch (type) {
-            case COBBLESTONE_GENERATOR -> upgrades.forEach(levelUpgrade -> {
-                final Map<String, Object> data = levelUpgrade.getData();
-                data.forEach((s, object) -> data.replace(s, ((CobblestoneGeneratorData)object).toGenerator()));
-            });
+            case COBBLESTONE_GENERATOR -> {
+                for (LevelUpgrade levelUpgrade : upgrades) {
+                    final Map<String, Object> rewriteData = new HashMap<>();
+                    for (Map.Entry<String, Object> entry : levelUpgrade.getData().entrySet())
+                        rewriteData.put(entry.getKey(), ((CobblestoneGeneratorData) entry.getValue()).toGenerator());
+                    rewriteUpgrades.add(new LevelUpgrade(levelUpgrade, rewriteData));
+                }
+            }
+            default -> {
+                return;
+            }
         }
+
+        if (!rewriteUpgrades.isEmpty())
+            this.upgrades = rewriteUpgrades;
     }
 
 }

@@ -17,6 +17,11 @@ public class LevelUpgrade {
         this.data = data;
     }
 
+    public LevelUpgrade(LevelUpgrade levelUpgrade, Map<String, Object> data) {
+        this(levelUpgrade.price, levelUpgrade.slot, levelUpgrade.description, data);
+    }
+
+
     public float getPrice() {
         return price;
     }

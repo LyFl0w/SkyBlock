@@ -83,64 +83,6 @@ public class CobblestoneGeneratorUpgrade extends IslandUpgrade {
             return initialMaterialProbability;
         }
 
-        public enum PreGenerator {
-            UPGRADE_1(new CobblestoneGeneratorUpgrade.Generator(
-                    Material.COAL_BLOCK,
-                    Map.of(
-                            Material.COAL_ORE, 0.2,
-                            Material.LAPIS_ORE, 0.2,
-                            Material.REDSTONE_ORE, 0.3
-                    )
-            )),
-
-            UPGRADE_1_2(new CobblestoneGeneratorUpgrade.Generator(
-                    Material.COAL_BLOCK,
-                    Map.of(
-                            Material.COAL_ORE, 0.25,
-                            Material.LAPIS_ORE, 0.25,
-                            Material.REDSTONE_ORE, 0.32
-                    )
-            )),
-
-            UPGRADE_1_3(new CobblestoneGeneratorUpgrade.Generator(
-                    Material.COAL_BLOCK,
-                    Map.of(
-                            Material.COAL_ORE, 0.3,
-                            Material.LAPIS_ORE, 0.3,
-                            Material.REDSTONE_ORE, 0.4
-                    )
-            )),
-
-            UPGRADE_2(new CobblestoneGeneratorUpgrade.Generator(
-                    Material.IRON_BLOCK,
-                    Map.of(
-                            Material.COPPER_ORE, 0.3,
-                            Material.IRON_ORE, 0.2,
-                            Material.GOLD_ORE, 0.1,
-                            Material.DIAMOND_ORE, 0.1,
-                            Material.EMERALD_ORE, 0.01
-                    )
-            )),
-
-            UPGRADE_3(new CobblestoneGeneratorUpgrade.Generator(
-                    Material.QUARTZ_BLOCK, Material.NETHERRACK,
-                    Map.of(
-                            Material.NETHER_QUARTZ_ORE, 0.2,
-                            Material.NETHER_GOLD_ORE, 0.3,
-                            Material.SOUL_SAND, 0.1
-                    )
-            ));
-
-            final Generator generator;
-
-            PreGenerator(Generator generator) {
-                this.generator = generator;
-            }
-
-            public Generator getGenerator() {
-                return generator;
-            }
-        }
     }
 
     public static class ListenerEvent implements Listener {
