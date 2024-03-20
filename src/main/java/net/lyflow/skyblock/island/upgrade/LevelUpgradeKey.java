@@ -7,7 +7,7 @@ import java.util.Map;
 public enum LevelUpgradeKey {
 
     GENERATOR("generator", CobblestoneGeneratorUpgrade.Generator.class),
-    DROP_RATE("drop_rate", Float.class);
+    DROP_RATE("drop_rate", Double.class);
 
     private final String key;
     private final Class<?> type;
@@ -28,4 +28,9 @@ public enum LevelUpgradeKey {
     public <T> T getData(Map<String, Object> data) {
         return (T) data.get(key);
     }
+
+    public Object getNonFormalizedData(Map<String, Object> data) {
+        return data.get(key);
+    }
+
 }

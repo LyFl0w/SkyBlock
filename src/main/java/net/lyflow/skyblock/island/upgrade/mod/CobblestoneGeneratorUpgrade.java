@@ -24,6 +24,7 @@ import java.util.Random;
 
 public class CobblestoneGeneratorUpgrade extends IslandUpgrade {
 
+
     public CobblestoneGeneratorUpgrade(SkyBlock skyBlock, int id, List<LevelUpgrade> upgrades, ItemInfo itemInfo) {
         super(skyBlock, id, Type.COBBLESTONE_GENERATOR, upgrades, itemInfo);
     }
@@ -33,14 +34,14 @@ public class CobblestoneGeneratorUpgrade extends IslandUpgrade {
         protected record MaterialEntry(Material material, double probability) {
         }
 
+        private static final Random random = new Random();
+
         private final Material materialActivation;
         private final List<MaterialEntry> summedMaterialProbability;
         private final Map<Material, Double> initialMaterialProbability;
-        private final Random random;
 
         public Generator(Material materialActivation, Material defaultMaterial, Map<Material, Double> materialProbability) {
             this.materialActivation = materialActivation;
-            this.random = new Random();
             this.summedMaterialProbability = new ArrayList<>();
             this.initialMaterialProbability = materialProbability;
             validateAndInitProbabilities(defaultMaterial, materialProbability);

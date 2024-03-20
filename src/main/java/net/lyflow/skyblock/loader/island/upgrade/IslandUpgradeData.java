@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.island.upgrade.IslandUpgrade;
 import net.lyflow.skyblock.island.upgrade.LevelUpgrade;
+import net.lyflow.skyblock.loader.island.upgrade.mod.CobblestoneGeneratorData;
 import net.lyflow.skyblock.utils.iteminfo.ItemInfo;
 import net.lyflow.skyblock.utils.iteminfo.UniqueItemInfo;
 import org.bukkit.Material;
@@ -12,6 +13,7 @@ import org.bukkit.Registry;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -39,6 +41,10 @@ public class IslandUpgradeData {
         this.data = data;
     }
 
+    public IslandUpgradeData(int id, int slot, String type, String material, String name, List<String> description, List<LevelUpgrade> upgrades) {
+        this(id, slot, type, material, name, description, upgrades, null);
+    }
+
     public IslandUpgrade toUpgrade(SkyBlock skyBlock) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         final IslandUpgrade.Type reelType = IslandUpgrade.Type.getTypeByName(type);
         final boolean isUnique = reelType.isUniqueEvent();
@@ -55,6 +61,9 @@ public class IslandUpgradeData {
         if (!hasData && data != null)
             throw new IllegalArgumentException(name + " island upgrade don't have default parameters !");
 
+        // rewrite upgrade ( Example : Cobblestone Generator -> (Cobblestone Generator Data -> ) )
+        rewriteUpgrade(reelType);
+
         if (isUnique) {
             final UniqueItemInfo itemInfo = UniqueItemInfo.of(slot, reelMaterial, name);
 
@@ -63,7 +72,6 @@ public class IslandUpgradeData {
             } else {
                 islandUpgrade = (IslandUpgrade) constructor.newInstance(skyBlock, id, upgrades, itemInfo);
             }
-
         } else {
             final ItemInfo itemInfo = ItemInfo.of(slot, reelMaterial, name, (description == null ? new String[]{} : description.toArray(new String[0])));
 
@@ -75,6 +83,15 @@ public class IslandUpgradeData {
         }
 
         return islandUpgrade;
+    }
+
+    private void rewriteUpgrade(IslandUpgrade.Type type) {
+        switch (type) {
+            case COBBLESTONE_GENERATOR -> upgrades.forEach(levelUpgrade -> {
+                final Map<String, Object> data = levelUpgrade.getData();
+                data.forEach((s, object) -> data.replace(s, ((CobblestoneGeneratorData)object).toGenerator()));
+            });
+        }
     }
 
 }

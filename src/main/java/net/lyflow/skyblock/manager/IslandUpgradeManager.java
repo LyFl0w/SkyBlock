@@ -10,6 +10,7 @@ import net.lyflow.skyblock.island.upgrade.mod.CobblestoneGeneratorUpgrade;
 import net.lyflow.skyblock.island.upgrade.mod.TntDropRateUpgrade;
 import net.lyflow.skyblock.loader.gson.EmptyListToNullFactory;
 import net.lyflow.skyblock.loader.island.upgrade.IslandUpgradeData;
+import net.lyflow.skyblock.loader.island.upgrade.mod.CobblestoneGeneratorData;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,14 +39,14 @@ public class IslandUpgradeManager {
                 .setPrettyPrinting()
                 .create();
 
-        final IslandUpgradeData upgrade2 = new IslandUpgradeData(4, 4, "tnt_drop_rate",
+        final IslandUpgradeData upgrade4 = new IslandUpgradeData(4, 4, "tnt_drop_rate",
                 "minecraft:tnt", "Tnt Drop Rate Upgrade", List.of(),
                 List.of(
-                        new LevelUpgrade(1_000f, 1, List.of("Vous en avez marre des 50% ?", "En voilà 60% !"), Map.of(LevelUpgradeKey.DROP_RATE.getKey(), 0.6f)),
-                        new LevelUpgrade(2_000f, 2, List.of("Vous en avez marre des 60% ?", "En voilà 80% !"), Map.of(LevelUpgradeKey.DROP_RATE.getKey(), 0.8f)),
-                        new LevelUpgrade(3_000f, 3, List.of("Coquin !!!", "En voilà 100% !"), Map.of(LevelUpgradeKey.DROP_RATE.getKey(), 1.0f))
+                        new LevelUpgrade(1_000, 1, List.of("Vous en avez marre des 50% ?", "En voilà 60% !"), Map.of(LevelUpgradeKey.DROP_RATE.getKey(), 0.6)),
+                        new LevelUpgrade(2_000, 2, List.of("Vous en avez marre des 60% ?", "En voilà 80% !"), Map.of(LevelUpgradeKey.DROP_RATE.getKey(), 0.8)),
+                        new LevelUpgrade(3_000, 3, List.of("Coquin !!!", "En voilà 100% !"), Map.of(LevelUpgradeKey.DROP_RATE.getKey(), 1.0))
                 ),
-                Map.of(LevelUpgradeKey.DROP_RATE.getKey(), 0.5f)
+                Map.of(LevelUpgradeKey.DROP_RATE.getKey(), 0.5)
         );
 
         /*
@@ -98,7 +99,7 @@ public class IslandUpgradeManager {
                 )
 
 
-         */
+
 
         final IslandUpgradeData upgrade = new IslandUpgradeData(0, 1, "cobblestone_generator",
                 "minecraft:coal_ore",  "Cobblestone Upgrade n°1",
@@ -107,17 +108,91 @@ public class IslandUpgradeManager {
                         "Avec cette amélioration et un block de charbon en dessous de votre lave"
                 ),
                 List.of(
-                        new LevelUpgrade(1_000f, 1, List.of("Vous en avez marre des 50% ?", "En voilà 60% !"), Map.of(LevelUpgradeKey.GENERATOR.getKey(), 0.6f)),
-                        new LevelUpgrade(2_000f, 2, List.of("Vous en avez marre des 60% ?", "En voilà 80% !"), Map.of(LevelUpgradeKey.DROP_RATE.getKey(), 0.8f)),
-                        new LevelUpgrade(3_000f, 3, List.of("Coquin !!!", "En voilà 100% !"), Map.of(LevelUpgradeKey.DROP_RATE.getKey(), 1.0f))
+                        new LevelUpgrade(1_000, 1, List.of("Passer au niveau suppérieur"),
+                                Map.of(LevelUpgradeKey.GENERATOR.getKey(), CobblestoneGeneratorUpgrade.Generator
+                                        .PreGenerator.UPGRADE_1.getGenerator())),
+                        new LevelUpgrade(2_000, 2, List.of("Toujours plus ?!"),
+                                Map.of(LevelUpgradeKey.GENERATOR.getKey(), CobblestoneGeneratorUpgrade.Generator
+                                        .PreGenerator.UPGRADE_1_2.getGenerator())),
+                        new LevelUpgrade(3_000, 3, List.of("Gourmand !"),
+                                Map.of(LevelUpgradeKey.GENERATOR.getKey(), CobblestoneGeneratorUpgrade.Generator
+                                        .PreGenerator.UPGRADE_1_3.getGenerator()))
+                )
+        );*/
+
+        final IslandUpgradeData upgrade = new IslandUpgradeData(0, 1, "cobblestone_generator",
+                "minecraft:coal_ore",  "Cobblestone Upgrade n°1",
+                List.of(
+                        "Vous en avez marre de casser du bois, d'acheter de la redstone, ou du lapis ?",
+                        "Avec cette amélioration et un block de charbon en dessous de votre lave"
                 ),
-                Map.of(LevelUpgradeKey.DROP_RATE.getKey(), 0.5f)
+                List.of(
+                        new LevelUpgrade(1_000, 1, List.of("Passer au niveau suppérieur"),
+                                Map.of(LevelUpgradeKey.GENERATOR.getKey(),
+                                        new CobblestoneGeneratorData(
+                                                "minecraft:cobblestone",
+                                                "minecraft:coal_block",
+                                                List.of(
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:coal_ore", 0.2),
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:lapis_ore", 0.2),
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:redstone_ore", 0.3)
+                                                )
+                                        ))),
+                        new LevelUpgrade(2_000, 2, List.of("Toujours plus ?!"),
+                                Map.of(LevelUpgradeKey.GENERATOR.getKey(),
+                                        new CobblestoneGeneratorData(
+                                                "minecraft:cobblestone",
+                                                "minecraft:coal_block",
+                                                List.of(
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:coal_ore", 0.25),
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:lapis_ore", 0.25),
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:redstone_ore", 0.32)
+                                                )
+                                        ))),
+                        new LevelUpgrade(3_000, 3, List.of("Gourmand !"),
+                                Map.of(LevelUpgradeKey.GENERATOR.getKey(),
+                                        new CobblestoneGeneratorData(
+                                                "minecraft:cobblestone",
+                                                "minecraft:coal_block",
+                                                List.of(
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:coal_ore", 0.3),
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:lapis_ore", 0.3),
+                                                        new CobblestoneGeneratorData.MaterialEntry("minecraft:redstone_ore", 0.4)
+                                                )
+                                        )))
+                )
         );
 
+        /*final IslandUpgradeData upgrade2 = new IslandUpgradeData(1, 2, "cobblestone_generator",
+                "minecraft:iron_ore",  "Cobblestone Upgrade n°2",
+                List.of(
+                        "Vous en avez marre d'acheter tout vos minerais ?",
+                        "Avec cette amélioration et un block de fer en dessous de votre lave",
+                        "Vous pourrez obtenir les minerais suivants :"
+                ),
+                List.of(new LevelUpgrade(1_000, 2, List.of(), Map.of(LevelUpgradeKey.GENERATOR.getKey(), CobblestoneGeneratorUpgrade.Generator.PreGenerator.UPGRADE_2.getGenerator())))
+        );
+
+        final IslandUpgradeData upgrade3 = new IslandUpgradeData(2, 3, "cobblestone_generator",
+                "minecraft:nether_quartz_ore",  "Cobblestone Upgrade n°3",
+                List.of(
+                        "Vous en avez marre d'acheter du quartz ?",
+                        "Avec cette amélioration et un block de netherrack en dessous de votre lave",
+                        "Vous pourrez obtenir les minerais suivants :"
+                ),
+                List.of(new LevelUpgrade(1_000, 3, List.of(), Map.of(LevelUpgradeKey.GENERATOR.getKey(), CobblestoneGeneratorUpgrade.Generator.PreGenerator.UPGRADE_3.getGenerator())))
+        );*/
+
+
+        System.out.println(gson.toJson(upgrade));
+        /*System.out.println(gson.toJson(upgrade2));
+        System.out.println(gson.toJson(upgrade3));*/
 
         try {
             addIslandUpgrade(upgrade.toUpgrade(skyblock));
-            addIslandUpgrade(upgrade2.toUpgrade(skyblock));
+            /*addIslandUpgrade(upgrade2.toUpgrade(skyblock));
+            addIslandUpgrade(upgrade3.toUpgrade(skyblock));*/
+            addIslandUpgrade(upgrade4.toUpgrade(skyblock));
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

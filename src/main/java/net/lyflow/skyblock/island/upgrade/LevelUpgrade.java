@@ -32,4 +32,8 @@ public class LevelUpgrade {
     public <T> T getData(LevelUpgradeKey key) {
         return key.getData(data);
     }
+
+    public Map<String, Object> getData() {
+        return data;
+    }
 }
