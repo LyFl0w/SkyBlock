@@ -3,6 +3,7 @@ package net.lyflow.skyblock.island.upgrade;
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.island.upgrade.mod.CobblestoneGeneratorUpgrade;
 import net.lyflow.skyblock.island.upgrade.mod.TntDropRateUpgrade;
+import net.lyflow.skyblock.loader.island.upgrade.mod.CobblestoneGeneratorData;
 import net.lyflow.skyblock.manager.IslandUpgradeManager;
 import net.lyflow.skyblock.utils.builder.ItemBuilder;
 import net.lyflow.skyblock.utils.iteminfo.ItemInfo;
@@ -12,10 +13,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class IslandUpgrade {
 
@@ -67,10 +65,16 @@ public class IslandUpgrade {
         final ItemBuilder itemBuilder = itemInfo.getItemBuildRepresentation();
 
         if (!levelUpgradeManager.isOneLevel()) {
-            itemBuilder.setLore(getDescription());
+            if (level == 0) {
+                itemBuilder.setLore(getDescription());
 
-            if ((level == 0 && upgradeStatus.isEnable()) || level == upgradeStatus.getCurrentLevel()) {
-                itemBuilder.addVisualEnchant();
+                if (upgradeStatus.isEnable())
+                    itemBuilder.addVisualEnchant();
+            } else {
+                itemBuilder.setLore(levelUpgradeManager.getDescriptions(level));
+
+                if (level == upgradeStatus.getCurrentLevel())
+                    itemBuilder.addVisualEnchant();
             }
         } else {
             itemBuilder.setLore(getDescription());
