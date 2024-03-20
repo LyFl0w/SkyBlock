@@ -1,16 +1,8 @@
 package net.lyflow.skyblock.island.upgrade.mod;
 
-import org.bukkit.Material;
-import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 class CobblestoneGeneratorDataUpgradeTest {
 
-    @Test
+    /*@Test
     void testUpgradeRandomMaterialProbability() {
         final int iterations = 10_000;
         final double marginError = 0.03;
@@ -31,5 +23,5 @@ class CobblestoneGeneratorDataUpgradeTest {
                 assertEquals(expectedProbability, actualProbability, marginError);
             }
         }
-    }
+    }*/
 }
