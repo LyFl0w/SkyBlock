@@ -89,7 +89,7 @@ public class IslandUpgradeData {
             case COBBLESTONE_GENERATOR -> {
                 for (LevelUpgrade levelUpgrade : upgrades) {
                     final Map<String, Object> rewriteData = new HashMap<>();
-                    for (Map.Entry<String, Object> entry : levelUpgrade.getData().entrySet()){
+                    for (Map.Entry<String, Object> entry : levelUpgrade.getData().entrySet()) {
                         rewriteData.put(entry.getKey(), new CobblestoneGeneratorData((LinkedTreeMap<String, Object>) entry.getValue()).toGenerator());
                     }
 

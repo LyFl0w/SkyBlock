@@ -13,12 +13,7 @@ import net.lyflow.skyblock.challenge.mod.entity.ReproduceAnimalChallenge;
 import net.lyflow.skyblock.challenge.mod.shop.BuyItemChallenge;
 import net.lyflow.skyblock.challenge.mod.shop.SellItemChallenge;
 import net.lyflow.skyblock.loader.challenge.ChallengeData;
-import net.lyflow.skyblock.loader.challenge.RewardData;
-import net.lyflow.skyblock.loader.challenge.SubChallengeData;
 import net.lyflow.skyblock.loader.gson.EmptyListToNullFactory;
-import net.lyflow.skyblock.loader.island.upgrade.IslandUpgradeData;
-import net.lyflow.skyblock.loader.minecraft.EnchantmentData;
-import net.lyflow.skyblock.loader.minecraft.ItemStackData;
 import net.lyflow.skyblock.utils.ResourceUtils;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
@@ -56,12 +51,12 @@ public class ChallengeManager {
 
         final String name = "data/challenge";
         final File challengeFolder = new File(skyblock.getDataFolder(), name);
-        if(!challengeFolder.exists()) {
+        if (!challengeFolder.exists()) {
             skyblock.getLogger().info("Generate Challenge folder in plugin folder (" + name + ")");
             ResourceUtils.saveResourceFolder(name, challengeFolder, skyblock, false);
         }
 
-        for(File configurationFile : Objects.requireNonNull(challengeFolder.listFiles())) {
+        for (File configurationFile : Objects.requireNonNull(challengeFolder.listFiles())) {
             try {
                 final ChallengeData challengeData = gson.fromJson(new FileReader(configurationFile), ChallengeData.class);
                 addNewChallenge(challengeData.toChallenge(skyblock));

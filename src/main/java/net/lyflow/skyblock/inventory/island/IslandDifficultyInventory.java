@@ -7,7 +7,6 @@ import net.lyflow.skyblock.utils.builder.InventoryBuilder;
 import net.lyflow.skyblock.utils.builder.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +34,7 @@ public class IslandDifficultyInventory {
     public static void inventoryEvent(SkyBlock skyBlock, InventoryClickEvent event, Player player, ItemStack item) {
         event.setCancelled(true);
         player.closeInventory();
-        if(item.getType() == Material.STRUCTURE_VOID) {
+        if (item.getType() == Material.STRUCTURE_VOID) {
             //player.closeInventory();
             return;
         }

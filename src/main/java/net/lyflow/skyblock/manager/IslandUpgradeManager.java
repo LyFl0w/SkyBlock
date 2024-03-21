@@ -42,16 +42,17 @@ public class IslandUpgradeManager {
 
         final String name = "data/upgrade";
         final File upgradeFolder = new File(skyblock.getDataFolder(), name);
-        if(!upgradeFolder.exists()) {
+        if (!upgradeFolder.exists()) {
             skyblock.getLogger().info("Generate Upgrade folder in plugin folder (" + name + ")");
             ResourceUtils.saveResourceFolder(name, upgradeFolder, skyblock, false);
         }
 
-        for(File configurationFile : Objects.requireNonNull(upgradeFolder.listFiles())) {
+        for (File configurationFile : Objects.requireNonNull(upgradeFolder.listFiles())) {
             try {
                 final IslandUpgradeData islandUpgradeData = gson.fromJson(new FileReader(configurationFile), IslandUpgradeData.class);
                 addIslandUpgrade(islandUpgradeData.toUpgrade(skyblock));
-            } catch (FileNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            } catch (FileNotFoundException | InvocationTargetException | InstantiationException |
+                     IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         }

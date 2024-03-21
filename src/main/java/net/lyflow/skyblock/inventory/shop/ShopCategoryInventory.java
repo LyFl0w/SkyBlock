@@ -1,8 +1,5 @@
 package net.lyflow.skyblock.inventory.shop;
 
-import net.lyflow.skyblock.SkyBlock;
-import net.lyflow.skyblock.event.island.CreateIslandEvent;
-import net.lyflow.skyblock.island.IslandDifficulty;
 import net.lyflow.skyblock.shop.ShopCategory;
 import net.lyflow.skyblock.utils.builder.InventoryBuilder;
 import net.lyflow.skyblock.utils.builder.ItemBuilder;
@@ -31,7 +28,7 @@ public class ShopCategoryInventory {
     public static void inventoryEvent(InventoryClickEvent event, Player player, ItemStack item) {
         event.setCancelled(true);
 
-        switch(item.getType()) {
+        switch (item.getType()) {
             case CLOCK -> player.openInventory(ShopInventory.getServeurShopInventory());
             case RECOVERY_COMPASS -> player.openInventory(ShopInventory.getPlayerShopInventory());
         }

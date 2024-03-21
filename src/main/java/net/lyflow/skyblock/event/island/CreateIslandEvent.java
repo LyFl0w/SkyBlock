@@ -1,9 +1,9 @@
 package net.lyflow.skyblock.event.island;
 
 import net.lyflow.skyblock.SkyBlock;
+import net.lyflow.skyblock.database.request.island.IslandRequest;
 import net.lyflow.skyblock.database.request.island.UpgradeIslandRequest;
 import net.lyflow.skyblock.island.IslandDifficulty;
-import net.lyflow.skyblock.database.request.island.IslandRequest;
 import net.lyflow.skyblock.island.upgrade.IslandUpgrade;
 import net.lyflow.skyblock.island.upgrade.IslandUpgradeStatus;
 import net.lyflow.skyblock.utils.ResourceUtils;
@@ -13,8 +13,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
 import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -53,9 +53,9 @@ public class CreateIslandEvent extends Event implements Cancellable {
                 // Make a copy of  Island World
 
                 // create island in DB
-                final String defaultPath = startPath+islandID;
-                final File islandWorld = new File(skyBlock.getDataFolder(), "../../"+defaultPath);
-                ResourceUtils.saveResourceFolder("maps/skyblock-"+islandDifficulty.name().toLowerCase(), islandWorld, skyBlock, false);
+                final String defaultPath = startPath + islandID;
+                final File islandWorld = new File(skyBlock.getDataFolder(), "../../" + defaultPath);
+                ResourceUtils.saveResourceFolder("maps/skyblock-" + islandDifficulty.name().toLowerCase(), islandWorld, skyBlock, false);
 
                 final UpgradeIslandRequest upgradeIslandRequest = new UpgradeIslandRequest(skyBlock.getDatabase(), false);
                 final List<IslandUpgrade> islandUpgradeList = skyBlock.getIslandUpgradeManager().getIslandUpgrades();

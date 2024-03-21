@@ -2,7 +2,6 @@ package net.lyflow.skyblock.loader.island.upgrade.mod;
 
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.internal.LinkedTreeMap;
-import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.island.upgrade.mod.CobblestoneGeneratorUpgrade;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -43,8 +42,8 @@ public class CobblestoneGeneratorData {
         this.materialActivation = (String) map.get("materialActivation");
         this.materialProbability = new ArrayList<>();
 
-        ((ArrayList<LinkedTreeMap<String, Object>>)map.get("materialProbability")).forEach(map1 ->
-                this.materialProbability.add(new MaterialEntry((String) map1.get("item"), (double)map1.get("probability")))
+        ((ArrayList<LinkedTreeMap<String, Object>>) map.get("materialProbability")).forEach(map1 ->
+                this.materialProbability.add(new MaterialEntry((String) map1.get("item"), (double) map1.get("probability")))
         );
     }
 
@@ -60,7 +59,7 @@ public class CobblestoneGeneratorData {
                 )
         );
 
-        if(defaultMaterial == null)
+        if (defaultMaterial == null)
             return new CobblestoneGeneratorUpgrade.Generator(materialActivation, materialProbability);
 
         return new CobblestoneGeneratorUpgrade.Generator(materialActivation,
