@@ -16,15 +16,22 @@ import net.lyflow.skyblock.loader.challenge.ChallengeData;
 import net.lyflow.skyblock.loader.challenge.RewardData;
 import net.lyflow.skyblock.loader.challenge.SubChallengeData;
 import net.lyflow.skyblock.loader.gson.EmptyListToNullFactory;
+import net.lyflow.skyblock.loader.island.upgrade.IslandUpgradeData;
 import net.lyflow.skyblock.loader.minecraft.EnchantmentData;
 import net.lyflow.skyblock.loader.minecraft.ItemStackData;
+import net.lyflow.skyblock.utils.ResourceUtils;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class ChallengeManager {
 
@@ -40,31 +47,28 @@ public class ChallengeManager {
     }
 
     private void createChallenges(SkyBlock skyblock) {
-        final ChallengeData challenge = new ChallengeData(1, 1, "minecraft:diamond_block", "Hello world",
-                List.of("description 1"), "easy", List.of(),
-                new RewardData(
-                        List.of(new ItemStackData("minecraft:paper", 2,
-                                List.of(new EnchantmentData("minecraft:sharpness", 2)),
-                                List.of("hide_enchants"))), 128, 55),
-                List.of(
-                        new SubChallengeData("kill_entity", List.of(3), List.of(List.of("minecraft:cow", "minecraft:sheep"))),
-                        new SubChallengeData("reproduce_animal", List.of(3), List.of(List.of("minecraft:cow", "minecraft:sheep")))
-                )
-        );
 
         final Gson gson = new GsonBuilder()
                 .serializeSpecialFloatingPointValues()
                 .registerTypeAdapterFactory(EmptyListToNullFactory.INSTANCE)
+                .setPrettyPrinting()
                 .create();
 
-        final String serialized = gson.toJson(challenge);
-        final ChallengeData data = gson.fromJson(serialized, ChallengeData.class);
-        System.out.println(serialized);
+        final String name = "data/challenge";
+        final File challengeFolder = new File(skyblock.getDataFolder(), name);
+        if(!challengeFolder.exists()) {
+            skyblock.getLogger().info("Generate Challenge folder in plugin folder (" + name + ")");
+            ResourceUtils.saveResourceFolder(name, challengeFolder, skyblock, false);
+        }
 
-        try {
-            addNewChallenge(data.toChallenge(skyblock));
-        } catch (Exception e) {
-            throw new IllegalCallerException(e);
+        for(File configurationFile : Objects.requireNonNull(challengeFolder.listFiles())) {
+            try {
+                final ChallengeData challengeData = gson.fromJson(new FileReader(configurationFile), ChallengeData.class);
+                addNewChallenge(challengeData.toChallenge(skyblock));
+            } catch (FileNotFoundException | InvocationTargetException | InstantiationException |
+                     IllegalAccessException | NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         /*addNewChallenges(

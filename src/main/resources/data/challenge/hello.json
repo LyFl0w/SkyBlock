@@ -1,0 +1,55 @@
+{
+   "id": 1,
+   "slot": 1,
+   "material": "minecraft:diamond_block",
+   "name": "Hello world",
+   "description": [
+     "description 1"
+   ],
+   "difficulty": "easy",
+   "reward": {
+     "items": [
+       {
+         "item": "minecraft:paper",
+         "count": 2,
+         "enchantments": [
+           {
+             "enchantment": "minecraft:sharpness",
+             "level": 2
+           }
+         ],
+         "flags": [
+           "hide_enchants"
+         ]
+       }
+     ],
+     "level": 128,
+     "money": 55.0
+   },
+   "subChallenge": [
+     {
+         "type": "kill_entity",
+       "counterList": [
+         3
+       ],
+       "elementsCounter": [
+         [
+           "minecraft:cow",
+           "minecraft:sheep"
+         ]
+       ]
+     },
+     {
+       "type": "reproduce_animal",
+       "counterList": [
+         3
+       ],
+       "elementsCounter": [
+         [
+           "minecraft:cow",
+           "minecraft:sheep"
+         ]
+       ]
+     }
+   ]
+ }

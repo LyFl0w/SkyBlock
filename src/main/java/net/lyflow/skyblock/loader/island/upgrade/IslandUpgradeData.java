@@ -1,6 +1,7 @@
 package net.lyflow.skyblock.loader.island.upgrade;
 
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.internal.LinkedTreeMap;
 import net.lyflow.skyblock.SkyBlock;
 import net.lyflow.skyblock.island.upgrade.IslandUpgrade;
 import net.lyflow.skyblock.island.upgrade.LevelUpgrade;
@@ -71,7 +72,6 @@ public class IslandUpgradeData {
             }
         } else {
             final ItemInfo itemInfo = ItemInfo.of(slot, reelMaterial, name, (description == null ? new String[]{} : description.toArray(new String[0])));
-            System.out.println("description of " + name + " : " + Arrays.toString(description == null ? new String[]{} : description.toArray(new String[0])));
             if (hasData) {
                 islandUpgrade = (IslandUpgrade) constructor.newInstance(skyBlock, id, upgrades, data, itemInfo);
             } else {
@@ -89,8 +89,10 @@ public class IslandUpgradeData {
             case COBBLESTONE_GENERATOR -> {
                 for (LevelUpgrade levelUpgrade : upgrades) {
                     final Map<String, Object> rewriteData = new HashMap<>();
-                    for (Map.Entry<String, Object> entry : levelUpgrade.getData().entrySet())
-                        rewriteData.put(entry.getKey(), ((CobblestoneGeneratorData) entry.getValue()).toGenerator());
+                    for (Map.Entry<String, Object> entry : levelUpgrade.getData().entrySet()){
+                        rewriteData.put(entry.getKey(), new CobblestoneGeneratorData((LinkedTreeMap<String, Object>) entry.getValue()).toGenerator());
+                    }
+
                     rewriteUpgrades.add(new LevelUpgrade(levelUpgrade, rewriteData));
                 }
             }
